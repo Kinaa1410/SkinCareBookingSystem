@@ -7,7 +7,9 @@ C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\SkinCareBookingSystem.pdb
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Humanizer.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Microsoft.Build.Locator.dll
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
@@ -152,6 +154,7 @@ C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.csproj.CoreCompileInputs.cache
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.sourcelink.json
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\staticwebassets\msbuild.SkinCareBookingSystem.Microsoft.AspNetCore.StaticWebAssets.props
@@ -166,3 +169,5 @@ C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.pdb
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.genruntimeconfig.cache
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\ref\SkinCareBookingSystem.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
