@@ -8,7 +8,7 @@ namespace SkinCareBookingSystem.Models
         public int RoleId { get; set; }
 
         [Required]
-        public string RoleName { get; set; } = string.Empty; // ✅ Fixes CS8618 warning
+        public string RoleName { get; set; } = string.Empty; 
 
         public bool Status { get; set; }
     }
