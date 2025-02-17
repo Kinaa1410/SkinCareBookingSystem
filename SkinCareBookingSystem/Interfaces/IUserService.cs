@@ -12,5 +12,6 @@ namespace SkinCareBookingSystem.Interfaces
         Task<bool> UpdateUserAsync(int id, UpdateUserDTO userDTO);
         Task<bool> DeleteUserAsync(int id);
         Task<LoginResponseDTO?> LoginAsync(LoginDTO loginDTO);
+        Task<List<UserDTO>> GetUsersByRoleIdAsync(int roleId);
     }
 }

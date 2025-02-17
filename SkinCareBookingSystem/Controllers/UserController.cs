@@ -21,7 +21,6 @@ namespace SkinCareBookingSystem.Controllers
             _createUserValidator = createUserValidator;
         }
 
-        [Authorize(Roles = "Admin, Staff")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
@@ -38,7 +37,6 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(user);
         }
 
-        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UserDTO>> CreateUser([FromBody] CreateUserDTO userDTO)
         {
@@ -87,6 +85,18 @@ namespace SkinCareBookingSystem.Controllers
                 return BadRequest(new { message = "Email already exists" });
 
             return CreatedAtAction(nameof(GetUser), new { id = newTherapist.Id }, newTherapist);
+        }
+
+        [HttpGet("by-role/{roleId}")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersByRole(int roleId)
+        {
+            var users = await _userService.GetUsersByRoleIdAsync(roleId);
+            if (users == null || users.Count == 0)
+            {
+                return NotFound(new { message = "No users found for this role." });
+            }
+
+            return Ok(users);
         }
     }
 }

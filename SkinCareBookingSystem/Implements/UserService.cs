@@ -193,5 +193,22 @@ namespace SkinCareBookingSystem.Implements
                 Role = user.Role.RoleName
             };
         }
+
+        public async Task<List<UserDTO>> GetUsersByRoleIdAsync(int roleId)
+        {
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.RoleId == roleId)
+                .Select(u => new UserDTO
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    Role = u.Role.RoleName,
+                    Status = u.Status
+                }).ToListAsync();
+
+            return users;
+        }
     }
 }
