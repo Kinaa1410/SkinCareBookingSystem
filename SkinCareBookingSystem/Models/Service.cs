@@ -34,7 +34,6 @@ namespace SkinCareBookingSystem.Models
 
         public bool Exist { get; set; } = true;
 
-        // Navigation Property
         public ServiceCategory ServiceCategory { get; set; } = null!;
     }
 }

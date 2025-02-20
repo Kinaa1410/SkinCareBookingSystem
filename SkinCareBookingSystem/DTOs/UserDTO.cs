@@ -5,7 +5,7 @@
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public int RoleId { get; set; }  // 1 = User, 2 = Staff, 3 = Therapist
+        public int RoleId { get; set; }
     }
 
     public class UpdateUserDTO
