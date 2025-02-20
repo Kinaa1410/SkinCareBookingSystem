@@ -46,6 +46,12 @@ builder.Services.AddScoped<IValidator<UpdateUserDetailsDTO>, UpdateUserDetailsDT
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IValidator<CreateRoleDTO>, CreateRoleDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateRoleDTO>, UpdateRoleDTOValidator>();
+builder.Services.AddScoped<IServiceCategoryService, ServiceCategoryService>();
+builder.Services.AddScoped<IValidator<CreateServiceCategoryDTO>, CreateServiceCategoryDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateServiceCategoryDTO>, UpdateServiceCategoryDTOValidator>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IValidator<CreateServiceDTO>, CreateServiceDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateServiceDTO>, UpdateServiceDTOValidator>(); 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
