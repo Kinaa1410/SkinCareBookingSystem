@@ -12,9 +12,8 @@ namespace SkinCareBookingSystem.Models
         public int ServiceId { get; set; }
 
         [Required]
-        public string ImageURL { get; set; } = string.Empty; // ✅ Fixes CS8618 warning
+        public string ImageURL { get; set; } = string.Empty;
 
-        // Navigation Property
-        public Service Service { get; set; } = null!; // ✅ Fixes CS8618 warning
+        public Service Service { get; set; } = null!;
     }
 }

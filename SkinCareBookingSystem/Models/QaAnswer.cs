@@ -18,7 +18,6 @@ namespace SkinCareBookingSystem.Models
         [Required]
         public string Answer { get; set; } = string.Empty;
 
-        // Navigation Properties
         public User User { get; set; } = null!;
         public Qa Qa { get; set; } = null!;
     }
