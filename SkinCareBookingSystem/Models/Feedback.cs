@@ -28,7 +28,6 @@ namespace SkinCareBookingSystem.Models
 
         public bool Status { get; set; } = true;
 
-        // Navigation Property
         public Booking Booking { get; set; } = null!;
     }
 }

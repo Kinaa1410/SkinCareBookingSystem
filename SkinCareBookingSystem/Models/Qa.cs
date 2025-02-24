@@ -12,14 +12,14 @@ namespace SkinCareBookingSystem.Models
         public int ServiceCategoryId { get; set; }
 
         [Required]
-        public string Question { get; set; } = string.Empty; // ✅ Fixes CS8618 warning
+        public string Question { get; set; } = string.Empty;
 
         [Required]
-        public string Type { get; set; } = string.Empty; // ✅ Fixes CS8618 warning
+        public string Type { get; set; } = string.Empty; 
 
         public bool Status { get; set; }
 
-        // Navigation Property
-        public ServiceCategory ServiceCategory { get; set; } = null!; // ✅ Fixes CS8618 warning
+        
+        public ServiceCategory ServiceCategory { get; set; } = null!;
     }
 }

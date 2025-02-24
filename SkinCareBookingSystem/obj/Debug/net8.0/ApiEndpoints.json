@@ -16,6 +16,258 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.CartItemController",
+    "Method": "GetAllCartItems",
+    "RelativePath": "api/CartItem",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.CartItemController",
+    "Method": "CreateCartItem",
+    "RelativePath": "api/CartItem",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cartItemDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateCartItemDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.CartItemController",
+    "Method": "GetCartItem",
+    "RelativePath": "api/CartItem/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.CartItemController",
+    "Method": "UpdateCartItem",
+    "RelativePath": "api/CartItem/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "cartItemDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateCartItemDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.CartItemController",
+    "Method": "DeleteCartItem",
+    "RelativePath": "api/CartItem/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaController",
+    "Method": "GetAllQas",
+    "RelativePath": "api/Qa",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaController",
+    "Method": "CreateQa",
+    "RelativePath": "api/Qa",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "qaDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateQaDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaController",
+    "Method": "GetQa",
+    "RelativePath": "api/Qa/{qaId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "qaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaController",
+    "Method": "UpdateQa",
+    "RelativePath": "api/Qa/{qaId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "qaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "qaDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateQaDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaController",
+    "Method": "DeleteQa",
+    "RelativePath": "api/Qa/{qaId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "qaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaAnswerController",
+    "Method": "GetAllQaAnswers",
+    "RelativePath": "api/QaAnswer",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaAnswerController",
+    "Method": "CreateQaAnswer",
+    "RelativePath": "api/QaAnswer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "qaAnswerDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateQaAnswerDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaAnswerController",
+    "Method": "GetQaAnswer",
+    "RelativePath": "api/QaAnswer/{userId}/{qaId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "qaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaAnswerController",
+    "Method": "UpdateQaAnswer",
+    "RelativePath": "api/QaAnswer/{userId}/{qaId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "qaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "qaAnswerDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateQaAnswerDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.QaAnswerController",
+    "Method": "DeleteQaAnswer",
+    "RelativePath": "api/QaAnswer/{userId}/{qaId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "qaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.RoleController",
     "Method": "GetAllRoles",
     "RelativePath": "api/Role",

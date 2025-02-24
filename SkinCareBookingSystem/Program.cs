@@ -51,7 +51,19 @@ builder.Services.AddScoped<IValidator<CreateServiceCategoryDTO>, CreateServiceCa
 builder.Services.AddScoped<IValidator<UpdateServiceCategoryDTO>, UpdateServiceCategoryDTOValidator>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IValidator<CreateServiceDTO>, CreateServiceDTOValidator>();
-builder.Services.AddScoped<IValidator<UpdateServiceDTO>, UpdateServiceDTOValidator>(); 
+builder.Services.AddScoped<IValidator<UpdateServiceDTO>, UpdateServiceDTOValidator>();
+builder.Services.AddScoped<IQaService, QaService>();
+builder.Services.AddScoped<IValidator<CreateQaDTO>, CreateQaDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateQaDTO>, UpdateQaDTOValidator>();
+builder.Services.AddScoped<IQaAnswerService, QaAnswerService>();
+builder.Services.AddScoped<IValidator<CreateQaAnswerDTO>, CreateQaAnswerDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateQaAnswerDTO>, UpdateQaAnswerDTOValidator>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+builder.Services.AddScoped<IValidator<CreateCartItemDTO>, CreateCartItemDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateCartItemDTO>, UpdateCartItemDTOValidator>();
+
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
