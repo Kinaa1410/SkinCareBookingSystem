@@ -11,8 +11,8 @@ namespace SkinCareBookingSystem.Models
         [Key, Column(Order = 2)]
         public int ServiceId { get; set; }
 
-        public int StockBooking { get; set; }
-        public float Price { get; set; }
+        public int StockBooking { get; set; } 
+        public float Price { get; set; } 
 
         public Booking? Booking { get; set; }
         public Service? Service { get; set; }

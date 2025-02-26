@@ -1,19 +1,15 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace SkinCareBookingSystem.Models
+public class ServiceCategory
 {
-    public class ServiceCategory
-    {
-        [Key]
-        public int ServiceCategoryId { get; set; }
+    [Key]
+    public int ServiceCategoryId { get; set; }
 
-        [Required]
-        public string Name { get; set; } = string.Empty; 
+    [Required]
+    public string Name { get; set; } = string.Empty;
 
-        public bool Status { get; set; }
-        public bool Exist { get; set; }
+    public bool Status { get; set; }
+    public bool Exist { get; set; }
 
-        public ICollection<Service> Services { get; set; } = new List<Service>(); 
-    }
+    public ICollection<Service> Services { get; set; } = new List<Service>();
 }

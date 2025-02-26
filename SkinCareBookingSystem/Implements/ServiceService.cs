@@ -48,7 +48,7 @@ namespace SkinCareBookingSystem.Implements
                 ServiceCategoryId = service.ServiceCategoryId,
                 Name = service.Name,
                 Description = service.Description,
-                Price = service.Price,
+                Price = service.Price, 
                 Duration = service.Duration,
                 VideoURL = service.VideoURL,
                 Rating = service.Rating,

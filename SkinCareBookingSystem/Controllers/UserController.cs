@@ -46,12 +46,20 @@ namespace SkinCareBookingSystem.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
+            if (await _userService.UserExistsAsync(userDTO.UserName, userDTO.Email))
+            {
+                return BadRequest(new { message = "Username or Email already exists" });
+            }
+
             var newUser = await _userService.RegisterUserAsync(userDTO);
             if (newUser == null)
-                return BadRequest(new { message = "Email already exists" });
+            {
+                return BadRequest(new { message = "User creation failed" });
+            }
 
             return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]

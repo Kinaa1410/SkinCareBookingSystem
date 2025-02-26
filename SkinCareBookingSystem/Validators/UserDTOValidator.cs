@@ -18,9 +18,6 @@ namespace SkinCareBookingSystem.Validators
             RuleFor(user => user.Password)
                 .NotEmpty().WithMessage("Mật khẩu không được bỏ trống!")
                 .MinimumLength(6).WithMessage("Mật khẩu phải có ít nhất 6 ký tự.");
-
-            RuleFor(user => user.RoleId)
-                .GreaterThan(0).WithMessage("Vai trò không hợp lệ.");
         }
     }
 
@@ -39,8 +36,6 @@ namespace SkinCareBookingSystem.Validators
                 .NotEmpty().WithMessage("Mật khẩu không được bỏ trống!")
                 .MinimumLength(6).WithMessage("Mật khẩu phải có ít nhất 6 ký tự.");
 
-            RuleFor(user => user.RoleId)
-                .GreaterThan(0).WithMessage("Vai trò không hợp lệ.");
         }
     }
 }
