@@ -149,7 +149,7 @@ namespace SkinCareBookingSystem.Implements
         public async Task<BookingDTO> BookWithRandomTherapistAsync(CreateBookingDTO bookingDTO)
         {
             var availableTherapists = await _context.Users
-                .Where(u => u.RoleId == 3 && !u.CustomerBookings.Any(b => b.AppointmentDate == bookingDTO.AppointmentDate))
+                .Where(u => u.RoleId == 2 && !u.CustomerBookings.Any(b => b.AppointmentDate == bookingDTO.AppointmentDate))
                 .ToListAsync();
 
             if (!availableTherapists.Any())
@@ -166,7 +166,7 @@ namespace SkinCareBookingSystem.Implements
         public async Task<BookingDTO> BookWithSpecificTherapistAsync(CreateBookingDTO bookingDTO)
         {
             var therapist = await _context.Users.FindAsync(bookingDTO.TherapistId);
-            if (therapist == null || therapist.RoleId != 3)
+            if (therapist == null || therapist.RoleId != 2)
                 throw new InvalidOperationException("Therapist not found or invalid.");
             bool isAvailable = await IsTherapistAvailableAsync((int)bookingDTO.TherapistId, bookingDTO.AppointmentDate);
             if (!isAvailable)
@@ -178,7 +178,7 @@ namespace SkinCareBookingSystem.Implements
         public async Task<BookingDTO> BookWithSpecificTherapistIfFreeAsync(CreateBookingDTO bookingDTO)
         {
             var therapist = await _context.Users.FindAsync(bookingDTO.TherapistId);
-            if (therapist == null || therapist.RoleId != 3)
+            if (therapist == null || therapist.RoleId != 2)
                 throw new InvalidOperationException("Therapist not found or invalid.");
 
             bool isAvailable = await IsTherapistAvailableAsync((int)bookingDTO.TherapistId, bookingDTO.AppointmentDate);
@@ -192,7 +192,7 @@ namespace SkinCareBookingSystem.Implements
         public async Task<BookingDTO> BookWithStaffChoiceAsync(CreateBookingDTO bookingDTO)
         {
             var staff = await _context.Users.FindAsync(bookingDTO.UserId);
-            if (staff == null || staff.RoleId != 2)
+            if (staff == null || staff.RoleId != 3)
                 throw new UnauthorizedAccessException("Only staff can book on behalf of a customer.");
 
             var availableTherapist = await _context.Users
