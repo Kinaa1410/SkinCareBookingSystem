@@ -1,39 +1,35 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SkinCareBookingSystem.Models
+public class Service
 {
-    public class Service
-    {
-        [Key]
-        public int ServiceId { get; set; }
+    [Key]
+    public int ServiceId { get; set; }
 
-        [ForeignKey("ServiceCategory")]
-        public int ServiceCategoryId { get; set; }
+    [ForeignKey("ServiceCategory")]
+    public int ServiceCategoryId { get; set; }
 
-        [Required]
-        public string Name { get; set; } = string.Empty;
+    [Required]
+    public string Name { get; set; } = string.Empty;
 
-        [Required]
-        public string Description { get; set; } = string.Empty;
+    [Required]
+    public string Description { get; set; } = string.Empty;
 
-        [Required]
-        [Column(TypeName = "decimal(10,2)")]
-        public float Price { get; set; } = 0.0f;
+    [Required]
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal Price { get; set; } = 0.0m;
 
-        [Required]
-        public TimeSpan Duration { get; set; } = TimeSpan.Zero;
+    [Required]
+    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
 
-        public string VideoURL { get; set; } = string.Empty;
+    public string VideoURL { get; set; } = string.Empty;
 
-        [Range(0, 5)]
-        public float Rating { get; set; } = 0.0f;
+    [Range(0, 5)]
+    public float Rating { get; set; } = 0.0f;
 
-        public bool Status { get; set; } = true;
+    public bool Status { get; set; } = true;
 
-        public bool Exist { get; set; } = true;
+    public bool Exist { get; set; } = true;
 
-        public ServiceCategory ServiceCategory { get; set; } = null!;
-    }
+    public ServiceCategory ServiceCategory { get; set; } = null!;
 }

@@ -13,5 +13,6 @@ namespace SkinCareBookingSystem.Interfaces
         Task<bool> DeleteUserAsync(int id);
         Task<LoginResponseDTO?> LoginAsync(LoginDTO loginDTO);
         Task<List<UserDTO>> GetUsersByRoleIdAsync(int roleId);
+        Task<bool> UserExistsAsync(string userName, string email);
     }
 }

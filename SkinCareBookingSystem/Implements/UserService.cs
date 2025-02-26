@@ -49,18 +49,23 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
+        public async Task<bool> UserExistsAsync(string userName, string email)
+        {
+            return await _context.Users
+                .AnyAsync(u => u.UserName == userName || u.Email == email);
+        }
+
         public async Task<UserDTO> RegisterUserAsync(CreateUserDTO userDTO)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == userDTO.Email))
+            if (await _context.Users.AnyAsync(u => u.UserName == userDTO.UserName || u.Email == userDTO.Email))
             {
                 return null;
             }
-
             var user = new User
             {
                 UserName = userDTO.UserName,
                 Email = userDTO.Email,
-                Password = userDTO.Password,
+                Password = userDTO.Password, 
                 RoleId = 1,
                 Status = true
             };
@@ -78,9 +83,10 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
+
         public async Task<UserDTO> CreateStaffAsync(CreateUserDTO userDTO)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == userDTO.Email))
+            if (await _context.Users.AnyAsync(u => u.UserName == userDTO.UserName || u.Email == userDTO.Email))
             {
                 return null;
             }
@@ -109,7 +115,7 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<UserDTO> CreateTherapistAsync(CreateUserDTO userDTO)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == userDTO.Email))
+            if (await _context.Users.AnyAsync(u => u.UserName == userDTO.UserName || u.Email == userDTO.Email))
             {
                 return null;
             }
@@ -144,7 +150,6 @@ namespace SkinCareBookingSystem.Implements
             user.UserName = userDTO.UserName;
             user.Email = userDTO.Email;
             user.Password = userDTO.Password;
-            user.RoleId = userDTO.RoleId;
             user.Status = userDTO.Status;
 
             _context.Entry(user).State = EntityState.Modified;

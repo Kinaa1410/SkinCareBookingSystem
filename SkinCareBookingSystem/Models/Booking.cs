@@ -9,30 +9,26 @@ namespace SkinCareBookingSystem.Models
         public int BookingId { get; set; }
 
         [ForeignKey("User")]
-        public int UserId { get; set; }  // Customer
+        public int UserId { get; set; }
 
         [ForeignKey("StaffUser")]
-        public int? StaffId { get; set; }  // Staff 
+        public int? StaffId { get; set; }
 
-        [ForeignKey("TherapistUser")]
-        public int? TherapistId { get; set; }  // Therapist
+        [ForeignKey("TherapistSchedule")]
+        public int ScheduleId { get; set; } 
 
         public DateTime DateCreated { get; set; }
         public float TotalPrice { get; set; }
         public string Note { get; set; } = string.Empty;
         public bool Status { get; set; }
         public bool IsPaid { get; set; }
-        public DateTime AppointmentDate { get; set; }
+        public DateTime AppointmentDate { get; set; } 
         public bool UseWallet { get; set; }
 
-        public User? User { get; set; }  // The customer making the booking
+        public User User { get; set; }
+        public User StaffUser { get; set; }
+        public TherapistSchedule TherapistSchedule { get; set; }
 
-        [ForeignKey("StaffId")]
-        public User? StaffUser { get; set; }
-
-        [ForeignKey("TherapistId")]
-        public User? TherapistUser { get; set; }
-
-        public ICollection<BookingDetails> BookingDetails { get; set; } = new List<BookingDetails>();
+        public ICollection<BookingDetails> BookingDetails { get; set; } = new List<BookingDetails>(); 
     }
 }

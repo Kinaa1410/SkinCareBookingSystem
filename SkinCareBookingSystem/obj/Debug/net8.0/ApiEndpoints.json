@@ -16,6 +16,133 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "GetAllBookings",
+    "RelativePath": "api/Booking",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "GetBooking",
+    "RelativePath": "api/Booking/{bookingId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "UpdateBooking",
+    "RelativePath": "api/Booking/{bookingId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "bookingDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateBookingDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "DeleteBooking",
+    "RelativePath": "api/Booking/{bookingId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "BookWithRandomTherapist",
+    "RelativePath": "api/Booking/random-therapist",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateBookingDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "BookWithSpecificTherapist",
+    "RelativePath": "api/Booking/specific-therapist",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateBookingDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "BookWithSpecificTherapistIfFree",
+    "RelativePath": "api/Booking/specific-therapist-free",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateBookingDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.BookingController",
+    "Method": "BookWithStaffChoice",
+    "RelativePath": "api/Booking/staff-choice",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateBookingDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.CartItemController",
     "Method": "GetAllCartItems",
     "RelativePath": "api/CartItem",
@@ -519,6 +646,234 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "CreateSchedule",
+    "RelativePath": "api/TherapistSchedule",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "scheduleDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateTherapistScheduleDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SkinCareBookingSystem.DTOs.TherapistScheduleDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "GetScheduleById",
+    "RelativePath": "api/TherapistSchedule/{scheduleId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "scheduleId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SkinCareBookingSystem.DTOs.TherapistScheduleDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "UpdateSchedule",
+    "RelativePath": "api/TherapistSchedule/{scheduleId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "scheduleId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "scheduleDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateTherapistScheduleDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "DeleteSchedule",
+    "RelativePath": "api/TherapistSchedule/{scheduleId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "scheduleId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "GetAllSchedules",
+    "RelativePath": "api/TherapistSchedule/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.TherapistScheduleDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "GetScheduleByTherapistId",
+    "RelativePath": "api/TherapistSchedule/therapist/{therapistId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "therapistId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.TherapistScheduleDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "GetTherapistsWorkingInTimeRange",
+    "RelativePath": "api/TherapistSchedule/working-in-time-range",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "startTime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "endTime",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.TherapistScheduleDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "GetTherapistsWorkingOnDayInTimeRange",
+    "RelativePath": "api/TherapistSchedule/working-on-day-in-time-range",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dayOfWeek",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "startTime",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "endTime",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.TherapistScheduleDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistScheduleController",
+    "Method": "GetTherapistsWorkingOnDay",
+    "RelativePath": "api/TherapistSchedule/working-on-day/{dayOfWeek}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dayOfWeek",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.TherapistScheduleDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "SkinCareBookingSystem.Controllers.UserDetailsController",
