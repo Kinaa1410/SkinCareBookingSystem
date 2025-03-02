@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\swp391\\skincarebookingsystem\\skincarebookingsystem\\skincarebookingsystem.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\skincarebookingsystem.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\swp391\\skincarebookingsystem\\skincarebookingsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -38,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,7 +50,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "SkinCareBookingSystem",
+              "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
+              "RelativeDocumentMoniker": "SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
+              "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
+              "RelativeToolTip": "SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-03-02T07:19:13.582Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\appsettings.json",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\appsettings.json",
@@ -54,24 +71,25 @@
               "RelativeToolTip": "SkinCareBookingSystem\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-02-27T15:15:02.412Z"
+              "WhenOpened": "2025-02-27T15:15:02.412Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\Program.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Program.cs",
               "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\Program.cs",
               "RelativeToolTip": "SkinCareBookingSystem\\Program.cs",
-              "ViewState": "AgIAAGMAAAAAAAAAAAAcwIoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAcwHAAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-27T15:02:04.575Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "TherapistTimeSlotController.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\Controllers\\TherapistTimeSlotController.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Controllers\\TherapistTimeSlotController.cs",
@@ -79,11 +97,12 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Controllers\\TherapistTimeSlotController.cs",
               "ViewState": "AgIAABMAAAAAAAAAAAAuwDwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T15:00:50.849Z"
+              "WhenOpened": "2025-02-27T15:00:50.849Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "TherapistTimeSlotService.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\Implements\\TherapistTimeSlotService.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Implements\\TherapistTimeSlotService.cs",
@@ -91,11 +110,12 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Implements\\TherapistTimeSlotService.cs",
               "ViewState": "AgIAADMAAAAAAAAAAAAuwFwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T15:00:30.183Z"
+              "WhenOpened": "2025-02-27T15:00:30.183Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "ITherapistTimeSlotService.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\Interfaces\\ITherapistTimeSlotService.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Interfaces\\ITherapistTimeSlotService.cs",
@@ -103,11 +123,12 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Interfaces\\ITherapistTimeSlotService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T15:00:15.519Z"
+              "WhenOpened": "2025-02-27T15:00:15.519Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "TherapistTimeSlotValidator.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\Validators\\TherapistTimeSlotValidator.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Validators\\TherapistTimeSlotValidator.cs",
@@ -115,11 +136,12 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Validators\\TherapistTimeSlotValidator.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T14:59:50.683Z"
+              "WhenOpened": "2025-02-27T14:59:50.683Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "TherapistTimeSlotDTO.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\DTOs\\TherapistTimeSlotDTO.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\DTOs\\TherapistTimeSlotDTO.cs",
@@ -127,7 +149,8 @@
               "RelativeToolTip": "SkinCareBookingSystem\\DTOs\\TherapistTimeSlotDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T14:56:34.49Z"
+              "WhenOpened": "2025-02-27T14:56:34.49Z",
+              "EditorCaption": ""
             }
           ]
         }
