@@ -61,14 +61,13 @@ builder.Services.AddScoped<IValidator<UpdateQaAnswerDTO>, UpdateQaAnswerDTOValid
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<IValidator<CreateCartItemDTO>, CreateCartItemDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateCartItemDTO>, UpdateCartItemDTOValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateBookingDTOValidator>();
 builder.Services.AddScoped<IValidator<CreateBookingDTO>, CreateBookingDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateBookingDTO>, UpdateBookingDTOValidator>();
 builder.Services.AddScoped<ITherapistScheduleService, TherapistScheduleService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
-builder.Services.AddScoped<IValidator<CreateBookingDTO>, CreateBookingDTOValidator>();
-builder.Services.AddScoped<IValidator<UpdateBookingDTO>, UpdateBookingDTOValidator>();
-
+builder.Services.AddScoped<ITherapistTimeSlotService, TherapistTimeSlotService>();
+builder.Services.AddScoped<IValidator<CreateTherapistTimeSlotDTO>, CreateTherapistTimeSlotDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateTherapistTimeSlotDTO>, UpdateTherapistTimeSlotDTOValidator>();
 
 
 

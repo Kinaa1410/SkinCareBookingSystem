@@ -7,8 +7,8 @@ public interface ITherapistScheduleService
     Task<TherapistScheduleDTO> CreateScheduleAsync(CreateTherapistScheduleDTO scheduleDTO);
     Task<bool> UpdateScheduleAsync(int scheduleId, UpdateTherapistScheduleDTO scheduleDTO);
     Task<bool> DeleteScheduleAsync(int scheduleId);
-    Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingOnDayAsync(DayOfWeek dayOfWeek);
     Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingInTimeRangeAsync(TimeSpan startTime, TimeSpan endTime);
     Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingOnDayInTimeRangeAsync(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);
     Task<IEnumerable<TherapistScheduleDTO>> GetScheduleByTherapistIdAsync(int therapistId);
+
 }

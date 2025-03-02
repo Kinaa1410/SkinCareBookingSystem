@@ -61,13 +61,6 @@ namespace SkinCareBookingSystem.Controllers
             return NoContent();
         }
 
-        [HttpGet("working-on-day/{dayOfWeek}")]
-        public async Task<ActionResult<IEnumerable<TherapistScheduleDTO>>> GetTherapistsWorkingOnDay(DayOfWeek dayOfWeek)
-        {
-            var schedules = await _therapistScheduleService.GetTherapistsWorkingOnDayAsync(dayOfWeek);
-            return Ok(schedules);
-        }
-
         [HttpGet("working-in-time-range")]
         public async Task<ActionResult<IEnumerable<TherapistScheduleDTO>>> GetTherapistsWorkingInTimeRange([FromQuery] string startTime, [FromQuery] string endTime)
         {

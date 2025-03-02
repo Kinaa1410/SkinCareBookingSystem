@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkinCareBookingSystem.Models
 {
@@ -14,21 +14,23 @@ namespace SkinCareBookingSystem.Models
         [ForeignKey("StaffUser")]
         public int? StaffId { get; set; }
 
-        [ForeignKey("TherapistSchedule")]
-        public int ScheduleId { get; set; } 
+        [ForeignKey("TherapistTimeSlot")]
+        public int TimeSlotId { get; set; } // ✅ Ensure this field is present
 
         public DateTime DateCreated { get; set; }
         public float TotalPrice { get; set; }
         public string Note { get; set; } = string.Empty;
         public bool Status { get; set; }
         public bool IsPaid { get; set; }
-        public DateTime AppointmentDate { get; set; } 
+        public DateTime AppointmentDate { get; set; }
         public bool UseWallet { get; set; }
 
         public User User { get; set; }
         public User StaffUser { get; set; }
-        public TherapistSchedule TherapistSchedule { get; set; }
 
-        public ICollection<BookingDetails> BookingDetails { get; set; } = new List<BookingDetails>(); 
+        // ✅ Fix the missing navigation property
+        public TherapistTimeSlot TherapistTimeSlot { get; set; } = null!;
+
+        public ICollection<BookingDetails> BookingDetails { get; set; } = new List<BookingDetails>();
     }
 }

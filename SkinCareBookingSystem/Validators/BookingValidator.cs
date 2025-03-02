@@ -10,12 +10,17 @@ namespace SkinCareBookingSystem.Validators
             RuleFor(booking => booking.UserId)
                 .NotEmpty().WithMessage("User ID is required.");
 
+            RuleFor(booking => booking.TimeSlotId)
+                .NotEmpty().WithMessage("Time Slot ID is required.")
+                .GreaterThan(0).WithMessage("Invalid Time Slot ID.");
+
             RuleFor(booking => booking.AppointmentDate)
                 .NotEmpty().WithMessage("Appointment date is required.")
                 .GreaterThan(DateTime.Now).WithMessage("Appointment date must be in the future.");
 
             RuleFor(booking => booking.TherapistId)
-                .NotNull().WithMessage("Therapist ID is required for specific therapist bookings.");
+                .GreaterThan(0).When(booking => booking.TherapistId.HasValue)
+                .WithMessage("Invalid Therapist ID.");
 
             RuleFor(booking => booking.Note)
                 .MaximumLength(500).WithMessage("Note cannot be longer than 500 characters.");
