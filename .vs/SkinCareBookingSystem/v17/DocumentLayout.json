@@ -54,8 +54,7 @@
               "RelativeToolTip": "SkinCareBookingSystem\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-02-27T15:15:02.412Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T15:15:02.412Z"
             },
             {
               "$type": "Document",
@@ -65,7 +64,7 @@
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Program.cs",
               "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SWP391\\SkinCareBookingSystem\\SkinCareBookingSystem\\Program.cs",
               "RelativeToolTip": "SkinCareBookingSystem\\Program.cs",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAYwFYAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAYwIcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-27T15:02:04.575Z",
               "EditorCaption": ""
@@ -80,8 +79,7 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Controllers\\TherapistTimeSlotController.cs",
               "ViewState": "AgIAABMAAAAAAAAAAAAuwDwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T15:00:50.849Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T15:00:50.849Z"
             },
             {
               "$type": "Document",
@@ -93,8 +91,7 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Implements\\TherapistTimeSlotService.cs",
               "ViewState": "AgIAADMAAAAAAAAAAAAuwFwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T15:00:30.183Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T15:00:30.183Z"
             },
             {
               "$type": "Document",
@@ -106,8 +103,7 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Interfaces\\ITherapistTimeSlotService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T15:00:15.519Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T15:00:15.519Z"
             },
             {
               "$type": "Document",
@@ -119,8 +115,7 @@
               "RelativeToolTip": "SkinCareBookingSystem\\Validators\\TherapistTimeSlotValidator.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T14:59:50.683Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T14:59:50.683Z"
             },
             {
               "$type": "Document",
@@ -132,8 +127,7 @@
               "RelativeToolTip": "SkinCareBookingSystem\\DTOs\\TherapistTimeSlotDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-27T14:56:34.49Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T14:56:34.49Z"
             }
           ]
         }
