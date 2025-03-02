@@ -122,7 +122,10 @@ app.UseCors("AllowAll");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "SkinCareBookingSystem API v1");
+    });
 }
 
 app.UseHttpsRedirection();
