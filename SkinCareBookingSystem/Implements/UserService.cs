@@ -61,12 +61,15 @@ namespace SkinCareBookingSystem.Implements
             {
                 return null;
             }
+
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Customer");
+
             var user = new User
             {
                 UserName = userDTO.UserName,
                 Email = userDTO.Email,
-                Password = userDTO.Password, 
-                RoleId = 1,
+                Password = userDTO.Password,
+                Role = role,
                 Status = true
             };
 
@@ -78,10 +81,11 @@ namespace SkinCareBookingSystem.Implements
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                Role = "User",
+                Role = user.Role.RoleName,
                 Status = user.Status
             };
         }
+
 
 
         public async Task<UserDTO> CreateStaffAsync(CreateUserDTO userDTO)
@@ -91,12 +95,14 @@ namespace SkinCareBookingSystem.Implements
                 return null;
             }
 
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Staff");
+
             var staff = new User
             {
                 UserName = userDTO.UserName,
                 Email = userDTO.Email,
                 Password = userDTO.Password,
-                RoleId = 2,
+                Role = role,
                 Status = true
             };
 
@@ -108,10 +114,11 @@ namespace SkinCareBookingSystem.Implements
                 Id = staff.Id,
                 UserName = staff.UserName,
                 Email = staff.Email,
-                Role = "Staff",
+                Role = staff.Role.RoleName,
                 Status = staff.Status
             };
         }
+
 
         public async Task<UserDTO> CreateTherapistAsync(CreateUserDTO userDTO)
         {
@@ -120,12 +127,18 @@ namespace SkinCareBookingSystem.Implements
                 return null;
             }
 
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Therapist");
+            if (role == null)
+            {
+                return null; 
+            }
+
             var therapist = new User
             {
                 UserName = userDTO.UserName,
                 Email = userDTO.Email,
                 Password = userDTO.Password,
-                RoleId = 3, 
+                Role = role, 
                 Status = true
             };
 
@@ -137,10 +150,13 @@ namespace SkinCareBookingSystem.Implements
                 Id = therapist.Id,
                 UserName = therapist.UserName,
                 Email = therapist.Email,
-                Role = "Therapist",
+                Role = therapist.Role.RoleName,
                 Status = therapist.Status
             };
         }
+
+
+
 
         public async Task<bool> UpdateUserAsync(int id, UpdateUserDTO userDTO)
         {
@@ -199,11 +215,11 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        public async Task<List<UserDTO>> GetUsersByRoleIdAsync(int roleId)
+        public async Task<List<UserDTO>> GetUsersByRoleNameAsync(string roleName)
         {
             var users = await _context.Users
                 .Include(u => u.Role)
-                .Where(u => u.RoleId == roleId)
+                .Where(u => u.Role.RoleName == roleName)  
                 .Select(u => new UserDTO
                 {
                     Id = u.Id,
@@ -215,5 +231,6 @@ namespace SkinCareBookingSystem.Implements
 
             return users;
         }
+
     }
 }

@@ -148,3 +148,7 @@ C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.pdb
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.genruntimeconfig.cache
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\ref\SkinCareBookingSystem.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\CucumberExpressions.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Gherkin.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Reqnroll.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\System.Text.Json.dll

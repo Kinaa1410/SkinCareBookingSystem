@@ -95,16 +95,18 @@ namespace SkinCareBookingSystem.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = newTherapist.Id }, newTherapist);
         }
 
-        [HttpGet("by-role/{roleId}")]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersByRole(int roleId)
+        [HttpGet("by-role/{roleName}")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsersByRole(string roleName)
         {
-            var users = await _userService.GetUsersByRoleIdAsync(roleId);
+            var users = await _userService.GetUsersByRoleNameAsync(roleName);
+
             if (users == null || users.Count == 0)
             {
-                return NotFound(new { message = "No users found for this role." });
+                return NotFound(new { message = $"No users found for the role '{roleName}'." });
             }
 
             return Ok(users);
         }
+
     }
 }

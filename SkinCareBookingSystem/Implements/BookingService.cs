@@ -26,7 +26,7 @@ namespace SkinCareBookingSystem.Implements
         public async Task<BookingDTO> GetBookingByIdAsync(int bookingId)
         {
             var booking = await _context.Bookings
-                .Include(b => b.TherapistTimeSlot) // ✅ FIXED: Use TherapistTimeSlot instead of TimeSlot
+                .Include(b => b.TherapistTimeSlot) 
                 .ThenInclude(ts => ts.TherapistSchedule)
                 .ThenInclude(ts => ts.TherapistUser)
                 .FirstOrDefaultAsync(b => b.BookingId == bookingId);
@@ -50,7 +50,7 @@ namespace SkinCareBookingSystem.Implements
         public async Task<IEnumerable<BookingDTO>> GetAllBookingsAsync()
         {
             return await _context.Bookings
-                .Include(b => b.TherapistTimeSlot) // ✅ FIXED: Use TherapistTimeSlot instead of TimeSlot
+                .Include(b => b.TherapistTimeSlot) 
                 .ThenInclude(ts => ts.TherapistSchedule)
                 .ThenInclude(ts => ts.TherapistUser)
                 .Select(b => new BookingDTO
