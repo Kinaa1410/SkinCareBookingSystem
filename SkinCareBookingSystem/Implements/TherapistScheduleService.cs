@@ -3,6 +3,10 @@ using SkinCareBookingSystem.Data;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SkinCareBookingSystem.Implements
 {
@@ -19,15 +23,20 @@ namespace SkinCareBookingSystem.Implements
         {
             return await _context.TherapistSchedules
                 .Include(ts => ts.TherapistUser)
+                .Include(ts => ts.TimeSlots)
                 .Select(ts => new TherapistScheduleDTO
                 {
                     ScheduleId = ts.ScheduleId,
                     TherapistId = ts.TherapistId,
                     TherapistName = ts.TherapistUser.UserName,
                     DayOfWeek = ts.DayOfWeek,
-                    StartTime = ts.StartTime,
-                    EndTime = ts.EndTime,
-                    IsAvailable = ts.IsAvailable
+                    TimeSlots = ts.TimeSlots.Select(slot => new TherapistTimeSlotDTO
+                    {
+                        TimeSlotId = slot.TimeSlotId,
+                        StartTime = slot.StartTime,
+                        EndTime = slot.EndTime,
+                        IsAvailable = slot.IsAvailable
+                    }).ToList()
                 }).ToListAsync();
         }
 
@@ -35,6 +44,7 @@ namespace SkinCareBookingSystem.Implements
         {
             var schedule = await _context.TherapistSchedules
                 .Include(ts => ts.TherapistUser)
+                .Include(ts => ts.TimeSlots)
                 .FirstOrDefaultAsync(ts => ts.ScheduleId == scheduleId);
 
             if (schedule == null) return null;
@@ -45,49 +55,52 @@ namespace SkinCareBookingSystem.Implements
                 TherapistId = schedule.TherapistId,
                 TherapistName = schedule.TherapistUser.UserName,
                 DayOfWeek = schedule.DayOfWeek,
-                StartTime = schedule.StartTime,
-                EndTime = schedule.EndTime,
-                IsAvailable = schedule.IsAvailable
+                TimeSlots = schedule.TimeSlots.Select(slot => new TherapistTimeSlotDTO
+                {
+                    TimeSlotId = slot.TimeSlotId,
+                    StartTime = slot.StartTime,
+                    EndTime = slot.EndTime,
+                    IsAvailable = slot.IsAvailable
+                }).ToList()
             };
         }
 
         public async Task<TherapistScheduleDTO> CreateScheduleAsync(CreateTherapistScheduleDTO scheduleDTO)
         {
-            var startTime = new TimeSpan(scheduleDTO.StartHour, scheduleDTO.StartMinute, 0);
-            var endTime = new TimeSpan(scheduleDTO.EndHour, scheduleDTO.EndMinute, 0);
-
             var schedule = new TherapistSchedule
             {
                 TherapistId = scheduleDTO.TherapistId,
                 DayOfWeek = scheduleDTO.DayOfWeek,
-                StartTime = startTime,
-                EndTime = endTime,
-                IsAvailable = scheduleDTO.IsAvailable
+                TimeSlots = scheduleDTO.TimeSlots.Select(slot => new TherapistTimeSlot
+                {
+                    StartTime = slot.StartTime,
+                    EndTime = slot.EndTime,
+                    IsAvailable = slot.IsAvailable
+                }).ToList()
             };
 
             _context.TherapistSchedules.Add(schedule);
             await _context.SaveChangesAsync();
 
-            return new TherapistScheduleDTO
-            {
-                ScheduleId = schedule.ScheduleId,
-                TherapistId = schedule.TherapistId,
-                DayOfWeek = schedule.DayOfWeek,
-                StartTime = schedule.StartTime,
-                EndTime = schedule.EndTime,
-                IsAvailable = schedule.IsAvailable
-            };
+            return await GetScheduleByIdAsync(schedule.ScheduleId);
         }
 
         public async Task<bool> UpdateScheduleAsync(int scheduleId, UpdateTherapistScheduleDTO scheduleDTO)
         {
-            var schedule = await _context.TherapistSchedules.FindAsync(scheduleId);
+            var schedule = await _context.TherapistSchedules
+                .Include(ts => ts.TimeSlots)
+                .FirstOrDefaultAsync(ts => ts.ScheduleId == scheduleId);
+
             if (schedule == null) return false;
 
             schedule.DayOfWeek = scheduleDTO.DayOfWeek;
-            schedule.StartTime = new TimeSpan(scheduleDTO.StartHour, scheduleDTO.StartMinute, 0);
-            schedule.EndTime = new TimeSpan(scheduleDTO.EndHour, scheduleDTO.EndMinute, 0);
-            schedule.IsAvailable = scheduleDTO.IsAvailable;
+            schedule.TimeSlots = scheduleDTO.TimeSlots.Select(slot => new TherapistTimeSlot
+            {
+                TimeSlotId = slot.TimeSlotId,
+                StartTime = slot.StartTime,
+                EndTime = slot.EndTime,
+                IsAvailable = slot.IsAvailable
+            }).ToList();
 
             _context.Entry(schedule).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -97,7 +110,10 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<bool> DeleteScheduleAsync(int scheduleId)
         {
-            var schedule = await _context.TherapistSchedules.FindAsync(scheduleId);
+            var schedule = await _context.TherapistSchedules
+                .Include(ts => ts.TimeSlots)
+                .FirstOrDefaultAsync(ts => ts.ScheduleId == scheduleId);
+
             if (schedule == null) return false;
 
             _context.TherapistSchedules.Remove(schedule);
@@ -106,88 +122,75 @@ namespace SkinCareBookingSystem.Implements
             return true;
         }
 
-        public async Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingOnDayAsync(DayOfWeek dayOfWeek)
-        {
-            var schedules = await _context.TherapistSchedules
-                .Include(ts => ts.TherapistUser)
-                .Where(ts => ts.DayOfWeek == dayOfWeek && ts.IsAvailable)
-                .Select(ts => new TherapistScheduleDTO
-                {
-                    ScheduleId = ts.ScheduleId,
-                    TherapistId = ts.TherapistId,
-                    TherapistName = ts.TherapistUser.UserName,
-                    DayOfWeek = ts.DayOfWeek,
-                    StartTime = ts.StartTime,
-                    EndTime = ts.EndTime,
-                    IsAvailable = ts.IsAvailable
-                })
-                .ToListAsync();
-
-            return schedules;
-        }
-
         public async Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingInTimeRangeAsync(TimeSpan startTime, TimeSpan endTime)
         {
-            var schedules = await _context.TherapistSchedules
-                .Include(ts => ts.TherapistUser)
+            return await _context.TherapistTimeSlots
+                .Include(ts => ts.TherapistSchedule)
+                .ThenInclude(s => s.TherapistUser)
                 .Where(ts => ts.StartTime >= startTime && ts.EndTime <= endTime && ts.IsAvailable)
                 .Select(ts => new TherapistScheduleDTO
                 {
                     ScheduleId = ts.ScheduleId,
-                    TherapistId = ts.TherapistId,
-                    TherapistName = ts.TherapistUser.UserName,
-                    DayOfWeek = ts.DayOfWeek,
-                    StartTime = ts.StartTime,
-                    EndTime = ts.EndTime,
-                    IsAvailable = ts.IsAvailable
-                })
-                .ToListAsync();
-
-            return schedules;
-        }
-
-        public async Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingOnDayInTimeRangeAsync(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
-        {
-            var schedules = await _context.TherapistSchedules
-                .Include(ts => ts.TherapistUser)
-                .Where(ts => ts.DayOfWeek == dayOfWeek
-                            && ts.IsAvailable
-                            && ts.StartTime >= startTime
-                            && ts.EndTime <= endTime)
-                .Select(ts => new TherapistScheduleDTO
-                {
-                    ScheduleId = ts.ScheduleId,
-                    TherapistId = ts.TherapistId,
-                    TherapistName = ts.TherapistUser.UserName,
-                    DayOfWeek = ts.DayOfWeek,
-                    StartTime = ts.StartTime,
-                    EndTime = ts.EndTime,
-                    IsAvailable = ts.IsAvailable
-                })
-                .ToListAsync();
-
-            return schedules;
+                    TherapistId = ts.TherapistSchedule.TherapistId,
+                    TherapistName = ts.TherapistSchedule.TherapistUser.UserName,
+                    DayOfWeek = ts.TherapistSchedule.DayOfWeek,
+                    TimeSlots = new List<TherapistTimeSlotDTO>
+                    {
+                        new TherapistTimeSlotDTO
+                        {
+                            TimeSlotId = ts.TimeSlotId,
+                            StartTime = ts.StartTime,
+                            EndTime = ts.EndTime,
+                            IsAvailable = ts.IsAvailable
+                        }
+                    }
+                }).ToListAsync();
         }
 
         public async Task<IEnumerable<TherapistScheduleDTO>> GetScheduleByTherapistIdAsync(int therapistId)
         {
-            var schedules = await _context.TherapistSchedules
+            return await _context.TherapistSchedules
                 .Include(ts => ts.TherapistUser)
-                .Where(ts => ts.TherapistId == therapistId && ts.IsAvailable)
+                .Include(ts => ts.TimeSlots)
+                .Where(ts => ts.TherapistId == therapistId)
                 .Select(ts => new TherapistScheduleDTO
                 {
                     ScheduleId = ts.ScheduleId,
                     TherapistId = ts.TherapistId,
                     TherapistName = ts.TherapistUser.UserName,
                     DayOfWeek = ts.DayOfWeek,
-                    StartTime = ts.StartTime,
-                    EndTime = ts.EndTime,
-                    IsAvailable = ts.IsAvailable
-                })
-                .ToListAsync();
-
-            return schedules;
+                    TimeSlots = ts.TimeSlots.Select(slot => new TherapistTimeSlotDTO
+                    {
+                        TimeSlotId = slot.TimeSlotId,
+                        StartTime = slot.StartTime,
+                        EndTime = slot.EndTime,
+                        IsAvailable = slot.IsAvailable
+                    }).ToList()
+                }).ToListAsync();
         }
 
+        public async Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingOnDayInTimeRangeAsync(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
+        {
+            return await _context.TherapistSchedules
+                .Include(ts => ts.TherapistUser)
+                .Include(ts => ts.TimeSlots)
+                .Where(ts => ts.DayOfWeek == dayOfWeek && ts.TimeSlots.Any(slot => slot.StartTime >= startTime && slot.EndTime <= endTime))
+                .Select(ts => new TherapistScheduleDTO
+                {
+                    ScheduleId = ts.ScheduleId,
+                    TherapistId = ts.TherapistId,
+                    TherapistName = ts.TherapistUser.UserName,
+                    DayOfWeek = ts.DayOfWeek,
+                    TimeSlots = ts.TimeSlots.Where(slot => slot.StartTime >= startTime && slot.EndTime <= endTime)
+                                            .Select(slot => new TherapistTimeSlotDTO
+                                            {
+                                                TimeSlotId = slot.TimeSlotId,
+                                                StartTime = slot.StartTime,
+                                                EndTime = slot.EndTime,
+                                                IsAvailable = slot.IsAvailable
+                                            }).ToList()
+                })
+                .ToListAsync();
+        }
     }
 }
