@@ -1117,14 +1117,14 @@
   {
     "ContainingType": "SkinCareBookingSystem.Controllers.UserController",
     "Method": "GetUsersByRole",
-    "RelativePath": "api/users/by-role/{roleId}",
+    "RelativePath": "api/users/by-role/{roleName}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "roleId",
-        "Type": "System.Int32",
+        "Name": "roleName",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
