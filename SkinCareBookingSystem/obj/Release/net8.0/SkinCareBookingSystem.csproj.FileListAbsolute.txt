@@ -171,3 +171,4 @@ C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Release\net8.0\SkinCareBookingSystem.pdb
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Release\net8.0\SkinCareBookingSystem.genruntimeconfig.cache
 C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\obj\Release\net8.0\ref\SkinCareBookingSystem.dll
+C:\Users\hoang\Desktop\DOTNET\SWP391\SkinCareBookingSystem\SkinCareBookingSystem\bin\Release\net8.0\publish\swagger.json

@@ -1,8 +1,10 @@
 name: Build and deploy .NET Core application to Web App SkinCareBookingSystem with API Management Service SkinCareBookingSystemapi-SkinCareBookingSystem
+
 on:
   push:
     branches:
     - main
+
 env:
   AZURE_WEBAPP_NAME: SkinCareBookingSystem
   AZURE_WEBAPP_PACKAGE_PATH: SkinCareBookingSystem\publish
@@ -19,9 +21,11 @@ env:
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: SkinCareBookingSystem
+
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET SDK
@@ -50,9 +54,11 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
   deploy:
     runs-on: windows-latest
     needs: build
+
     steps:
     - name: Download artifact from build job
       uses: actions/download-artifact@v4
