@@ -211,7 +211,8 @@ namespace SkinCareBookingSystem.Implements
             {
                 Token = tokenString,
                 UserName = user.UserName,
-                Role = user.Role.RoleName
+                Role = user.Role.RoleName,
+                UserId = user.UserId
             };
         }
 
