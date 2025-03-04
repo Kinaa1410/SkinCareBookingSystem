@@ -32,9 +32,9 @@ namespace SkinCareBookingSystem.Controllers
 
             var response = await _userService.LoginAsync(loginDTO);
             if (response == null)
-                return Unauthorized(new { message = "Invalid email or password" });
+                return Unauthorized(new { message = "Invalid username or password" });
 
-            return Ok(new { message = "Login successful", token = response.Token });
+            return Ok(new { message = "Login successful", token = response.Token, userId = response.UserId });
         }
      
     }
