@@ -190,7 +190,6 @@ namespace SkinCareBookingSystem.Implements
                 .FirstOrDefaultAsync(u => u.UserName == loginDTO.UserName && u.Password == loginDTO.Password);
 
             if (user == null) return null;
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
