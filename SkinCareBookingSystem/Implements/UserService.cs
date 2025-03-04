@@ -26,7 +26,7 @@ namespace SkinCareBookingSystem.Implements
             return await _context.Users.Include(u => u.Role)
                 .Select(u => new UserDTO
                 {
-                    Id = u.Id,
+                    UserId = u.UserId,
                     UserName = u.UserName,
                     Email = u.Email,
                     Role = u.Role.RoleName,
@@ -34,14 +34,14 @@ namespace SkinCareBookingSystem.Implements
                 }).ToListAsync();
         }
 
-        public async Task<UserDTO> GetUserByIdAsync(int id)
+        public async Task<UserDTO> GetUserByIdAsync(int userId)
         {
-            var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.UserId == userId);
             if (user == null) return null;
 
             return new UserDTO
             {
-                Id = user.Id,
+                UserId = user.UserId,
                 UserName = user.UserName,
                 Email = user.Email,
                 Role = user.Role.RoleName,
@@ -78,7 +78,7 @@ namespace SkinCareBookingSystem.Implements
 
             return new UserDTO
             {
-                Id = user.Id,
+                UserId = user.UserId,
                 UserName = user.UserName,
                 Email = user.Email,
                 Role = user.Role.RoleName,
@@ -111,7 +111,7 @@ namespace SkinCareBookingSystem.Implements
 
             return new UserDTO
             {
-                Id = staff.Id,
+                UserId = staff.UserId,
                 UserName = staff.UserName,
                 Email = staff.Email,
                 Role = staff.Role.RoleName,
@@ -147,7 +147,7 @@ namespace SkinCareBookingSystem.Implements
 
             return new UserDTO
             {
-                Id = therapist.Id,
+                UserId = therapist.UserId,
                 UserName = therapist.UserName,
                 Email = therapist.Email,
                 Role = therapist.Role.RoleName,
@@ -222,7 +222,7 @@ namespace SkinCareBookingSystem.Implements
                 .Where(u => u.Role.RoleName == roleName)  
                 .Select(u => new UserDTO
                 {
-                    Id = u.Id,
+                    UserId = u.UserId,
                     UserName = u.UserName,
                     Email = u.Email,
                     Role = u.Role.RoleName,

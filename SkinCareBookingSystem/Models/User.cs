@@ -6,7 +6,7 @@ namespace SkinCareBookingSystem.Models
     public class User
     {
         [Key]
-        public int Id { get; set; }
+        public int UserId { get; set; }
 
         [ForeignKey("Role")]
         public int RoleId { get; set; }  // 1 = User, 2 = Staff, 3 = Therapist

@@ -57,7 +57,7 @@ namespace SkinCareBookingSystem.Controllers
                 return BadRequest(new { message = "User creation failed" });
             }
 
-            return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, newUser);
+            return CreatedAtAction(nameof(GetUser), new { id = newUser.UserId }, newUser);
         }
 
 
@@ -81,7 +81,7 @@ namespace SkinCareBookingSystem.Controllers
             if (newStaff == null)
                 return BadRequest(new { message = "Email already exists" });
 
-            return CreatedAtAction(nameof(GetUser), new { id = newStaff.Id }, newStaff);
+            return CreatedAtAction(nameof(GetUser), new { id = newStaff.UserId }, newStaff);
         }
 
         [Authorize(Roles = "Admin, Staff")]
@@ -92,7 +92,7 @@ namespace SkinCareBookingSystem.Controllers
             if (newTherapist == null)
                 return BadRequest(new { message = "Email already exists" });
 
-            return CreatedAtAction(nameof(GetUser), new { id = newTherapist.Id }, newTherapist);
+            return CreatedAtAction(nameof(GetUser), new { id = newTherapist.UserId }, newTherapist);
         }
 
         [HttpGet("by-role/{roleName}")]

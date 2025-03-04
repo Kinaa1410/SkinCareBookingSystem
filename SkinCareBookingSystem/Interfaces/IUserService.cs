@@ -5,7 +5,7 @@ namespace SkinCareBookingSystem.Interfaces
     public interface IUserService
     {
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
-        Task<UserDTO> GetUserByIdAsync(int id);
+        Task<UserDTO> GetUserByIdAsync(int userId);
         Task<UserDTO> RegisterUserAsync(CreateUserDTO userDTO); 
         Task<UserDTO> CreateStaffAsync(CreateUserDTO userDTO);   
         Task<UserDTO> CreateTherapistAsync(CreateUserDTO userDTO); 
