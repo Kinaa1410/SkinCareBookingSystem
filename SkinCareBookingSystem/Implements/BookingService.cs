@@ -37,7 +37,7 @@ namespace SkinCareBookingSystem.Implements
             {
                 BookingId = booking.BookingId,
                 UserId = booking.UserId,
-                TherapistId = booking.TherapistTimeSlot.TherapistSchedule.TherapistUser.Id,
+                TherapistId = booking.TherapistTimeSlot.TherapistSchedule.TherapistUser.UserId,
                 DateCreated = booking.DateCreated,
                 TotalPrice = booking.TotalPrice,
                 Status = booking.Status,
@@ -57,7 +57,7 @@ namespace SkinCareBookingSystem.Implements
                 {
                     BookingId = b.BookingId,
                     UserId = b.UserId,
-                    TherapistId = b.TherapistTimeSlot.TherapistSchedule.TherapistUser.Id,
+                    TherapistId = b.TherapistTimeSlot.TherapistSchedule.TherapistUser.UserId,
                     DateCreated = b.DateCreated,
                     TotalPrice = b.TotalPrice,
                     Status = b.Status,
