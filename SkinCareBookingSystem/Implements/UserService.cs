@@ -156,8 +156,6 @@ namespace SkinCareBookingSystem.Implements
         }
 
 
-
-
         public async Task<bool> UpdateUserAsync(int id, UpdateUserDTO userDTO)
         {
             var user = await _context.Users.FindAsync(id);
@@ -188,24 +186,28 @@ namespace SkinCareBookingSystem.Implements
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserName == loginDTO.UserName && u.Password == loginDTO.Password);
-
-            if (user == null) return null;
+            if (user == null)
+            {
+                return null;  
+            }
+            if (user.UserName.ToLower() == user.UserName && loginDTO.UserName != loginDTO.UserName.ToLower())
+            {
+                return null;
+            }
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-            new Claim(ClaimTypes.Name, user.UserName), 
+            new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.Role, user.Role.RoleName)
         }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-
             return new LoginResponseDTO
             {
                 Token = tokenString,
@@ -214,6 +216,7 @@ namespace SkinCareBookingSystem.Implements
                 UserId = user.UserId
             };
         }
+
 
         public async Task<List<UserDTO>> GetUsersByRoleNameAsync(string roleName)
         {

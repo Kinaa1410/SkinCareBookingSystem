@@ -37,6 +37,10 @@ namespace SkinCareBookingSystem.Controllers
         [HttpPost]
         public async Task<ActionResult<TherapistScheduleDTO>> CreateSchedule([FromBody] CreateTherapistScheduleDTO scheduleDTO)
         {
+            if (scheduleDTO.TherapistId == 0)
+            {
+                throw new ArgumentException("Invalid TherapistId: 0");
+            }
             var createdSchedule = await _therapistScheduleService.CreateScheduleAsync(scheduleDTO);
             return CreatedAtAction(nameof(GetScheduleById), new { scheduleId = createdSchedule.ScheduleId }, createdSchedule);
         }

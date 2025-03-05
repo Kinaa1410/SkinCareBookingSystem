@@ -10,6 +10,9 @@ using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Validators;
 using System.Text;
 using SkinCareBookingSystem.DTOs;
+using SkinCareBookingSystem.Binder;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +35,10 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false
     };
 });
-
+builder.Services.AddControllers(options =>
+{
+    options.ModelBinderProviders.Insert(0, new BinderTypeModelBinderProvider());
+});
 builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -68,6 +74,9 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ITherapistTimeSlotService, TherapistTimeSlotService>();
 builder.Services.AddScoped<IValidator<CreateTherapistTimeSlotDTO>, CreateTherapistTimeSlotDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateTherapistTimeSlotDTO>, UpdateTherapistTimeSlotDTOValidator>();
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<IValidator<CreateFeedbackDTO>, CreateFeedbackDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateFeedbackDTO>, UpdateFeedbackDTOValidator>();
 
 
 

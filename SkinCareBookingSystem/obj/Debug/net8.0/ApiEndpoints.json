@@ -206,6 +206,117 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.FeedbackController",
+    "Method": "GetAllFeedbacks",
+    "RelativePath": "api/feedbacks",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.FeedbackController",
+    "Method": "CreateFeedback",
+    "RelativePath": "api/feedbacks",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feedbackDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateFeedbackDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.FeedbackController",
+    "Method": "GetFeedbackByBookingId",
+    "RelativePath": "api/feedbacks/{bookingId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.FeedbackController",
+    "Method": "UpdateFeedback",
+    "RelativePath": "api/feedbacks/{feedbackId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feedbackId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "feedbackDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateFeedbackDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.FeedbackController",
+    "Method": "DeleteFeedback",
+    "RelativePath": "api/feedbacks/{feedbackId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "feedbackId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.FeedbackController",
+    "Method": "GetAverageTherapistRating",
+    "RelativePath": "api/feedbacks/average-rating/{therapistId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "therapistId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.FeedbackController",
+    "Method": "GetTherapistRatings",
+    "RelativePath": "api/feedbacks/ratings/{therapistId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "therapistId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.QaController",
     "Method": "GetAllQas",
     "RelativePath": "api/Qa",
