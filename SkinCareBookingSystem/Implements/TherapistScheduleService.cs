@@ -67,16 +67,32 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<TherapistScheduleDTO> CreateScheduleAsync(CreateTherapistScheduleDTO scheduleDTO)
         {
+            var therapist = await _context.Users
+                .FirstOrDefaultAsync(u => u.UserId == scheduleDTO.TherapistId && u.RoleId == 2); 
+
+            if (therapist == null)
+            {
+                throw new InvalidOperationException($"Therapist with ID {scheduleDTO.TherapistId} not found.");
+            }
+            var startTime = TimeSpan.Parse(scheduleDTO.StartTime);  
+            var endTime = TimeSpan.Parse(scheduleDTO.EndTime);   
+            var timeSlots = new List<TherapistTimeSlot>();
+            while (startTime < endTime)
+            {
+                timeSlots.Add(new TherapistTimeSlot
+                {
+                    StartTime = startTime,
+                    EndTime = startTime.Add(new TimeSpan(1, 0, 0)), 
+                    IsAvailable = true 
+                });
+                startTime = startTime.Add(new TimeSpan(1, 0, 0));
+            }
+
             var schedule = new TherapistSchedule
             {
                 TherapistId = scheduleDTO.TherapistId,
-                DayOfWeek = scheduleDTO.DayOfWeek,
-                TimeSlots = scheduleDTO.TimeSlots.Select(slot => new TherapistTimeSlot
-                {
-                    StartTime = slot.StartTime,
-                    EndTime = slot.EndTime,
-                    IsAvailable = slot.IsAvailable
-                }).ToList()
+                DayOfWeek = scheduleDTO.DayOfWeek, 
+                TimeSlots = timeSlots
             };
 
             _context.TherapistSchedules.Add(schedule);
@@ -84,6 +100,7 @@ namespace SkinCareBookingSystem.Implements
 
             return await GetScheduleByIdAsync(schedule.ScheduleId);
         }
+
 
         public async Task<bool> UpdateScheduleAsync(int scheduleId, UpdateTherapistScheduleDTO scheduleDTO)
         {
@@ -97,8 +114,8 @@ namespace SkinCareBookingSystem.Implements
             schedule.TimeSlots = scheduleDTO.TimeSlots.Select(slot => new TherapistTimeSlot
             {
                 TimeSlotId = slot.TimeSlotId,
-                StartTime = slot.StartTime,
-                EndTime = slot.EndTime,
+                StartTime = slot.StartTime,  // Already TimeSpan
+                EndTime = slot.EndTime,      // Already TimeSpan
                 IsAvailable = slot.IsAvailable
             }).ToList();
 

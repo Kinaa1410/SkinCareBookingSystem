@@ -15,7 +15,7 @@ namespace SkinCareBookingSystem.Models
         public int? StaffId { get; set; }
 
         [ForeignKey("TherapistTimeSlot")]
-        public int TimeSlotId { get; set; } // ✅ Ensure this field is present
+        public int TimeSlotId { get; set; } 
 
         public DateTime DateCreated { get; set; }
         public float TotalPrice { get; set; }
@@ -28,7 +28,6 @@ namespace SkinCareBookingSystem.Models
         public User User { get; set; }
         public User StaffUser { get; set; }
 
-        // ✅ Fix the missing navigation property
         public TherapistTimeSlot TherapistTimeSlot { get; set; } = null!;
 
         public ICollection<BookingDetails> BookingDetails { get; set; } = new List<BookingDetails>();

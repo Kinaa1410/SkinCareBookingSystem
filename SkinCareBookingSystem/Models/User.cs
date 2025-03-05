@@ -9,7 +9,7 @@ namespace SkinCareBookingSystem.Models
         public int UserId { get; set; }
 
         [ForeignKey("Role")]
-        public int RoleId { get; set; }  // 1 = User, 2 = Staff, 3 = Therapist
+        public int RoleId { get; set; }  // 1 = User, 2 = Therapist, 3 = Staff
 
         [Required]
         public string UserName { get; set; } = string.Empty;
@@ -22,12 +22,10 @@ namespace SkinCareBookingSystem.Models
 
         public bool Status { get; set; }
 
-        // ✅ Foreign key references
-        public Role Role { get; set; } = null!;  // Required, always has a Role
-        public UserDetails? UserDetails { get; set; }  // Nullable, might not have details
-        public Wallet? Wallet { get; set; }  // Nullable, might not have a wallet
+        public Role Role { get; set; } = null!;  
+        public UserDetails? UserDetails { get; set; } 
+        public Wallet? Wallet { get; set; }  
 
-        // ✅ Bookings where this user is the CUSTOMER
         public ICollection<Booking> CustomerBookings { get; set; } = new List<Booking>();
     }
 }

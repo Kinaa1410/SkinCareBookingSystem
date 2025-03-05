@@ -13,7 +13,6 @@ namespace SkinCareBookingSystem.Models
 
         public DayOfWeek DayOfWeek { get; set; }
 
-        // ✅ A schedule can have multiple time slots
         public ICollection<TherapistTimeSlot> TimeSlots { get; set; } = new List<TherapistTimeSlot>();
 
         public User TherapistUser { get; set; } = null!;

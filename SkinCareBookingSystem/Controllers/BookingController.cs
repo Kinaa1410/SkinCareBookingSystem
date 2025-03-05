@@ -16,9 +16,6 @@ namespace SkinCareBookingSystem.Controllers
             _bookingService = bookingService;
         }
 
-        /// <summary>
-        /// Get a booking by ID
-        /// </summary>
         [HttpGet("{bookingId}")]
         public async Task<IActionResult> GetBooking(int bookingId)
         {
@@ -27,9 +24,6 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(booking);
         }
 
-        /// <summary>
-        /// Get all bookings
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllBookings()
         {
@@ -37,9 +31,7 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(bookings);
         }
 
-        /// <summary>
-        /// Create a new booking
-        /// </summary>
+
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDTO bookingDTO)
         {
@@ -57,9 +49,7 @@ namespace SkinCareBookingSystem.Controllers
             }
         }
 
-        /// <summary>
-        /// Update a booking
-        /// </summary>
+
         [HttpPut("{bookingId}")]
         public async Task<IActionResult> UpdateBooking(int bookingId, [FromBody] UpdateBookingDTO bookingDTO)
         {
@@ -71,9 +61,6 @@ namespace SkinCareBookingSystem.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Delete a booking
-        /// </summary>
         [HttpDelete("{bookingId}")]
         public async Task<IActionResult> DeleteBooking(int bookingId)
         {
@@ -82,9 +69,7 @@ namespace SkinCareBookingSystem.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Book a random therapist
-        /// </summary>
+
         [HttpPost("random-therapist")]
         public async Task<IActionResult> BookWithRandomTherapist([FromBody] CreateBookingDTO bookingDTO)
         {
@@ -99,9 +84,7 @@ namespace SkinCareBookingSystem.Controllers
             }
         }
 
-        /// <summary>
-        /// Book a specific therapist
-        /// </summary>
+ 
         [HttpPost("specific-therapist")]
         public async Task<IActionResult> BookWithSpecificTherapist([FromBody] CreateBookingDTO bookingDTO)
         {
