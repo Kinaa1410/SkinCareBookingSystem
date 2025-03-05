@@ -134,6 +134,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "SkinCareBookingSystem API v1");
+        options.RoutePrefix = "swagger";
     });
 }
 
