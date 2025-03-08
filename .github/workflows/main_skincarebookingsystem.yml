@@ -1,6 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
+# Deploys ASP.Net Core app to Azure Web App - SkinCareBookingSystem
 name: Build and deploy ASP.Net Core app to Azure Web App - SkinCareBookingSystem
 
 on:
@@ -12,27 +10,32 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: read # Required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-          include-prerelease: true
+
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --no-restore
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Publish application
+        run: dotnet publish -c Release -r win-x64 --self-contained true -o myapp
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: published-app
+          path: myapp
 
   deploy:
     runs-on: windows-latest
@@ -40,18 +43,27 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write # Required for requesting the JWT
+      contents: read # Required for actions/checkout
 
     steps:
       - name: Download artifact from build job
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: .net-app
+          name: published-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'SkinCareBookingSystem'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E4A66000DDF540AD8FC677E55C9F2935 }}
-          package: .
+          package: published-app
