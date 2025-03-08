@@ -311,6 +311,36 @@ namespace SkinCareBookingSystem.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("SkinCareBookingSystem.Models.ServiceRecommendation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AnswerOption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QaId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("ServiceRecommendations");
+                });
+
             modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistSchedule", b =>
                 {
                     b.Property<int>("ScheduleId")
@@ -563,6 +593,25 @@ namespace SkinCareBookingSystem.Migrations
                     b.Navigation("Qa");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SkinCareBookingSystem.Models.ServiceRecommendation", b =>
+                {
+                    b.HasOne("SkinCareBookingSystem.Models.Qa", "Qa")
+                        .WithMany()
+                        .HasForeignKey("QaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Service", "Service")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Qa");
+
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistSchedule", b =>

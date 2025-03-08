@@ -23,6 +23,7 @@ namespace SkinCareBookingSystem.Data
         public DbSet<QaAnswer> QaAnswers { get; set; }
         public DbSet<TherapistSchedule> TherapistSchedules { get; set; }
         public DbSet<TherapistTimeSlot> TherapistTimeSlots { get; set; }
+        public DbSet<ServiceRecommendation> ServiceRecommendations { get; set; } // ✅ Added
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +31,19 @@ namespace SkinCareBookingSystem.Data
             modelBuilder.Entity<BookingDetails>().HasKey(bd => new { bd.BookingId, bd.ServiceId });
             modelBuilder.Entity<CartItem>().HasKey(ci => new { ci.UserId, ci.ServiceId });
             modelBuilder.Entity<QaAnswer>().HasKey(qa => new { qa.UserId, qa.QaId });
+
+            // ✅ ServiceRecommendation Relationships
+            modelBuilder.Entity<ServiceRecommendation>()
+                .HasOne(sr => sr.Qa)
+                .WithMany()
+                .HasForeignKey(sr => sr.QaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ServiceRecommendation>()
+                .HasOne(sr => sr.Service)
+                .WithMany()
+                .HasForeignKey(sr => sr.ServiceId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // ✅ User Relationships
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithMany().HasForeignKey(u => u.RoleId);
@@ -43,7 +57,6 @@ namespace SkinCareBookingSystem.Data
                 .HasForeignKey(ts => ts.ScheduleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // ✅ TherapistTimeSlot Relationship
             modelBuilder.Entity<TherapistTimeSlot>()
                 .HasOne(ts => ts.TherapistSchedule)
                 .WithMany(s => s.TimeSlots)
@@ -99,6 +112,19 @@ namespace SkinCareBookingSystem.Data
                 .HasOne(ts => ts.TherapistUser)
                 .WithMany()
                 .HasForeignKey(ts => ts.TherapistId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ✅ Fix cascading issue by changing delete behavior
+            modelBuilder.Entity<ServiceRecommendation>()
+                .HasOne(sr => sr.Qa)
+                .WithMany()
+                .HasForeignKey(sr => sr.QaId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            modelBuilder.Entity<ServiceRecommendation>()
+                .HasOne(sr => sr.Service)
+                .WithMany()
+                .HasForeignKey(sr => sr.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);

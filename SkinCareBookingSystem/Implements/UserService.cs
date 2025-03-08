@@ -235,5 +235,21 @@ namespace SkinCareBookingSystem.Implements
             return users;
         }
 
+        public async Task<string> UpdatePasswordAsync(UpdateUserDTO updateUserDTO)
+        {
+            var user = await _context.Users
+                                      .FirstOrDefaultAsync(u => u.UserName == updateUserDTO.UserName
+                                                               && u.Email == updateUserDTO.Email);
+            if (user == null)
+            {
+                return "Username or Email is incorrect or not found.";
+            }
+            user.Password = updateUserDTO.Password;
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return "Password updated successfully.";
+        }
+
+
     }
 }

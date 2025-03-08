@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using System.Collections.Generic;
@@ -108,5 +109,16 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(users);
         }
 
+        [HttpPut("update-password")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserDTO updateUserDTO)
+        {
+            string message = await _userService.UpdatePasswordAsync(updateUserDTO);
+
+            if (message == "Username or Email is incorrect or not found.")
+            {
+                return BadRequest(message);
+            }
+            return Ok(message);
+        }
     }
 }
