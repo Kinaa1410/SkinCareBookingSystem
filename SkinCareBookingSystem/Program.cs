@@ -77,7 +77,9 @@ builder.Services.AddScoped<IValidator<UpdateTherapistTimeSlotDTO>, UpdateTherapi
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IValidator<CreateFeedbackDTO>, CreateFeedbackDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateFeedbackDTO>, UpdateFeedbackDTOValidator>();
-
+builder.Services.AddScoped<IServiceRecommendationService, ServiceRecommendationService>();
+builder.Services.AddScoped<IValidator<CreateServiceRecommendationDTO>, CreateServiceRecommendationDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateServiceRecommendationDTO>, UpdateServiceRecommendationDTOValidator>();
 
 
 
@@ -130,13 +132,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
-
 var app = builder.Build();
-
-
-
-app.UseCors("AllowAll");
 
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
@@ -147,19 +143,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    context.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 204;
-        await context.Response.CompleteAsync();
-        return;
-    }
-    await next();
-});
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -14,5 +14,6 @@ namespace SkinCareBookingSystem.Interfaces
         Task<LoginResponseDTO?> LoginAsync(LoginDTO loginDTO);
         Task<List<UserDTO>> GetUsersByRoleNameAsync(string roleName);
         Task<bool> UserExistsAsync(string userName, string email);
+        Task<string> UpdatePasswordAsync(UpdateUserDTO updateUserDTO);
     }
 }

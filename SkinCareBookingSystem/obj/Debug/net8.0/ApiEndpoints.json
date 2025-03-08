@@ -595,6 +595,64 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.ServiceRecommendationController",
+    "Method": "GetAll",
+    "RelativePath": "api/service-recommendations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.ServiceRecommendationController",
+    "Method": "Create",
+    "RelativePath": "api/service-recommendations",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "SkinCareBookingSystem.DTOs.CreateServiceRecommendationDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.ServiceRecommendationController",
+    "Method": "GetById",
+    "RelativePath": "api/service-recommendations/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.ServiceRecommendationController",
+    "Method": "GetRecommendedServices",
+    "RelativePath": "api/service-recommendations/get-service-recommendation",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "answers",
+        "Type": "System.Collections.Generic.List\u00601[[SkinCareBookingSystem.DTOs.QaAnswerDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.ServiceController",
     "Method": "GetService",
     "RelativePath": "api/Service/{serviceId}",
@@ -1302,6 +1360,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.UserController",
+    "Method": "UpdatePassword",
+    "RelativePath": "api/users/update-password",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "updateUserDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateUserDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "SkinCareBookingSystem.Controllers.WeatherForecastController",
