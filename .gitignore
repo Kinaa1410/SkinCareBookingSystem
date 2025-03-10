@@ -1,0 +1,13 @@
+# Ignore Visual Studio files
+.vs/
+obj/
+publish/
+
+# Ignore user-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Ignore backup files
+*~ 

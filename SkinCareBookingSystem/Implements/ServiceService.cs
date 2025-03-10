@@ -26,8 +26,6 @@ namespace SkinCareBookingSystem.Implements
                     Name = s.Name,
                     Description = s.Description,
                     Price = s.Price,
-                    Duration = s.Duration,
-                    VideoURL = s.VideoURL,
                     Rating = s.Rating,
                     Status = s.Status,
                     Exist = s.Exist
@@ -49,8 +47,6 @@ namespace SkinCareBookingSystem.Implements
                 Name = service.Name,
                 Description = service.Description,
                 Price = service.Price, 
-                Duration = service.Duration,
-                VideoURL = service.VideoURL,
                 Rating = service.Rating,
                 Status = service.Status,
                 Exist = service.Exist
@@ -65,9 +61,7 @@ namespace SkinCareBookingSystem.Implements
                 Name = serviceDTO.Name,
                 Description = serviceDTO.Description,
                 Price = serviceDTO.Price,
-                Duration = serviceDTO.Duration,
-                VideoURL = serviceDTO.VideoURL,
-                Rating = serviceDTO.Rating,
+                Rating = 0,
                 Status = serviceDTO.Status,
                 Exist = serviceDTO.Exist
             };
@@ -82,8 +76,6 @@ namespace SkinCareBookingSystem.Implements
                 Name = service.Name,
                 Description = service.Description,
                 Price = service.Price,
-                Duration = service.Duration,
-                VideoURL = service.VideoURL,
                 Rating = service.Rating,
                 Status = service.Status,
                 Exist = service.Exist
@@ -99,8 +91,6 @@ namespace SkinCareBookingSystem.Implements
             service.Name = serviceDTO.Name;
             service.Description = serviceDTO.Description;
             service.Price = serviceDTO.Price;
-            service.Duration = serviceDTO.Duration;
-            service.VideoURL = serviceDTO.VideoURL;
             service.Rating = serviceDTO.Rating;
             service.Status = serviceDTO.Status;
             service.Exist = serviceDTO.Exist;
@@ -132,13 +122,41 @@ namespace SkinCareBookingSystem.Implements
                     Name = s.Name,
                     Description = s.Description,
                     Price = s.Price,
-                    Duration = s.Duration,
-                    VideoURL = s.VideoURL,
                     Rating = s.Rating,
                     Status = s.Status,
                     Exist = s.Exist
                 })
                 .ToListAsync();
         }
+
+        public async Task<float> CalculateAverageRatingAsync(int serviceId)
+        {
+            var feedbacks = await _context.Feedbacks
+                .Where(f => _context.BookingDetails
+                                .Where(bd => bd.ServiceId == serviceId)
+                                .Select(bd => bd.BookingId)
+                                .Contains(f.BookingId))
+                .ToListAsync();
+            if (feedbacks.Count == 0)
+            {
+                return 0;
+            }
+            var averageRating = feedbacks.Average(f => f.RatingService);
+
+            return (float)Math.Round(averageRating, 2);
+        }
+
+        public async Task UpdateServiceRatingAsync(int serviceId)
+        {
+            float averageRating = await CalculateAverageRatingAsync(serviceId);
+            var service = await _context.Services.FindAsync(serviceId);
+            if (service != null)
+            {
+                service.Rating = averageRating;
+                _context.Entry(service).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

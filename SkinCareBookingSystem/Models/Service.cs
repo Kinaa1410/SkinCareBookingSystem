@@ -19,11 +19,6 @@ public class Service
     [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; } = 0.0m;
 
-    [Required]
-    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
-
-    public string VideoURL { get; set; } = string.Empty;
-
     [Range(0, 5)]
     public float Rating { get; set; } = 0.0f;
 

@@ -16,9 +16,6 @@ namespace SkinCareBookingSystem.Validators
             RuleFor(service => service.Price)
                 .GreaterThan(0).WithMessage("Price must be greater than 0.");
 
-            RuleFor(service => service.Duration)
-                .GreaterThan(TimeSpan.Zero).WithMessage("Duration must be greater than 0.");
-
             RuleFor(service => service.Rating)
                 .InclusiveBetween(0, 5).WithMessage("Rating must be between 0 and 5.");
         }
@@ -36,9 +33,6 @@ namespace SkinCareBookingSystem.Validators
 
             RuleFor(service => service.Price)
                 .GreaterThan(0).WithMessage("Price must be greater than 0.");
-
-            RuleFor(service => service.Duration)
-                .GreaterThan(TimeSpan.Zero).WithMessage("Duration must be greater than 0.");
 
             RuleFor(service => service.Rating)
                 .InclusiveBetween(0, 5).WithMessage("Rating must be between 0 and 5.");

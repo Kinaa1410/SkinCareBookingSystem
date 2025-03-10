@@ -9,10 +9,12 @@ namespace SkinCareBookingSystem.Implements
     public class FeedbackService : IFeedbackService
     {
         private readonly BookingDbContext _context;
+        private readonly IServiceService _service;
 
-        public FeedbackService(BookingDbContext context)
+        public FeedbackService(BookingDbContext context, IServiceService service)
         {
             _context = context;
+            _service = service;
         }
 
         public async Task<FeedbackDTO> GetFeedbackByBookingIdAsync(int bookingId)
@@ -74,9 +76,13 @@ namespace SkinCareBookingSystem.Implements
                 DateCreated = DateTime.Now,
                 Status = true
             };
-
             _context.Feedbacks.Add(feedback);
             await _context.SaveChangesAsync();
+            var serviceId = booking.BookingDetails.FirstOrDefault()?.ServiceId;
+            if (serviceId.HasValue)
+            {
+                await _service.UpdateServiceRatingAsync(serviceId.Value);  
+            }
 
             return await GetFeedbackByBookingIdAsync(feedback.FeedbackId);
         }
