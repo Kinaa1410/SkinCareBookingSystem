@@ -112,8 +112,6 @@ namespace SkinCareBookingSystem.Implements
                     Name = s.Name,
                     Description = s.Description,
                     Price = s.Price,
-                    Duration = s.Duration,
-                    VideoURL = s.VideoURL,
                     Rating = s.Rating,
                     Status = s.Status,
                     Exist = s.Exist
