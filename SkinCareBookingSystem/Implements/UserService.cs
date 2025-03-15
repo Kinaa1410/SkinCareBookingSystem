@@ -148,35 +148,38 @@ namespace SkinCareBookingSystem.Implements
             _context.Users.Add(therapist);
             await _context.SaveChangesAsync();  // Save the user first so we can get the UserId
 
-            // Now, associate the specialties with the newly created therapist
-            var therapistSpecialties = new List<TherapistSpecialty>();
-
-            foreach (var serviceCategoryId in userDTO.ServiceCategoryIds)
+            // If the user is a therapist, associate specialties
+            if (userDTO.ServiceCategoryIds != null && userDTO.ServiceCategoryIds.Any())
             {
-                // Check if the ServiceCategory exists in the database
-                var serviceCategory = await _context.ServiceCategories
-                    .FirstOrDefaultAsync(sc => sc.ServiceCategoryId == serviceCategoryId);
+                var therapistSpecialties = new List<TherapistSpecialty>();
 
-                if (serviceCategory == null)
+                foreach (var serviceCategoryId in userDTO.ServiceCategoryIds)
                 {
-                    // If the specialty does not exist, throw an exception or handle it appropriately
-                    throw new InvalidOperationException($"ServiceCategory with ID {serviceCategoryId} does not exist.");
+                    // Check if the ServiceCategory exists in the database
+                    var serviceCategory = await _context.ServiceCategories
+                        .FirstOrDefaultAsync(sc => sc.ServiceCategoryId == serviceCategoryId);
+
+                    if (serviceCategory == null)
+                    {
+                        // If the specialty does not exist, throw an exception or handle it appropriately
+                        throw new InvalidOperationException($"ServiceCategory with ID {serviceCategoryId} does not exist.");
+                    }
+
+                    // If the service category exists, create the TherapistSpecialty entry
+                    var specialty = new TherapistSpecialty
+                    {
+                        TherapistId = therapist.UserId,  // Associate this specialty with the therapist
+                        ServiceCategoryId = serviceCategory.ServiceCategoryId
+                    };
+
+                    therapistSpecialties.Add(specialty);
                 }
 
-                // If the service category exists, create the TherapistSpecialty entry
-                var specialty = new TherapistSpecialty
+                if (therapistSpecialties.Any())
                 {
-                    TherapistId = therapist.UserId,  // Associate this specialty with the therapist
-                    ServiceCategoryId = serviceCategory.ServiceCategoryId
-                };
-
-                therapistSpecialties.Add(specialty);
-            }
-
-            if (therapistSpecialties.Any())
-            {
-                _context.TherapistSpecialties.AddRange(therapistSpecialties);
-                await _context.SaveChangesAsync();  // Save the specialties to the database
+                    _context.TherapistSpecialties.AddRange(therapistSpecialties);
+                    await _context.SaveChangesAsync();  // Save the specialties to the database
+                }
             }
 
             // Return the created therapist as DTO
@@ -189,6 +192,7 @@ namespace SkinCareBookingSystem.Implements
                 Status = therapist.Status
             };
         }
+
 
 
 
