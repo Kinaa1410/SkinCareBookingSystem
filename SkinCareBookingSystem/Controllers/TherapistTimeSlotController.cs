@@ -33,18 +33,16 @@ namespace SkinCareBookingSystem.Controllers
         }
 
         [HttpPost("{scheduleId}")]
-        public async Task<ActionResult<TherapistTimeSlotDTO>> CreateTimeSlot(int scheduleId, [FromBody] CreateTherapistTimeSlotDTO timeSlotDTO)
+        public async Task<ActionResult<TherapistTimeSlotDTO>> CreateTimeSlotForTherapist(int scheduleId)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            var newTimeSlot = await _timeSlotService.CreateTimeSlotAsync(scheduleId, timeSlotDTO);
-            return CreatedAtAction(nameof(GetTimeSlotById), new { id = newTimeSlot.TimeSlotId }, newTimeSlot);
+            var newTimeSlot = await _timeSlotService.CreateTimeSlotForTherapistAsync(scheduleId);
+            return CreatedAtAction(nameof(GetTimeSlotById), new { id = newTimeSlot.ScheduleId }, newTimeSlot);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTimeSlot(int id, [FromBody] UpdateTherapistTimeSlotDTO timeSlotDTO)
+        public async Task<IActionResult> UpdateTimeSlot(int id, [FromBody] bool isBooked)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            var updated = await _timeSlotService.UpdateTimeSlotAsync(id, timeSlotDTO);
+            var updated = await _timeSlotService.UpdateTimeSlotAsync(id, isBooked);
             if (!updated) return NotFound();
             return NoContent();
         }

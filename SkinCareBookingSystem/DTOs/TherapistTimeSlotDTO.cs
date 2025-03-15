@@ -2,25 +2,24 @@
 {
     public class TherapistTimeSlotDTO
     {
+        public int Id { get; set; }
+        public int ScheduleId { get; set; }
         public int TimeSlotId { get; set; }
-        public int ScheduleId { get; set; } 
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
-        public bool IsAvailable { get; set; }
+        public string TimeSlotDescription { get; set; } = string.Empty;
+        public bool IsBooked { get; set; }
     }
 
     public class CreateTherapistTimeSlotDTO
     {
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
-        public bool IsAvailable { get; set; }
+        public int ScheduleId { get; set; }
+        public int TimeSlotId { get; set; }
+        public bool IsAvailable { get; set; } = true;
     }
 
     public class UpdateTherapistTimeSlotDTO
     {
         public int TimeSlotId { get; set; }
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
+        public int ScheduleId { get; set; }
         public bool IsAvailable { get; set; }
     }
 }

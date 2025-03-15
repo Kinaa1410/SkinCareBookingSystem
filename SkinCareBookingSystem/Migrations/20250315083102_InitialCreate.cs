@@ -41,10 +41,24 @@ namespace SkinCareBookingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TimeSlots",
+                columns: table => new
+                {
+                    TimeSlotId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimeSlots", x => x.TimeSlotId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -54,7 +68,7 @@ namespace SkinCareBookingSystem.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,
@@ -95,8 +109,6 @@ namespace SkinCareBookingSystem.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
-                    VideoURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<float>(type: "real", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     Exist = table.Column<bool>(type: "bit", nullable: false)
@@ -109,7 +121,7 @@ namespace SkinCareBookingSystem.Migrations
                         column: x => x.ServiceCategoryId,
                         principalTable: "ServiceCategories",
                         principalColumn: "ServiceCategoryId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -120,9 +132,8 @@ namespace SkinCareBookingSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TherapistId = table.Column<int>(type: "int", nullable: false),
                     DayOfWeek = table.Column<int>(type: "int", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                    StartWorkingTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndWorkingTime = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -131,7 +142,7 @@ namespace SkinCareBookingSystem.Migrations
                         name: "FK_TherapistSchedules_Users_TherapistId",
                         column: x => x.TherapistId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -153,7 +164,7 @@ namespace SkinCareBookingSystem.Migrations
                         name: "FK_UserDetails_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -172,7 +183,7 @@ namespace SkinCareBookingSystem.Migrations
                         name: "FK_Wallets_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -197,7 +208,7 @@ namespace SkinCareBookingSystem.Migrations
                         name: "FK_QaAnswers_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -222,7 +233,7 @@ namespace SkinCareBookingSystem.Migrations
                         name: "FK_CartItems_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -247,6 +258,61 @@ namespace SkinCareBookingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ServiceRecommendations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    QaId = table.Column<int>(type: "int", nullable: false),
+                    AnswerOption = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ServiceId = table.Column<int>(type: "int", nullable: false),
+                    Weight = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServiceRecommendations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ServiceRecommendations_Qas_QaId",
+                        column: x => x.QaId,
+                        principalTable: "Qas",
+                        principalColumn: "QaId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ServiceRecommendations_Services_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Services",
+                        principalColumn: "ServiceId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TherapistTimeSlots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ScheduleId = table.Column<int>(type: "int", nullable: false),
+                    TimeSlotId = table.Column<int>(type: "int", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TherapistTimeSlots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TherapistTimeSlots_TherapistSchedules_ScheduleId",
+                        column: x => x.ScheduleId,
+                        principalTable: "TherapistSchedules",
+                        principalColumn: "ScheduleId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TherapistTimeSlots_TimeSlots_TimeSlotId",
+                        column: x => x.TimeSlotId,
+                        principalTable: "TimeSlots",
+                        principalColumn: "TimeSlotId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Bookings",
                 columns: table => new
                 {
@@ -254,42 +320,36 @@ namespace SkinCareBookingSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     StaffId = table.Column<int>(type: "int", nullable: true),
-                    ScheduleId = table.Column<int>(type: "int", nullable: false),
+                    TimeSlotId = table.Column<int>(type: "int", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalPrice = table.Column<float>(type: "real", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UseWallet = table.Column<bool>(type: "bit", nullable: false),
-                    TherapistScheduleScheduleId = table.Column<int>(type: "int", nullable: true)
+                    UseWallet = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bookings", x => x.BookingId);
                     table.ForeignKey(
-                        name: "FK_Bookings_TherapistSchedules_ScheduleId",
-                        column: x => x.ScheduleId,
-                        principalTable: "TherapistSchedules",
-                        principalColumn: "ScheduleId",
+                        name: "FK_Bookings_TherapistTimeSlots_TimeSlotId",
+                        column: x => x.TimeSlotId,
+                        principalTable: "TherapistTimeSlots",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Bookings_TherapistSchedules_TherapistScheduleScheduleId",
-                        column: x => x.TherapistScheduleScheduleId,
-                        principalTable: "TherapistSchedules",
-                        principalColumn: "ScheduleId");
                     table.ForeignKey(
                         name: "FK_Bookings_Users_StaffId",
                         column: x => x.StaffId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Bookings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -309,7 +369,7 @@ namespace SkinCareBookingSystem.Migrations
                         column: x => x.BookingId,
                         principalTable: "Bookings",
                         principalColumn: "BookingId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BookingDetails_Services_ServiceId",
                         column: x => x.ServiceId,
@@ -349,19 +409,14 @@ namespace SkinCareBookingSystem.Migrations
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_ScheduleId",
-                table: "Bookings",
-                column: "ScheduleId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Bookings_StaffId",
                 table: "Bookings",
                 column: "StaffId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_TherapistScheduleScheduleId",
+                name: "IX_Bookings_TimeSlotId",
                 table: "Bookings",
-                column: "TherapistScheduleScheduleId");
+                column: "TimeSlotId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_UserId",
@@ -394,6 +449,16 @@ namespace SkinCareBookingSystem.Migrations
                 column: "ServiceCategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ServiceRecommendations_QaId",
+                table: "ServiceRecommendations",
+                column: "QaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceRecommendations_ServiceId",
+                table: "ServiceRecommendations",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Services_ServiceCategoryId",
                 table: "Services",
                 column: "ServiceCategoryId");
@@ -402,6 +467,16 @@ namespace SkinCareBookingSystem.Migrations
                 name: "IX_TherapistSchedules_TherapistId",
                 table: "TherapistSchedules",
                 column: "TherapistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TherapistTimeSlots_ScheduleId",
+                table: "TherapistTimeSlots",
+                column: "ScheduleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TherapistTimeSlots_TimeSlotId",
+                table: "TherapistTimeSlots",
+                column: "TimeSlotId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
@@ -428,6 +503,9 @@ namespace SkinCareBookingSystem.Migrations
                 name: "QaAnswers");
 
             migrationBuilder.DropTable(
+                name: "ServiceRecommendations");
+
+            migrationBuilder.DropTable(
                 name: "UserDetails");
 
             migrationBuilder.DropTable(
@@ -437,16 +515,22 @@ namespace SkinCareBookingSystem.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
+                name: "Qas");
+
+            migrationBuilder.DropTable(
                 name: "Services");
 
             migrationBuilder.DropTable(
-                name: "Qas");
+                name: "TherapistTimeSlots");
+
+            migrationBuilder.DropTable(
+                name: "ServiceCategories");
 
             migrationBuilder.DropTable(
                 name: "TherapistSchedules");
 
             migrationBuilder.DropTable(
-                name: "ServiceCategories");
+                name: "TimeSlots");
 
             migrationBuilder.DropTable(
                 name: "Users");

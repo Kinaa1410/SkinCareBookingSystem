@@ -345,6 +345,12 @@ namespace SkinCareBookingSystem.Migrations
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
 
+                    b.Property<TimeSpan>("EndWorkingTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartWorkingTime")
+                        .HasColumnType("time");
+
                     b.Property<int>("TherapistId")
                         .HasColumnType("int");
 
@@ -357,6 +363,32 @@ namespace SkinCareBookingSystem.Migrations
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistTimeSlot", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ScheduleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TimeSlotId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasIndex("TimeSlotId");
+
+                    b.ToTable("TherapistTimeSlots");
+                });
+
+            modelBuilder.Entity("SkinCareBookingSystem.Models.TimeSlot", b =>
+                {
                     b.Property<int>("TimeSlotId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
@@ -366,20 +398,12 @@ namespace SkinCareBookingSystem.Migrations
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ScheduleId")
-                        .HasColumnType("int");
-
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
                     b.HasKey("TimeSlotId");
 
-                    b.HasIndex("ScheduleId");
-
-                    b.ToTable("TherapistTimeSlots");
+                    b.ToTable("TimeSlots");
                 });
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.User", b =>
@@ -626,7 +650,15 @@ namespace SkinCareBookingSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SkinCareBookingSystem.Models.TimeSlot", "TimeSlot")
+                        .WithMany()
+                        .HasForeignKey("TimeSlotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("TherapistSchedule");
+
+                    b.Navigation("TimeSlot");
                 });
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.User", b =>

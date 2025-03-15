@@ -24,15 +24,16 @@ namespace SkinCareBookingSystem.Data
         public DbSet<TherapistSchedule> TherapistSchedules { get; set; }
         public DbSet<TherapistTimeSlot> TherapistTimeSlots { get; set; }
         public DbSet<ServiceRecommendation> ServiceRecommendations { get; set; } // ✅ Added
+        public DbSet<TimeSlot> TimeSlots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // ✅ Define composite keys
+            // Define composite keys
             modelBuilder.Entity<BookingDetails>().HasKey(bd => new { bd.BookingId, bd.ServiceId });
             modelBuilder.Entity<CartItem>().HasKey(ci => new { ci.UserId, ci.ServiceId });
             modelBuilder.Entity<QaAnswer>().HasKey(qa => new { qa.UserId, qa.QaId });
 
-            // ✅ ServiceRecommendation Relationships
+            // ServiceRecommendation Relationships
             modelBuilder.Entity<ServiceRecommendation>()
                 .HasOne(sr => sr.Qa)
                 .WithMany()
@@ -43,14 +44,14 @@ namespace SkinCareBookingSystem.Data
                 .HasOne(sr => sr.Service)
                 .WithMany()
                 .HasForeignKey(sr => sr.ServiceId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ User Relationships
+            // User Relationships
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithMany().HasForeignKey(u => u.RoleId);
             modelBuilder.Entity<User>().HasOne(u => u.UserDetails).WithOne(ud => ud.User).HasForeignKey<UserDetails>(ud => ud.UserId);
             modelBuilder.Entity<User>().HasOne(u => u.Wallet).WithOne(w => w.User).HasForeignKey<Wallet>(w => w.UserId);
 
-            // ✅ TherapistSchedule & TherapistTimeSlot Relationship
+            // TherapistSchedule & TherapistTimeSlot Relationship
             modelBuilder.Entity<TherapistSchedule>()
                 .HasMany(ts => ts.TimeSlots)
                 .WithOne(ts => ts.TherapistSchedule)
@@ -58,12 +59,12 @@ namespace SkinCareBookingSystem.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TherapistTimeSlot>()
-                .HasOne(ts => ts.TherapistSchedule)
-                .WithMany(s => s.TimeSlots)
-                .HasForeignKey(ts => ts.ScheduleId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(ts => ts.TimeSlot) // A TherapistTimeSlot links to a predefined TimeSlot
+                .WithMany() // A TimeSlot can be linked to many TherapistTimeSlots
+                .HasForeignKey(ts => ts.TimeSlotId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Booking Relationships
+            // Booking Relationships
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.User)
                 .WithMany(u => u.CustomerBookings)
@@ -82,7 +83,7 @@ namespace SkinCareBookingSystem.Data
                 .HasForeignKey(b => b.TimeSlotId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ BookingDetails Relationships
+            // BookingDetails Relationships
             modelBuilder.Entity<BookingDetails>()
                 .HasOne(bd => bd.Booking)
                 .WithMany(b => b.BookingDetails)
@@ -95,39 +96,27 @@ namespace SkinCareBookingSystem.Data
                 .HasForeignKey(bd => bd.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Feedback Relationship
+            // Feedback Relationship
             modelBuilder.Entity<Feedback>().HasOne(f => f.Booking).WithMany().HasForeignKey(f => f.BookingId);
 
-            // ✅ CartItem Relationships
+            // CartItem Relationships
             modelBuilder.Entity<CartItem>().HasOne(ci => ci.User).WithMany().HasForeignKey(ci => ci.UserId);
             modelBuilder.Entity<CartItem>().HasOne(ci => ci.Service).WithMany().HasForeignKey(ci => ci.ServiceId);
 
-            // ✅ Qa & Related Entities
+            // Qa & Related Entities
             modelBuilder.Entity<Qa>().HasOne(q => q.ServiceCategory).WithMany().HasForeignKey(q => q.ServiceCategoryId);
             modelBuilder.Entity<QaAnswer>().HasOne(qa => qa.User).WithMany().HasForeignKey(qa => qa.UserId);
             modelBuilder.Entity<QaAnswer>().HasOne(qa => qa.Qa).WithMany().HasForeignKey(qa => qa.QaId);
 
-            // ✅ TherapistSchedule Relationship
+            // TherapistSchedule Relationship
             modelBuilder.Entity<TherapistSchedule>()
                 .HasOne(ts => ts.TherapistUser)
                 .WithMany()
                 .HasForeignKey(ts => ts.TherapistId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Fix cascading issue by changing delete behavior
-            modelBuilder.Entity<ServiceRecommendation>()
-                .HasOne(sr => sr.Qa)
-                .WithMany()
-                .HasForeignKey(sr => sr.QaId)
-                .OnDelete(DeleteBehavior.Cascade); 
-
-            modelBuilder.Entity<ServiceRecommendation>()
-                .HasOne(sr => sr.Service)
-                .WithMany()
-                .HasForeignKey(sr => sr.ServiceId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             base.OnModelCreating(modelBuilder);
         }
+
     }
 }

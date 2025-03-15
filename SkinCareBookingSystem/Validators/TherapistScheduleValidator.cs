@@ -1,40 +1,29 @@
 ﻿using FluentValidation;
 using SkinCareBookingSystem.DTOs;
 
-public class CreateTherapistTimeSlotDTOValidator : AbstractValidator<CreateTherapistTimeSlotDTO>
+public class CreateTherapistScheduleDTOValidator : AbstractValidator<CreateTherapistScheduleDTO>
 {
-    public CreateTherapistTimeSlotDTOValidator()
+    public CreateTherapistScheduleDTOValidator()
     {
         RuleFor(x => x.StartTime)
-            .NotEmpty().WithMessage("Start time is required.");
+            .NotEmpty().WithMessage("Start time is required.")
+            .Must(startTime => TimeSpan.TryParse(startTime, out _)).WithMessage("Invalid start time format.");
 
         RuleFor(x => x.EndTime)
             .NotEmpty().WithMessage("End time is required.")
+            .Must(endTime => TimeSpan.TryParse(endTime, out _)).WithMessage("Invalid end time format.")
             .GreaterThan(x => x.StartTime).WithMessage("End time must be later than start time.");
 
-        RuleFor(x => x.IsAvailable)
-            .NotNull().WithMessage("Availability status is required.");
+        RuleFor(x => x.TherapistId)
+            .GreaterThan(0).WithMessage("Therapist ID must be valid.");
     }
-
-    
 }
 
-public class UpdateTherapistTimeSlotDTOValidator : AbstractValidator<UpdateTherapistTimeSlotDTO>
+public class UpdateTherapistScheduleDTOValidator : AbstractValidator<UpdateTherapistScheduleDTO>
 {
-    public UpdateTherapistTimeSlotDTOValidator()
+    public UpdateTherapistScheduleDTOValidator()
     {
-        RuleFor(x => x.TimeSlotId)
-            .GreaterThan(0).WithMessage("Time Slot ID must be valid.");
-
-        RuleFor(x => x.StartTime)
-            .NotEmpty().WithMessage("Start time is required.");
-
-        RuleFor(x => x.EndTime)
-            .NotEmpty().WithMessage("End time is required.")
-            .GreaterThan(x => x.StartTime).WithMessage("End time must be later than start time.");
-
-        RuleFor(x => x.IsAvailable)
-            .NotNull().WithMessage("Availability status is required.");
+        RuleFor(x => x.TimeSlots)
+            .NotEmpty().WithMessage("At least one time slot is required.");
     }
 }
-
