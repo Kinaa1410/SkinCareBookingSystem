@@ -27,5 +27,6 @@ namespace SkinCareBookingSystem.Models
         public Wallet? Wallet { get; set; }  
 
         public ICollection<Booking> CustomerBookings { get; set; } = new List<Booking>();
+        public ICollection<TherapistSpecialty> TherapistSpecialties { get; set; } = new List<TherapistSpecialty>();
     }
 }

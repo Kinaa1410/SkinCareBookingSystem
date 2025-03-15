@@ -12,4 +12,5 @@ public class ServiceCategory
     public bool Exist { get; set; }
 
     public ICollection<Service> Services { get; set; } = new List<Service>();
+    public ICollection<TherapistSpecialty> TherapistSpecialties { get; set; } = new List<TherapistSpecialty>();
 }
