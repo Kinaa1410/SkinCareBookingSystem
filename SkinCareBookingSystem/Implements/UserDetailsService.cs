@@ -51,29 +51,31 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetailsDTO, IFormFile avatarFile)
+        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetailsDTO, IFormFile? avatarFile)
         {
             string avatarPath = null;
 
-            if (avatarFile != null && avatarFile.Length > 0)
+            // Handle file upload if provided
+            if (avatarFile?.Length > 0)
             {
-                var fileName = Path.GetFileName(avatarFile.FileName);
+                // Ensure the image directory exists
+                Directory.CreateDirectory(_imageDirectory);
+
+                // Generate a unique file name to prevent collisions
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
                 var filePath = Path.Combine(_imageDirectory, fileName);
 
-                // Create directory if it does not exist
-                if (!Directory.Exists(_imageDirectory))
-                {
-                    Directory.CreateDirectory(_imageDirectory);
-                }
-
+                // Save the file to the server
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await avatarFile.CopyToAsync(stream);
                 }
 
-                avatarPath = filePath;  // Save the image path to the database
+                // Store the relative URL for the avatar image
+                avatarPath = $"/images/{fileName}";
             }
 
+            // Create the user details object
             var userDetails = new UserDetails
             {
                 UserId = userDetailsDTO.UserId,
@@ -81,12 +83,14 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetailsDTO.LastName,
                 Address = userDetailsDTO.Address,
                 Gender = userDetailsDTO.Gender,
-                Avatar = avatarPath
+                Avatar = avatarPath // Null if no avatar file was uploaded
             };
 
+            // Save to the database
             _context.UserDetails.Add(userDetails);
             await _context.SaveChangesAsync();
 
+            // Return the DTO with the user details
             return new UserDetailsDTO
             {
                 UserId = userDetails.UserId,
@@ -98,39 +102,47 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
+
+
         public async Task<bool> UpdateUserDetailsAsync(int userId, UpdateUserDetailsDTO userDetailsDTO, IFormFile avatarFile)
         {
+            // Find the user by their ID
             var userDetails = await _context.UserDetails.FindAsync(userId);
-            if (userDetails == null) return false;
+            if (userDetails == null) return false; // Return false if the user doesn't exist
 
-            if (avatarFile != null && avatarFile.Length > 0)
+            // Handle file upload if provided
+            if (avatarFile?.Length > 0)
             {
-                var fileName = Path.GetFileName(avatarFile.FileName);
+                // Generate a unique file name for the avatar
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
                 var filePath = Path.Combine(_imageDirectory, fileName);
 
-                // Create directory if it does not exist
-                if (!Directory.Exists(_imageDirectory))
-                {
-                    Directory.CreateDirectory(_imageDirectory);
-                }
+                // Ensure the image directory exists
+                Directory.CreateDirectory(_imageDirectory);
 
+                // Save the file to the server
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await avatarFile.CopyToAsync(stream);
                 }
 
-                userDetails.Avatar = filePath;  // Update avatar path
+                // Update the avatar field with the relative file path
+                userDetails.Avatar = $"/images/{fileName}";
             }
 
+            // Update other user details
             userDetails.FirstName = userDetailsDTO.FirstName;
             userDetails.LastName = userDetailsDTO.LastName;
             userDetails.Address = userDetailsDTO.Address;
             userDetails.Gender = userDetailsDTO.Gender;
 
+            // Mark the entity as modified and save changes
             _context.Entry(userDetails).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
             return true;
         }
+
 
         public async Task<bool> DeleteUserDetailsAsync(int userId)
         {
@@ -140,6 +152,22 @@ namespace SkinCareBookingSystem.Implements
             _context.UserDetails.Remove(userDetails);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        private async Task<byte[]> DownloadImageAsync(string url)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsByteArrayAsync();
+                }
+                else
+                {
+                    throw new Exception("Failed to download the image.");
+                }
+            }
         }
     }
 }

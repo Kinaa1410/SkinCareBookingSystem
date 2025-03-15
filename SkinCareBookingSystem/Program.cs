@@ -13,6 +13,7 @@ using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Binder;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using SkinCareBookingSystem.Config;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -110,10 +111,15 @@ builder.Services.AddSwaggerGen(c =>
         Title = "API"
     });
 
+    c.OperationFilter<FileUploadOperationFilter>();
+
+    c.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
+
+    // JWT Bearer token authentication for Swagger UI
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "JWT Authorization header sử dụng scheme Bearer.",
+        Description = "JWT Authorization header using Bearer scheme.",
         Type = SecuritySchemeType.Http,
         Name = "Authorization",
         Scheme = "Bearer"
@@ -136,15 +142,19 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 var app = builder.Build();
 
 
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SkinCareBookingSystem API v1");
+    });
 }
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");

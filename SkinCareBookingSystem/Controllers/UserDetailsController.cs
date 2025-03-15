@@ -43,7 +43,7 @@ namespace SkinCareBookingSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserDetails([FromForm] CreateUserDetailsDTO userDetailsDTO, [FromForm] IFormFile avatarFile)
+        public async Task<IActionResult> CreateUserDetails(CreateUserDetailsDTO userDetailsDTO, IFormFile? avatarFile)
         {
             var validationResult = await _createValidator.ValidateAsync(userDetailsDTO);
             if (!validationResult.IsValid)
@@ -52,11 +52,16 @@ namespace SkinCareBookingSystem.Controllers
             }
 
             var userDetails = await _userDetailsService.CreateUserDetailsAsync(userDetailsDTO, avatarFile);
+
             return CreatedAtAction(nameof(GetUserDetails), new { userId = userDetails.UserId }, userDetails);
         }
 
+
+
+
+
         [HttpPut("{userId}")]
-        public async Task<IActionResult> UpdateUserDetails(int userId, [FromForm] UpdateUserDetailsDTO userDetailsDTO, [FromForm] IFormFile avatarFile)
+        public async Task<IActionResult> UpdateUserDetails(int userId, UpdateUserDetailsDTO userDetailsDTO, IFormFile avatarFile)
         {
             var validationResult = await _updateValidator.ValidateAsync(userDetailsDTO);
             if (!validationResult.IsValid)
@@ -65,6 +70,8 @@ namespace SkinCareBookingSystem.Controllers
             }
 
             var result = await _userDetailsService.UpdateUserDetailsAsync(userId, userDetailsDTO, avatarFile);
+
+    
             if (!result)
             {
                 return NotFound("User details not found");
@@ -72,6 +79,7 @@ namespace SkinCareBookingSystem.Controllers
 
             return NoContent();
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{userId}")]
