@@ -1242,6 +1242,11 @@
         "Name": "userDetailsDTO",
         "Type": "SkinCareBookingSystem.DTOs.CreateUserDetailsDTO",
         "IsRequired": true
+      },
+      {
+        "Name": "avatarFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1279,6 +1284,11 @@
         "Name": "userDetailsDTO",
         "Type": "SkinCareBookingSystem.DTOs.UpdateUserDetailsDTO",
         "IsRequired": true
+      },
+      {
+        "Name": "avatarFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
