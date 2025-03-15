@@ -25,6 +25,7 @@ namespace SkinCareBookingSystem.Data
         public DbSet<TherapistTimeSlot> TherapistTimeSlots { get; set; }
         public DbSet<ServiceRecommendation> ServiceRecommendations { get; set; } // ✅ Added
         public DbSet<TimeSlot> TimeSlots { get; set; }
+        public DbSet<TherapistSpecialty> TherapistSpecialties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -114,6 +115,22 @@ namespace SkinCareBookingSystem.Data
                 .WithMany()
                 .HasForeignKey(ts => ts.TherapistId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TherapistSpecialty>()
+            .HasKey(ts => ts.Id);
+
+            modelBuilder.Entity<TherapistSpecialty>()
+            .HasOne(ts => ts.Therapist)   // Each TherapistSpecialty is associated with one User (Therapist)
+            .WithMany(u => u.TherapistSpecialties)  // A User (Therapist) can have many specialties
+            .HasForeignKey(ts => ts.TherapistId)   // Foreign key in the TherapistSpecialty table
+            .OnDelete(DeleteBehavior.Cascade);  // If a Therapist is deleted, also delete associated specialties
+
+            // ServiceCategory to TherapistSpecialty relationship (one-to-many)
+            modelBuilder.Entity<TherapistSpecialty>()
+                .HasOne(ts => ts.ServiceCategory)  // Each TherapistSpecialty is associated with one ServiceCategory
+                .WithMany(sc => sc.TherapistSpecialties)  // A ServiceCategory can have many therapists
+                .HasForeignKey(ts => ts.ServiceCategoryId)  // Foreign key in the TherapistSpecialty table
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

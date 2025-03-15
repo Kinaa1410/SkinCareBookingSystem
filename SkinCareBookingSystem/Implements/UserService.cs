@@ -122,29 +122,64 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<UserDTO> CreateTherapistAsync(CreateUserDTO userDTO)
         {
+            // Check if the username or email already exists
             if (await _context.Users.AnyAsync(u => u.UserName == userDTO.UserName || u.Email == userDTO.Email))
             {
                 return null;
             }
 
+            // Fetch the role of Therapist from the roles table
             var role = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Therapist");
             if (role == null)
             {
-                return null; 
+                return null;
             }
 
+            // Create a new therapist user
             var therapist = new User
             {
                 UserName = userDTO.UserName,
                 Email = userDTO.Email,
                 Password = userDTO.Password,
-                Role = role, 
+                Role = role,
                 Status = true
             };
 
             _context.Users.Add(therapist);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();  // Save the user first so we can get the UserId
 
+            // Now, associate the specialties with the newly created therapist
+            var therapistSpecialties = new List<TherapistSpecialty>();
+
+            foreach (var serviceCategoryId in userDTO.ServiceCategoryIds)
+            {
+                // Check if the ServiceCategory exists in the database
+                var serviceCategory = await _context.ServiceCategories
+                    .FirstOrDefaultAsync(sc => sc.ServiceCategoryId == serviceCategoryId);
+
+                if (serviceCategory == null)
+                {
+                    // If the specialty does not exist, throw an exception or handle it appropriately
+                    throw new InvalidOperationException($"ServiceCategory with ID {serviceCategoryId} does not exist.");
+                }
+
+                // If the service category exists, create the TherapistSpecialty entry
+                var specialty = new TherapistSpecialty
+                {
+                    TherapistId = therapist.UserId,  // Associate this specialty with the therapist
+                    ServiceCategoryId = serviceCategory.ServiceCategoryId
+                };
+
+                therapistSpecialties.Add(specialty);
+            }
+
+            if (therapistSpecialties.Any())
+            {
+                _context.TherapistSpecialties.AddRange(therapistSpecialties);
+                await _context.SaveChangesAsync();  // Save the specialties to the database
+            }
+
+            // Return the created therapist as DTO
             return new UserDTO
             {
                 UserId = therapist.UserId,
@@ -154,6 +189,8 @@ namespace SkinCareBookingSystem.Implements
                 Status = therapist.Status
             };
         }
+
+
 
 
         public async Task<bool> UpdateUserAsync(int id, UpdateUserDTO userDTO)
