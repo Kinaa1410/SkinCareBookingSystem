@@ -6,15 +6,17 @@ namespace SkinCareBookingSystem.Models
     public class TherapistTimeSlot
     {
         [Key]
-        public int TimeSlotId { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("TherapistSchedule")]
-        public int ScheduleId { get; set; } 
+        public int ScheduleId { get; set; }
 
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
+        [ForeignKey("TimeSlot")]
+        public int TimeSlotId { get; set; }
+
         public bool IsAvailable { get; set; } = true;
 
-        public TherapistSchedule TherapistSchedule { get; set; } = null!; 
+        public TherapistSchedule TherapistSchedule { get; set; } = null!;
+        public TimeSlot TimeSlot { get; set; } = null!;
     }
 }

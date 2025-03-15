@@ -1,37 +1,35 @@
 ﻿using FluentValidation;
 using SkinCareBookingSystem.DTOs;
+using SkinCareBookingSystem.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace SkinCareBookingSystem.Validators
 {
     public class CreateTherapistTimeSlotDTOValidator : AbstractValidator<CreateTherapistTimeSlotDTO>
     {
-        public CreateTherapistTimeSlotDTOValidator()
+        private readonly BookingDbContext _context;
+
+        public CreateTherapistTimeSlotDTOValidator(BookingDbContext context)
         {
-            RuleFor(x => x.StartTime)
-                .LessThan(x => x.EndTime).WithMessage("Start time must be before end time.");
+            _context = context;
 
-            RuleFor(x => x.EndTime)
-                .GreaterThan(x => x.StartTime).WithMessage("End time must be after start time.");
-
-            RuleFor(x => x.IsAvailable)
-                .NotNull().WithMessage("Availability status is required.");
+            RuleFor(x => x.TimeSlotId)
+                .MustAsync(async (id, cancellationToken) => await _context.TimeSlots.AnyAsync(t => t.TimeSlotId == id))
+                .WithMessage("The specified TimeSlotId does not exist.");
         }
     }
 
     public class UpdateTherapistTimeSlotDTOValidator : AbstractValidator<UpdateTherapistTimeSlotDTO>
     {
-        public UpdateTherapistTimeSlotDTOValidator()
+        private readonly BookingDbContext _context;
+
+        public UpdateTherapistTimeSlotDTOValidator(BookingDbContext context)
         {
-            RuleFor(x => x.TimeSlotId).GreaterThan(0).WithMessage("TimeSlotId must be a valid ID.");
+            _context = context;
 
-            RuleFor(x => x.StartTime)
-                .LessThan(x => x.EndTime).WithMessage("Start time must be before end time.");
-
-            RuleFor(x => x.EndTime)
-                .GreaterThan(x => x.StartTime).WithMessage("End time must be after start time.");
-
-            RuleFor(x => x.IsAvailable)
-                .NotNull().WithMessage("Availability status is required.");
+            RuleFor(x => x.TimeSlotId)
+                .MustAsync(async (id, cancellationToken) => await _context.TimeSlots.AnyAsync(t => t.TimeSlotId == id))
+                .WithMessage("The specified TimeSlotId does not exist.");
         }
     }
 }

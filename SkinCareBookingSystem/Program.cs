@@ -80,6 +80,10 @@ builder.Services.AddScoped<IValidator<UpdateFeedbackDTO>, UpdateFeedbackDTOValid
 builder.Services.AddScoped<IServiceRecommendationService, ServiceRecommendationService>();
 builder.Services.AddScoped<IValidator<CreateServiceRecommendationDTO>, CreateServiceRecommendationDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateServiceRecommendationDTO>, UpdateServiceRecommendationDTOValidator>();
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+builder.Services.AddScoped<IValidator<CreateTimeSlotDTO>, CreateTimeSlotDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateTimeSlotDTO>, UpdateTimeSlotDTOValidator>();
+
 
 
 

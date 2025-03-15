@@ -1,4 +1,5 @@
 ﻿using SkinCareBookingSystem.DTOs;
+using System.Threading.Tasks;
 
 namespace SkinCareBookingSystem.Interfaces
 {
@@ -6,8 +7,8 @@ namespace SkinCareBookingSystem.Interfaces
     {
         Task<IEnumerable<TherapistTimeSlotDTO>> GetAllTimeSlotsAsync();
         Task<TherapistTimeSlotDTO> GetTimeSlotByIdAsync(int timeSlotId);
-        Task<TherapistTimeSlotDTO> CreateTimeSlotAsync(int scheduleId, CreateTherapistTimeSlotDTO timeSlotDTO);
-        Task<bool> UpdateTimeSlotAsync(int timeSlotId, UpdateTherapistTimeSlotDTO timeSlotDTO);
+        Task<TherapistTimeSlotDTO> CreateTimeSlotForTherapistAsync(int scheduleId);
+        Task<bool> UpdateTimeSlotAsync(int timeSlotId, bool isBooked);
         Task<bool> DeleteTimeSlotAsync(int timeSlotId);
     }
 }
