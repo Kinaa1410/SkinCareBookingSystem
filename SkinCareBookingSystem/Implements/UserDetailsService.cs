@@ -3,12 +3,14 @@ using SkinCareBookingSystem.Data;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Models;
+using System.IO;
 
 namespace SkinCareBookingSystem.Implements
 {
     public class UserDetailsService : IUserDetailsService
     {
         private readonly BookingDbContext _context;
+        private readonly string _imageDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
         public UserDetailsService(BookingDbContext context)
         {
@@ -49,8 +51,29 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetailsDTO)
+        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetailsDTO, IFormFile avatarFile)
         {
+            string avatarPath = null;
+
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                var fileName = Path.GetFileName(avatarFile.FileName);
+                var filePath = Path.Combine(_imageDirectory, fileName);
+
+                // Create directory if it does not exist
+                if (!Directory.Exists(_imageDirectory))
+                {
+                    Directory.CreateDirectory(_imageDirectory);
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(stream);
+                }
+
+                avatarPath = filePath;  // Save the image path to the database
+            }
+
             var userDetails = new UserDetails
             {
                 UserId = userDetailsDTO.UserId,
@@ -58,7 +81,7 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetailsDTO.LastName,
                 Address = userDetailsDTO.Address,
                 Gender = userDetailsDTO.Gender,
-                Avatar = userDetailsDTO.Avatar
+                Avatar = avatarPath
             };
 
             _context.UserDetails.Add(userDetails);
@@ -75,16 +98,34 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        public async Task<bool> UpdateUserDetailsAsync(int userId, UpdateUserDetailsDTO userDetailsDTO)
+        public async Task<bool> UpdateUserDetailsAsync(int userId, UpdateUserDetailsDTO userDetailsDTO, IFormFile avatarFile)
         {
             var userDetails = await _context.UserDetails.FindAsync(userId);
             if (userDetails == null) return false;
+
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                var fileName = Path.GetFileName(avatarFile.FileName);
+                var filePath = Path.Combine(_imageDirectory, fileName);
+
+                // Create directory if it does not exist
+                if (!Directory.Exists(_imageDirectory))
+                {
+                    Directory.CreateDirectory(_imageDirectory);
+                }
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(stream);
+                }
+
+                userDetails.Avatar = filePath;  // Update avatar path
+            }
 
             userDetails.FirstName = userDetailsDTO.FirstName;
             userDetails.LastName = userDetailsDTO.LastName;
             userDetails.Address = userDetailsDTO.Address;
             userDetails.Gender = userDetailsDTO.Gender;
-            userDetails.Avatar = userDetailsDTO.Avatar;
 
             _context.Entry(userDetails).State = EntityState.Modified;
             await _context.SaveChangesAsync();

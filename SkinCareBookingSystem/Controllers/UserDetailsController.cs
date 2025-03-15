@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 
@@ -42,7 +43,7 @@ namespace SkinCareBookingSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserDetails([FromBody] CreateUserDetailsDTO userDetailsDTO)
+        public async Task<IActionResult> CreateUserDetails([FromForm] CreateUserDetailsDTO userDetailsDTO, [FromForm] IFormFile avatarFile)
         {
             var validationResult = await _createValidator.ValidateAsync(userDetailsDTO);
             if (!validationResult.IsValid)
@@ -50,12 +51,12 @@ namespace SkinCareBookingSystem.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var userDetails = await _userDetailsService.CreateUserDetailsAsync(userDetailsDTO);
+            var userDetails = await _userDetailsService.CreateUserDetailsAsync(userDetailsDTO, avatarFile);
             return CreatedAtAction(nameof(GetUserDetails), new { userId = userDetails.UserId }, userDetails);
         }
 
         [HttpPut("{userId}")]
-        public async Task<IActionResult> UpdateUserDetails(int userId, [FromBody] UpdateUserDetailsDTO userDetailsDTO)
+        public async Task<IActionResult> UpdateUserDetails(int userId, [FromForm] UpdateUserDetailsDTO userDetailsDTO, [FromForm] IFormFile avatarFile)
         {
             var validationResult = await _updateValidator.ValidateAsync(userDetailsDTO);
             if (!validationResult.IsValid)
@@ -63,7 +64,7 @@ namespace SkinCareBookingSystem.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var result = await _userDetailsService.UpdateUserDetailsAsync(userId, userDetailsDTO);
+            var result = await _userDetailsService.UpdateUserDetailsAsync(userId, userDetailsDTO, avatarFile);
             if (!result)
             {
                 return NotFound("User details not found");
