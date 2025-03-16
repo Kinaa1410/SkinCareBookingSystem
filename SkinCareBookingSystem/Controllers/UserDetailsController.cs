@@ -56,14 +56,15 @@ namespace SkinCareBookingSystem.Controllers
         }
 
         [HttpPut("UpdateUser/{userId}")]
-        public async Task<IActionResult> UpdateUserDetails(int userId, [FromForm] UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile? avatarFile)
+        public async Task<IActionResult> UpdateUserDetails(int userId, [FromForm] UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile avatarFile)
         {
             if (userId != updateUserDetailsDTO.UserId)
             {
                 return BadRequest("User ID mismatch.");
             }
 
-            var validationResult = await _createValidator.ValidateAsync((IValidationContext)updateUserDetailsDTO);
+            // Validate the DTO using the appropriate validator
+            var validationResult = await _updateValidator.ValidateAsync(updateUserDetailsDTO); // Use the correct validator
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors);
@@ -79,6 +80,7 @@ namespace SkinCareBookingSystem.Controllers
                 return NotFound("User not found.");
             }
         }
+
 
 
 
