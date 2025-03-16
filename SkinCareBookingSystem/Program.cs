@@ -49,7 +49,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateUserDTOValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginDTOValidator>();
 builder.Services.AddScoped<IUserDetailsService, UserDetailsService>();
 builder.Services.AddScoped<IValidator<CreateUserDetailsDTO>, CreateUserDetailsDTOValidator>();
-builder.Services.AddScoped<IValidator<UpdateUserDetailsDTO>, UpdateUserDetailsDTOValidator>();
+//builder.Services.AddScoped<IValidator<UpdateUserDetailsDTO>, UpdateUserDetailsDTOValidator>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IValidator<CreateRoleDTO>, CreateRoleDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateRoleDTO>, UpdateRoleDTOValidator>();
@@ -84,8 +84,7 @@ builder.Services.AddScoped<IValidator<UpdateServiceRecommendationDTO>, UpdateSer
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IValidator<CreateTimeSlotDTO>, CreateTimeSlotDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateTimeSlotDTO>, UpdateTimeSlotDTOValidator>();
-
-
+builder.Services.AddScoped<ITherapistSpecialtyService, TherapistSpecialtyService>();
 
 
 

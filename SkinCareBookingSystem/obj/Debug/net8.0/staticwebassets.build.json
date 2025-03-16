@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "KM2jpOczwS/AGsZr1BwWdj9wKFlQgCU34TY/06zsB78=",
+  "Hash": "fqDzv9YbF534gcgukzlMXG2ZR2RSi7iZIssMsaSZhUw=",
   "Source": "SkinCareBookingSystem",
   "BasePath": "_content/SkinCareBookingSystem",
   "Mode": "Default",
@@ -53,6 +53,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\cutber.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\iroha.jpg",
+      "SourceId": "SkinCareBookingSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "BasePath": "_content/SkinCareBookingSystem",
+      "RelativePath": "images/iroha.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\iroha.jpg"
     }
   ]
 }

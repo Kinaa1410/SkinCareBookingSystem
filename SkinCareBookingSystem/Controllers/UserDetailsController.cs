@@ -13,15 +13,16 @@ namespace SkinCareBookingSystem.Controllers
     {
         private readonly IUserDetailsService _userDetailsService;
         private readonly IValidator<CreateUserDetailsDTO> _createValidator;
-        private readonly IValidator<UpdateUserDetailsDTO> _updateValidator;
+        //private readonly IValidator<UpdateUserDetailsDTO> _updateValidator;
 
         public UserDetailsController(IUserDetailsService userDetailsService,
-            IValidator<CreateUserDetailsDTO> createValidator,
-            IValidator<UpdateUserDetailsDTO> updateValidator)
+            IValidator<CreateUserDetailsDTO> createValidator
+            //IValidator<UpdateUserDetailsDTO> updateValidator
+            )
         {
             _userDetailsService = userDetailsService;
             _createValidator = createValidator;
-            _updateValidator = updateValidator;
+            //_updateValidator = updateValidator;
         }
 
         [HttpGet]
@@ -55,23 +56,19 @@ namespace SkinCareBookingSystem.Controllers
             return CreatedAtAction(nameof(GetUserDetails), new { userId = userDetails.UserId }, userDetails);
         }
 
-        [HttpPut("UpdateUser/{userId}")]
-        public async Task<IActionResult> UpdateUserDetails(int userId, [FromForm] UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile avatarFile)
+        [HttpPut("UpdateUser")]
+        public async Task<IActionResult> UpdateUserDetails([FromForm] UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile? avatarFile)
         {
-            if (userId != updateUserDetailsDTO.UserId)
-            {
-                return BadRequest("User ID mismatch.");
-            }
-
-            // Validate the DTO using the appropriate validator
-            var validationResult = await _updateValidator.ValidateAsync(updateUserDetailsDTO); // Use the correct validator
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors);
-            }
+            // Validate incoming update request directly
+            //var validationResult = await _updateValidator.ValidateAsync(updateUserDetailsDTO);
+            //if (!validationResult.IsValid)
+            //{
+              //  return BadRequest(validationResult.Errors);
+            //}
 
             try
             {
+                // Update the user details
                 var updatedUserDetails = await _userDetailsService.UpdateUserDetailsAsync(updateUserDetailsDTO, avatarFile);
                 return Ok(new { Message = "User details updated successfully.", UserDetails = updatedUserDetails });
             }
