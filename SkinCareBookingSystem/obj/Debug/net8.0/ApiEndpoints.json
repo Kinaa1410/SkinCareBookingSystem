@@ -317,6 +317,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.PaymentController",
+    "Method": "GeneratePaymentUrl",
+    "RelativePath": "api/payment/generate-url",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "orderRef",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "amount",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.QaController",
     "Method": "GetAllQas",
     "RelativePath": "api/Qa",
@@ -1112,6 +1133,27 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistSpecialtyController",
+    "Method": "UpdateTherapistSpecialty",
+    "RelativePath": "api/TherapistSpecialty/UpdateTherapistSpecialty",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "therapistId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "serviceCategoryId",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
