@@ -9,4 +9,9 @@
         public string ServiceCategoryName { get; set; }
     }
 
+    public class UpdateTherapistSpecialtyDTO
+    {
+        public int ServiceCategoryId { get; set; }
+    }
+
 }

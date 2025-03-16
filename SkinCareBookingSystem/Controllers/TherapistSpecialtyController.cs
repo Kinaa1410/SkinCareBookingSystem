@@ -68,5 +68,28 @@ namespace SkinCareBookingSystem.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("UpdateTherapistSpecialty")]
+        public async Task<IActionResult> UpdateTherapistSpecialty([FromQuery] int therapistId, [FromQuery] int serviceCategoryId)
+        {
+            try
+            {
+                // Call the service method to update the therapist specialty
+                var updatedSpecialty = await _therapistSpecialtyService.UpdateTherapistSpecialtyAsync(therapistId, serviceCategoryId);
+
+                // Return the updated specialty details
+                return Ok(new { Message = "Therapist specialty updated successfully.", TherapistSpecialty = updatedSpecialty });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // Handle case where therapist or specialty is not found
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Handle any other unexpected errors
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

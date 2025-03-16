@@ -89,5 +89,52 @@ namespace SkinCareBookingSystem.Implements
             return true;
         }
 
+        public async Task<TherapistSpecialtyDTO> UpdateTherapistSpecialtyAsync(int therapistId, int serviceCategoryId)
+        {
+            // Check if the therapistId exists in the database and if the user is a therapist (RoleId == 2)
+            var therapist = await _context.Users.FirstOrDefaultAsync(u => u.UserId == therapistId && u.RoleId == 2);  // RoleId == 2 indicates "Therapist"
+
+            // If the therapist doesn't exist or is not a therapist, throw an error
+            if (therapist == null)
+            {
+                throw new KeyNotFoundException("Therapist with the given ID not found or user is not a therapist.");
+            }
+
+            // Check if the serviceCategoryId exists in the ServiceCategories table
+            var serviceCategory = await _context.ServiceCategories
+                .FirstOrDefaultAsync(sc => sc.ServiceCategoryId == serviceCategoryId);
+
+            // If the service category doesn't exist, throw an error
+            if (serviceCategory == null)
+            {
+                throw new KeyNotFoundException("Service category with the given ID not found.");
+            }
+
+            // Find the therapist specialty by therapistId
+            var therapistSpecialty = await _context.TherapistSpecialties
+                .FirstOrDefaultAsync(ts => ts.TherapistId == therapistId);
+
+            // If the therapist specialty doesn't exist, throw an error
+            if (therapistSpecialty == null)
+            {
+                throw new KeyNotFoundException("Therapist specialty not found.");
+            }
+
+            // Update the service category ID
+            therapistSpecialty.ServiceCategoryId = serviceCategoryId;
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            // Return the updated specialty
+            return new TherapistSpecialtyDTO
+            {
+                Id = therapistSpecialty.Id,
+                TherapistId = therapistSpecialty.TherapistId,
+                ServiceCategoryId = therapistSpecialty.ServiceCategoryId
+            };
+        }
+
+
     }
 }
