@@ -61,14 +61,10 @@ namespace SkinCareBookingSystem.Implements
             if (avatarFile != null && avatarFile.Length > 0)
             {
                 var avatarPath = Path.Combine(_imageDirectory, avatarFile.FileName);
-
-                // Save the avatar file to disk
                 using (var stream = new FileStream(avatarPath, FileMode.Create))
                 {
                     await avatarFile.CopyToAsync(stream);
                 }
-
-                // Store the relative file path in the Avatar field
                 userDetails.Avatar = Path.Combine("images", avatarFile.FileName);
             }
 
@@ -79,7 +75,7 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetails.LastName,
                 Address = userDetails.Address,
                 Gender = userDetails.Gender,
-                Avatar = userDetails.Avatar // Store the file path here
+                Avatar = userDetails.Avatar
             };
 
             _context.UserDetails.Add(userDetail);
@@ -92,28 +88,47 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetail.LastName,
                 Address = userDetail.Address,
                 Gender = userDetail.Gender,
-                Avatar = userDetail.Avatar // Return the stored file path
+                Avatar = userDetail.Avatar
             };
         }
 
         public async Task<UserDetailsDTO> UpdateUserDetailsAsync(UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile? avatarFile)
         {
+            // Find the user by UserId
             var userDetails = await _context.UserDetails.FirstOrDefaultAsync(ud => ud.UserId == updateUserDetailsDTO.UserId);
+
+            // If user not found, throw error
             if (userDetails == null)
             {
                 throw new KeyNotFoundException("User not found.");
             }
 
-            userDetails.FirstName = updateUserDetailsDTO.FirstName;
-            userDetails.LastName = updateUserDetailsDTO.LastName;
-            userDetails.Address = updateUserDetailsDTO.Address;
-            userDetails.Gender = updateUserDetailsDTO.Gender;
+            // Update the user's details only if new values are provided
+            if (!string.IsNullOrEmpty(updateUserDetailsDTO.FirstName))
+            {
+                userDetails.FirstName = updateUserDetailsDTO.FirstName;
+            }
+
+            if (!string.IsNullOrEmpty(updateUserDetailsDTO.LastName))
+            {
+                userDetails.LastName = updateUserDetailsDTO.LastName;
+            }
+
+            if (!string.IsNullOrEmpty(updateUserDetailsDTO.Address))
+            {
+                userDetails.Address = updateUserDetailsDTO.Address;
+            }
+
+            if (!string.IsNullOrEmpty(updateUserDetailsDTO.Gender))
+            {
+                userDetails.Gender = updateUserDetailsDTO.Gender;
+            }
 
             if (avatarFile != null && avatarFile.Length > 0)
             {
                 var avatarPath = Path.Combine(_imageDirectory, avatarFile.FileName);
 
-                // Save the avatar file to disk
+                // Save the new avatar file to disk
                 using (var stream = new FileStream(avatarPath, FileMode.Create))
                 {
                     await avatarFile.CopyToAsync(stream);
@@ -123,8 +138,10 @@ namespace SkinCareBookingSystem.Implements
                 userDetails.Avatar = Path.Combine("images", avatarFile.FileName);
             }
 
+            // Save changes to the database
             await _context.SaveChangesAsync();
 
+            // Return the updated user details
             return new UserDetailsDTO
             {
                 UserId = userDetails.UserId,
@@ -132,9 +149,12 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetails.LastName,
                 Address = userDetails.Address,
                 Gender = userDetails.Gender,
-                Avatar = userDetails.Avatar // Return the stored file path
+                Avatar = userDetails.Avatar // Return the updated file path
             };
         }
+
+
+
 
 
 

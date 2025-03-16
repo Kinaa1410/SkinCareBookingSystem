@@ -1425,16 +1425,11 @@
   {
     "ContainingType": "SkinCareBookingSystem.Controllers.UserDetailsController",
     "Method": "UpdateUserDetails",
-    "RelativePath": "api/UserDetails/UpdateUser/{userId}",
+    "RelativePath": "api/UserDetails/UpdateUser",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "userId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
       {
         "Name": "UserId",
         "Type": "System.Int32",

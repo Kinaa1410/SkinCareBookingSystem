@@ -3,20 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\skincarebookingsystem\\skincarebookingsystem\\controllers\\userdetailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\controllers\\userdetailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\skincarebookingsystem\\skincarebookingsystem\\dtos\\userdetailsdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\dtos\\userdetailsdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\skincarebookingsystem\\skincarebookingsystem\\controllers\\userdetailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\controllers\\userdetailscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\skincarebookingsystem\\skincarebookingsystem\\validators\\userdetailsdtovalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\validators\\userdetailsdtovalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\skincarebookingsystem\\skincarebookingsystem\\implements\\userdetailsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\implements\\userdetailsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\skincarebookingsystem\\skincarebookingsystem\\validators\\userdetailsdtovalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\validators\\userdetailsdtovalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|c:\\users\\hoang\\desktop\\dotnet\\skincarebookingsystem\\skincarebookingsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}|SkinCareBookingSystem\\SkinCareBookingSystem.csproj|solutionrelative:skincarebookingsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,52 +38,65 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Program.cs",
+              "RelativeDocumentMoniker": "SkinCareBookingSystem\\Program.cs",
+              "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Program.cs",
+              "RelativeToolTip": "SkinCareBookingSystem\\Program.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAADoAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-16T04:35:49.622Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "UserDetailsService.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Implements\\UserDetailsService.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Implements\\UserDetailsService.cs",
               "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Implements\\UserDetailsService.cs",
               "RelativeToolTip": "SkinCareBookingSystem\\Implements\\UserDetailsService.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAYwJkAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T03:59:23.517Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "UserDetailsDTOValidator.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Validators\\UserDetailsDTOValidator.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Validators\\UserDetailsDTOValidator.cs",
               "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Validators\\UserDetailsDTOValidator.cs",
               "RelativeToolTip": "SkinCareBookingSystem\\Validators\\UserDetailsDTOValidator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAABNAAAAAAAAAA==",
+              "ViewState": "AgIAACYAAAAAAAAAAAAmwEwAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T03:57:24.11Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "UserDetailsController.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Controllers\\UserDetailsController.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\Controllers\\UserDetailsController.cs",
-              "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Controllers\\UserDetailsController.cs",
-              "RelativeToolTip": "SkinCareBookingSystem\\Controllers\\UserDetailsController.cs",
-              "ViewState": "AgIAAC0AAAAAAAAAAIAywDwAAAAvAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\Controllers\\UserDetailsController.cs*",
+              "RelativeToolTip": "SkinCareBookingSystem\\Controllers\\UserDetailsController.cs*",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABIAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T03:57:02.203Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "UserDetailsDTO.cs",
               "DocumentMoniker": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\DTOs\\UserDetailsDTO.cs",
               "RelativeDocumentMoniker": "SkinCareBookingSystem\\DTOs\\UserDetailsDTO.cs",
               "ToolTip": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\DTOs\\UserDetailsDTO.cs",
               "RelativeToolTip": "SkinCareBookingSystem\\DTOs\\UserDetailsDTO.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAcwCUAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAcwCIAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T03:54:29.849Z",
               "EditorCaption": ""
