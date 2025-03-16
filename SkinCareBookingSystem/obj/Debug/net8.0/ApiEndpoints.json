@@ -1003,6 +1003,120 @@
     ]
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistSpecialtyController",
+    "Method": "GetTherapistSpecialtiesByTherapistId",
+    "RelativePath": "api/TherapistSpecialty/{therapistId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "therapistId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.TherapistSpecialtyDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistSpecialtyController",
+    "Method": "GetAllTherapistSpecialties",
+    "RelativePath": "api/TherapistSpecialty/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.TherapistSpecialtyDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistSpecialtyController",
+    "Method": "GetTherapistsByServiceCategoryId",
+    "RelativePath": "api/TherapistSpecialty/by-service-category/{serviceCategoryId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "serviceCategoryId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[SkinCareBookingSystem.DTOs.UserDTO, SkinCareBookingSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistSpecialtyController",
+    "Method": "CreateTherapistSpecialty",
+    "RelativePath": "api/TherapistSpecialty/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "specialtyDTO",
+        "Type": "SkinCareBookingSystem.DTOs.TherapistSpecialtyDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "SkinCareBookingSystem.DTOs.TherapistSpecialtyDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistSpecialtyController",
+    "Method": "DeleteTherapistSpecialty",
+    "RelativePath": "api/TherapistSpecialty/delete/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.TherapistTimeSlotController",
     "Method": "GetAllTimeSlots",
     "RelativePath": "api/TherapistTimeSlot",
@@ -1232,27 +1346,6 @@
   },
   {
     "ContainingType": "SkinCareBookingSystem.Controllers.UserDetailsController",
-    "Method": "CreateUserDetails",
-    "RelativePath": "api/UserDetails",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "userDetailsDTO",
-        "Type": "SkinCareBookingSystem.DTOs.CreateUserDetailsDTO",
-        "IsRequired": true
-      },
-      {
-        "Name": "avatarFile",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "SkinCareBookingSystem.Controllers.UserDetailsController",
     "Method": "GetUserDetails",
     "RelativePath": "api/UserDetails/{userId}",
     "HttpMethod": "GET",
@@ -1269,9 +1362,9 @@
   },
   {
     "ContainingType": "SkinCareBookingSystem.Controllers.UserDetailsController",
-    "Method": "UpdateUserDetails",
+    "Method": "DeleteUserDetails",
     "RelativePath": "api/UserDetails/{userId}",
-    "HttpMethod": "PUT",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -1279,11 +1372,47 @@
         "Name": "userId",
         "Type": "System.Int32",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.UserDetailsController",
+    "Method": "CreateUserDetails",
+    "RelativePath": "api/UserDetails/CreateUserDetail",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserId",
+        "Type": "System.Int32",
+        "IsRequired": false
       },
       {
-        "Name": "userDetailsDTO",
-        "Type": "SkinCareBookingSystem.DTOs.UpdateUserDetailsDTO",
-        "IsRequired": true
+        "Name": "FirstName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LastName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Address",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Gender",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Avatar",
+        "Type": "System.String",
+        "IsRequired": false
       },
       {
         "Name": "avatarFile",
@@ -1295,9 +1424,9 @@
   },
   {
     "ContainingType": "SkinCareBookingSystem.Controllers.UserDetailsController",
-    "Method": "DeleteUserDetails",
-    "RelativePath": "api/UserDetails/{userId}",
-    "HttpMethod": "DELETE",
+    "Method": "UpdateUserDetails",
+    "RelativePath": "api/UserDetails/UpdateUser/{userId}",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -1305,6 +1434,41 @@
         "Name": "userId",
         "Type": "System.Int32",
         "IsRequired": true
+      },
+      {
+        "Name": "UserId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "FirstName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "LastName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Address",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Gender",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Avatar",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "avatarFile",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

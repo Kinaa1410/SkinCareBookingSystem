@@ -113,8 +113,6 @@ builder.Services.AddSwaggerGen(c =>
 
     c.OperationFilter<FileUploadOperationFilter>();
 
-    c.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
-
     // JWT Bearer token authentication for Swagger UI
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

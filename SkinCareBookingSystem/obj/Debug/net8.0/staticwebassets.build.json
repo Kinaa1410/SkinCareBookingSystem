@@ -1,11 +1,58 @@
 {
   "Version": 1,
-  "Hash": "TFdo2tLvZtoRtkm2p4/I/uaJPW4HaIKFvMhmLEB9Bmw=",
+  "Hash": "KM2jpOczwS/AGsZr1BwWdj9wKFlQgCU34TY/06zsB78=",
   "Source": "SkinCareBookingSystem",
   "BasePath": "_content/SkinCareBookingSystem",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "SkinCareBookingSystem\\wwwroot",
+      "Source": "SkinCareBookingSystem",
+      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "BasePath": "_content/SkinCareBookingSystem",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\ciel.jpg",
+      "SourceId": "SkinCareBookingSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "BasePath": "_content/SkinCareBookingSystem",
+      "RelativePath": "images/ciel.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\ciel.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\cutber.jpg",
+      "SourceId": "SkinCareBookingSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "BasePath": "_content/SkinCareBookingSystem",
+      "RelativePath": "images/cutber.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\cutber.jpg"
+    }
+  ]
 }

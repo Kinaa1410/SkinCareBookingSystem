@@ -1,6 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.AspNetCore.Http;
 using System.Linq;
 
 namespace SkinCareBookingSystem.Config
@@ -9,23 +8,19 @@ namespace SkinCareBookingSystem.Config
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            var fileParams = context.ApiDescription.ParameterDescriptions
-                .Where(p => p.Type == typeof(IFormFile))
-                .ToList();
+            // Check if any parameter has IFormFile
+            var fileParam = context.ApiDescription.ActionDescriptor.Parameters
+                .FirstOrDefault(p => p.ParameterType == typeof(IFormFile));
 
-            foreach (var param in fileParams)
+            if (fileParam != null)
             {
-                operation.Parameters.Add(new OpenApiParameter
+                // Modify the Swagger schema for file parameters to be of type "string" with "binary" format
+                var fileParamSwagger = operation.Parameters.FirstOrDefault(p => p.Name == fileParam.Name);
+                if (fileParamSwagger != null)
                 {
-                    Name = param.Name,
-                    In = ParameterLocation.Header,  // This is how you handle form-data in Swagger now
-                    Required = true,
-                    Schema = new OpenApiSchema
-                    {
-                        Type = "string",
-                        Format = "binary"  // Specify the binary format for file uploads
-                    }
-                });
+                    fileParamSwagger.Schema.Type = "string";
+                    fileParamSwagger.Schema.Format = "binary";
+                }
             }
         }
     }
