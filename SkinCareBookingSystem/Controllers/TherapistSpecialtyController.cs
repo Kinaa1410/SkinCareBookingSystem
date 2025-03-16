@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace SkinCareBookingSystem.Controllers
 {
-    [Authorize(Roles = "Admin, Staff")]
     [Route("api/[controller]")]
     [ApiController]
     public class TherapistSpecialtyController : ControllerBase

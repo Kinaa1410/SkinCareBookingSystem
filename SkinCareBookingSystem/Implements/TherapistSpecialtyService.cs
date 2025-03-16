@@ -21,11 +21,8 @@ namespace SkinCareBookingSystem.Implements
                 .Include(ts => ts.ServiceCategory)
                 .Select(ts => new TherapistSpecialtyDTO
                 {
-                    Id = ts.Id,
                     TherapistId = ts.TherapistId,
-                    TherapistName = ts.Therapist.UserName,
                     ServiceCategoryId = ts.ServiceCategoryId,
-                    ServiceCategoryName = ts.ServiceCategory.Name
                 }).ToListAsync();
         }
 
@@ -36,9 +33,7 @@ namespace SkinCareBookingSystem.Implements
                 .Include(ts => ts.ServiceCategory)
                 .Select(ts => new TherapistSpecialtyDTO
                 {
-                    Id = ts.Id,
                     ServiceCategoryId = ts.ServiceCategoryId,
-                    ServiceCategoryName = ts.ServiceCategory.Name
                 }).ToListAsync();
         }
 
@@ -70,7 +65,6 @@ namespace SkinCareBookingSystem.Implements
 
             return new TherapistSpecialtyDTO
             {
-                Id = therapistSpecialty.Id,
                 TherapistId = therapistSpecialty.TherapistId,
                 ServiceCategoryId = therapistSpecialty.ServiceCategoryId
             };
@@ -129,11 +123,12 @@ namespace SkinCareBookingSystem.Implements
             // Return the updated specialty
             return new TherapistSpecialtyDTO
             {
-                Id = therapistSpecialty.Id,
                 TherapistId = therapistSpecialty.TherapistId,
                 ServiceCategoryId = therapistSpecialty.ServiceCategoryId
             };
         }
+
+
 
 
     }
