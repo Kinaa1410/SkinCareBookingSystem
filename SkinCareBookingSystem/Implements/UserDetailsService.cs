@@ -51,46 +51,80 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetailsDTO, IFormFile? avatarFile)
+        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetails, IFormFile? avatarFile)
         {
-            string avatarPath = null;
-
-            // Handle file upload if provided
-            if (avatarFile?.Length > 0)
+            if (!Directory.Exists(_imageDirectory))
             {
-                // Ensure the image directory exists
                 Directory.CreateDirectory(_imageDirectory);
+            }
 
-                // Generate a unique file name to prevent collisions
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
-                var filePath = Path.Combine(_imageDirectory, fileName);
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                var avatarPath = Path.Combine(_imageDirectory, avatarFile.FileName);
 
-                // Save the file to the server
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                // Save the avatar file to disk
+                using (var stream = new FileStream(avatarPath, FileMode.Create))
                 {
                     await avatarFile.CopyToAsync(stream);
                 }
 
-                // Store the relative URL for the avatar image
-                avatarPath = $"/images/{fileName}";
+                // Store the relative file path in the Avatar field
+                userDetails.Avatar = Path.Combine("images", avatarFile.FileName);
             }
 
-            // Create the user details object
-            var userDetails = new UserDetails
+            var userDetail = new UserDetails
             {
-                UserId = userDetailsDTO.UserId,
-                FirstName = userDetailsDTO.FirstName,
-                LastName = userDetailsDTO.LastName,
-                Address = userDetailsDTO.Address,
-                Gender = userDetailsDTO.Gender,
-                Avatar = avatarPath // Null if no avatar file was uploaded
+                UserId = userDetails.UserId,
+                FirstName = userDetails.FirstName,
+                LastName = userDetails.LastName,
+                Address = userDetails.Address,
+                Gender = userDetails.Gender,
+                Avatar = userDetails.Avatar // Store the file path here
             };
 
-            // Save to the database
-            _context.UserDetails.Add(userDetails);
+            _context.UserDetails.Add(userDetail);
             await _context.SaveChangesAsync();
 
-            // Return the DTO with the user details
+            return new UserDetailsDTO
+            {
+                UserId = userDetail.UserId,
+                FirstName = userDetail.FirstName,
+                LastName = userDetail.LastName,
+                Address = userDetail.Address,
+                Gender = userDetail.Gender,
+                Avatar = userDetail.Avatar // Return the stored file path
+            };
+        }
+
+        public async Task<UserDetailsDTO> UpdateUserDetailsAsync(UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile? avatarFile)
+        {
+            var userDetails = await _context.UserDetails.FirstOrDefaultAsync(ud => ud.UserId == updateUserDetailsDTO.UserId);
+            if (userDetails == null)
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            userDetails.FirstName = updateUserDetailsDTO.FirstName;
+            userDetails.LastName = updateUserDetailsDTO.LastName;
+            userDetails.Address = updateUserDetailsDTO.Address;
+            userDetails.Gender = updateUserDetailsDTO.Gender;
+
+            if (avatarFile != null && avatarFile.Length > 0)
+            {
+                var avatarPath = Path.Combine(_imageDirectory, avatarFile.FileName);
+
+                // Save the avatar file to disk
+                using (var stream = new FileStream(avatarPath, FileMode.Create))
+                {
+                    await avatarFile.CopyToAsync(stream);
+                }
+
+                // Store the relative file path in the Avatar field
+                userDetails.Avatar = Path.Combine("images", avatarFile.FileName);
+            }
+
+            await _context.SaveChangesAsync();
+
             return new UserDetailsDTO
             {
                 UserId = userDetails.UserId,
@@ -98,50 +132,11 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetails.LastName,
                 Address = userDetails.Address,
                 Gender = userDetails.Gender,
-                Avatar = userDetails.Avatar
+                Avatar = userDetails.Avatar // Return the stored file path
             };
         }
 
 
-
-        public async Task<bool> UpdateUserDetailsAsync(int userId, UpdateUserDetailsDTO userDetailsDTO, IFormFile avatarFile)
-        {
-            // Find the user by their ID
-            var userDetails = await _context.UserDetails.FindAsync(userId);
-            if (userDetails == null) return false; // Return false if the user doesn't exist
-
-            // Handle file upload if provided
-            if (avatarFile?.Length > 0)
-            {
-                // Generate a unique file name for the avatar
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(avatarFile.FileName);
-                var filePath = Path.Combine(_imageDirectory, fileName);
-
-                // Ensure the image directory exists
-                Directory.CreateDirectory(_imageDirectory);
-
-                // Save the file to the server
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await avatarFile.CopyToAsync(stream);
-                }
-
-                // Update the avatar field with the relative file path
-                userDetails.Avatar = $"/images/{fileName}";
-            }
-
-            // Update other user details
-            userDetails.FirstName = userDetailsDTO.FirstName;
-            userDetails.LastName = userDetailsDTO.LastName;
-            userDetails.Address = userDetailsDTO.Address;
-            userDetails.Gender = userDetailsDTO.Gender;
-
-            // Mark the entity as modified and save changes
-            _context.Entry(userDetails).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return true;
-        }
 
 
         public async Task<bool> DeleteUserDetailsAsync(int userId)
@@ -152,22 +147,6 @@ namespace SkinCareBookingSystem.Implements
             _context.UserDetails.Remove(userDetails);
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        private async Task<byte[]> DownloadImageAsync(string url)
-        {
-            using (var httpClient = new HttpClient())
-            {
-                var response = await httpClient.GetAsync(url);
-                if (response.IsSuccessStatusCode)
-                {
-                    return await response.Content.ReadAsByteArrayAsync();
-                }
-                else
-                {
-                    throw new Exception("Failed to download the image.");
-                }
-            }
         }
     }
 }

@@ -306,3 +306,5 @@ C:\Users\hoang\Desktop\DOTNET\SkinCareBookingSystem\SkinCareBookingSystem\obj\De
 C:\Users\hoang\Desktop\DOTNET\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.pdb
 C:\Users\hoang\Desktop\DOTNET\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\SkinCareBookingSystem.genruntimeconfig.cache
 C:\Users\hoang\Desktop\DOTNET\SkinCareBookingSystem\SkinCareBookingSystem\obj\Debug\net8.0\ref\SkinCareBookingSystem.dll
+C:\Users\hoang\Desktop\DOTNET\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\Swashbuckle.AspNetCore.Annotations.dll
+C:\Users\hoang\Desktop\DOTNET\SkinCareBookingSystem\SkinCareBookingSystem\bin\Debug\net8.0\SkinCareBookingSystem.staticwebassets.runtime.json

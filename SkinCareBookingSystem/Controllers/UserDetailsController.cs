@@ -42,8 +42,8 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(userDetails);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateUserDetails(CreateUserDetailsDTO userDetailsDTO, IFormFile? avatarFile)
+        [HttpPost("CreateUserDetail")]
+        public async Task<IActionResult> CreateUserDetails([FromForm] CreateUserDetailsDTO userDetailsDTO, IFormFile? avatarFile)
         {
             var validationResult = await _createValidator.ValidateAsync(userDetailsDTO);
             if (!validationResult.IsValid)
@@ -52,33 +52,34 @@ namespace SkinCareBookingSystem.Controllers
             }
 
             var userDetails = await _userDetailsService.CreateUserDetailsAsync(userDetailsDTO, avatarFile);
-
             return CreatedAtAction(nameof(GetUserDetails), new { userId = userDetails.UserId }, userDetails);
         }
 
-
-
-
-
-        [HttpPut("{userId}")]
-        public async Task<IActionResult> UpdateUserDetails(int userId, UpdateUserDetailsDTO userDetailsDTO, IFormFile avatarFile)
+        [HttpPut("UpdateUser/{userId}")]
+        public async Task<IActionResult> UpdateUserDetails(int userId, [FromForm] UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile? avatarFile)
         {
-            var validationResult = await _updateValidator.ValidateAsync(userDetailsDTO);
+            if (userId != updateUserDetailsDTO.UserId)
+            {
+                return BadRequest("User ID mismatch.");
+            }
+
+            var validationResult = await _createValidator.ValidateAsync((IValidationContext)updateUserDetailsDTO);
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors);
             }
 
-            var result = await _userDetailsService.UpdateUserDetailsAsync(userId, userDetailsDTO, avatarFile);
-
-    
-            if (!result)
+            try
             {
-                return NotFound("User details not found");
+                var updatedUserDetails = await _userDetailsService.UpdateUserDetailsAsync(updateUserDetailsDTO, avatarFile);
+                return Ok(new { Message = "User details updated successfully.", UserDetails = updatedUserDetails });
             }
-
-            return NoContent();
+            catch (KeyNotFoundException)
+            {
+                return NotFound("User not found.");
+            }
         }
+
 
 
         [Authorize(Roles = "Admin")]

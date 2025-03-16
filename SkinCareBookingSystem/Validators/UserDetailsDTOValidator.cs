@@ -26,9 +26,7 @@ namespace SkinCareBookingSystem.Validators
                 .Must(g => g == "Male" || g == "Female" || g == "Other")
                 .WithMessage("Gender must be 'Male', 'Female', or 'Other'.");
 
-            RuleFor(user => user.Avatar)
-                .Must(a => string.IsNullOrEmpty(a) || Uri.IsWellFormedUriString(a, UriKind.Absolute))
-                .WithMessage("Avatar must be a valid URL if provided.");
+
         }
     }
 
@@ -51,10 +49,6 @@ namespace SkinCareBookingSystem.Validators
                 .NotEmpty().WithMessage("Gender is required.")
                 .Must(g => g == "Male" || g == "Female" || g == "Other")
                 .WithMessage("Gender must be 'Male', 'Female', or 'Other'.");
-
-            RuleFor(user => user.Avatar)
-                .Must(a => string.IsNullOrEmpty(a) || Uri.IsWellFormedUriString(a, UriKind.Absolute))
-                .WithMessage("Avatar must be a valid URL if provided.");
         }
     }
 }
