@@ -85,7 +85,7 @@ builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IValidator<CreateTimeSlotDTO>, CreateTimeSlotDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateTimeSlotDTO>, UpdateTimeSlotDTOValidator>();
 builder.Services.AddScoped<ITherapistSpecialtyService, TherapistSpecialtyService>();
-
+builder.Services.AddScoped<IImageService, ImageService>();
 
 
 builder.Services.AddCors(options =>
