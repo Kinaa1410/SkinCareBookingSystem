@@ -3,6 +3,7 @@ using SkinCareBookingSystem.Data;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Models;
+using SkinCareBookingSystem.Enums;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace SkinCareBookingSystem.Implements
                     {
                         TimeSlotId = slot.TimeSlotId,
                         TimeSlotDescription = slot.TimeSlot.Description,
-                        IsBooked = slot.IsAvailable
+                        Status = SlotStatus.Available
                     }).ToList()
                 }).ToListAsync();
         }
@@ -66,7 +67,7 @@ namespace SkinCareBookingSystem.Implements
                 {
                     TimeSlotId = slot.TimeSlotId,
                     TimeSlotDescription = slot.TimeSlot.Description,
-                    IsBooked = slot.IsAvailable
+                    Status = SlotStatus.Available
                 }).ToList()
             };
         }
@@ -101,7 +102,7 @@ namespace SkinCareBookingSystem.Implements
                     timeSlots.Add(new TherapistTimeSlot
                     {
                         TimeSlotId = timeSlot.TimeSlotId,
-                        IsAvailable = false // Set initial availability
+                        Status = SlotStatus.Available
                     });
                 }
                 else
@@ -129,48 +130,70 @@ namespace SkinCareBookingSystem.Implements
             return await GetScheduleByIdAsync(schedule.ScheduleId);
         }
 
-        private TimeSpan RoundToNextHour(TimeSpan time)
+        // Method to handle the booking process
+        public async Task<bool> BookTimeSlotAsync(int timeSlotId, int userId)
         {
-            // If the minutes part is greater than 0, round up to the next hour
-            if (time.Minutes > 0)
+            var slot = await _context.TherapistTimeSlots
+                .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId && ts.Status == SlotStatus.Available);
+
+            if (slot == null)
             {
-                return new TimeSpan(time.Hours + 1, 0, 0); // Round up to the next hour
+                throw new InvalidOperationException("Time slot is either already booked or unavailable.");
             }
 
-            // If already at the top of the hour, no rounding needed
-            return time;
+            // Set slot to InProcess (booking initiated)
+            slot.Status = SlotStatus.InProcess; // Correct usage of SlotStatus enum
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
+        // Method to handle payment completion
+        public async Task<bool> CompletePaymentAsync(int timeSlotId)
+        {
+            var slot = await _context.TherapistTimeSlots
+                .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId && ts.Status == SlotStatus.InProcess);
 
-        // Update a therapist's schedule, including time slots
+            if (slot == null)
+            {
+                throw new InvalidOperationException("Time slot is not in process or already booked.");
+            }
+
+            // Complete the booking and set status to Booked
+            slot.Status = SlotStatus.Booked; // Correct usage of SlotStatus enum
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        // Method to update a therapist's schedule, including time slots
         public async Task<bool> UpdateScheduleAsync(int scheduleId, UpdateTherapistScheduleDTO scheduleDTO)
         {
             var schedule = await _context.TherapistSchedules
                 .Include(ts => ts.TimeSlots)
-                .ThenInclude(ts => ts.TimeSlot) // Include TimeSlot details (StartTime, EndTime)
+                .ThenInclude(ts => ts.TimeSlot)
                 .FirstOrDefaultAsync(ts => ts.ScheduleId == scheduleId);
 
             if (schedule == null) return false;
 
-            // Step 1: Check if the DayOfWeek is changing
+            // Check if the DayOfWeek is changing
             bool isDayOfWeekChanged = schedule.DayOfWeek != scheduleDTO.DayOfWeek;
 
-            // Step 2: Update the working times
+            // Update working times
             schedule.DayOfWeek = scheduleDTO.DayOfWeek;
             schedule.StartWorkingTime = TimeSpan.Parse(scheduleDTO.StartTime);
             schedule.EndWorkingTime = TimeSpan.Parse(scheduleDTO.EndTime);
 
-            // Step 3: Remove old time slots if the day is changed or hours are adjusted
             var newTimeSlots = new List<TherapistTimeSlot>();
 
-            // If the day is changing, we remove old time slots for the previous day.
+            // Remove old time slots if the day is changed or hours are adjusted
             if (isDayOfWeekChanged)
             {
                 var oldTimeSlotsToRemove = schedule.TimeSlots.ToList();
                 _context.TherapistTimeSlots.RemoveRange(oldTimeSlotsToRemove);
             }
 
-            // Step 4: Generate the new slots based on the new working hours
+            // Generate the new slots based on the new working hours
             var startTime = schedule.StartWorkingTime;
             var endTime = schedule.EndWorkingTime;
 
@@ -181,24 +204,21 @@ namespace SkinCareBookingSystem.Implements
 
                 if (timeSlot != null)
                 {
-                    // Check if the slot already exists for this schedule and is not booked
                     var existingSlot = schedule.TimeSlots.FirstOrDefault(ts => ts.TimeSlotId == timeSlot.TimeSlotId);
                     if (existingSlot != null)
                     {
-                        // Retain the existing slot, keeping the IsBooked status
                         newTimeSlots.Add(new TherapistTimeSlot
                         {
                             TimeSlotId = timeSlot.TimeSlotId,
-                            IsAvailable = existingSlot.IsAvailable // Keep existing booking status
+                            Status = existingSlot.Status // Correct usage of SlotStatus enum
                         });
                     }
                     else
                     {
-                        // Add new slot with IsBooked = false
                         newTimeSlots.Add(new TherapistTimeSlot
                         {
                             TimeSlotId = timeSlot.TimeSlotId,
-                            IsAvailable = false // New slot is available
+                            Status = SlotStatus.Available
                         });
                     }
                 }
@@ -206,7 +226,6 @@ namespace SkinCareBookingSystem.Implements
                 startTime = startTime.Add(new TimeSpan(1, 0, 0)); // Add 1 hour for each slot
             }
 
-            // Step 5: Add the newly generated time slots to the schedule
             schedule.TimeSlots = newTimeSlots;
 
             _context.Entry(schedule).State = EntityState.Modified;
@@ -230,67 +249,28 @@ namespace SkinCareBookingSystem.Implements
             return true;
         }
 
-        // Get therapists working in a given time range
-        public async Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingInTimeRangeAsync(TimeSpan startTime, TimeSpan endTime)
+        private TimeSpan RoundToNextHour(TimeSpan time)
         {
-            return await _context.TherapistTimeSlots
-                .Include(ts => ts.TherapistSchedule)
-                .ThenInclude(s => s.TherapistUser)
-                .Include(ts => ts.TimeSlot) // Include related TimeSlot
-                .Where(ts => ts.TimeSlot.StartTime >= startTime && ts.TimeSlot.EndTime <= endTime && !ts.IsAvailable) // Check availability
-                .Select(ts => new TherapistScheduleDTO
-                {
-                    ScheduleId = ts.ScheduleId,
-                    TherapistId = ts.TherapistSchedule.TherapistId,
-                    TherapistName = ts.TherapistSchedule.TherapistUser.UserName,
-                    DayOfWeek = ts.TherapistSchedule.DayOfWeek,
-                    StartWorkingTime = ts.TherapistSchedule.StartWorkingTime,
-                    EndWorkingTime = ts.TherapistSchedule.EndWorkingTime,
-                    TimeSlots = new List<TherapistTimeSlotDTO>
-                    {
-                        new TherapistTimeSlotDTO
-                        {
-                            TimeSlotId = ts.TimeSlotId,
-                            TimeSlotDescription = ts.TimeSlot.Description,
-                            IsBooked = ts.IsAvailable
-                        }
-                    }
-                }).ToListAsync();
+            if (time.Minutes > 0)
+            {
+                return new TimeSpan(time.Hours + 1, 0, 0); // Round up to the next hour
+            }
+
+            return time; // No rounding needed if already at the top of the hour
         }
 
-        // Get therapists working on a given day in a time range
+        // Example implementation for missing interface methods:
+
+        // Get therapists working on a specific day within a time range
         public async Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingOnDayInTimeRangeAsync(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
         {
             return await _context.TherapistSchedules
+                .Where(ts => ts.DayOfWeek == dayOfWeek &&
+                            ts.StartWorkingTime <= endTime &&
+                            ts.EndWorkingTime >= startTime)
                 .Include(ts => ts.TherapistUser)
                 .Include(ts => ts.TimeSlots)
                 .ThenInclude(ts => ts.TimeSlot)
-                .Where(ts => ts.DayOfWeek == dayOfWeek && ts.TimeSlots.Any(slot => slot.TimeSlot.StartTime >= startTime && slot.TimeSlot.EndTime <= endTime))
-                .Select(ts => new TherapistScheduleDTO
-                {
-                    ScheduleId = ts.ScheduleId,
-                    TherapistId = ts.TherapistId,
-                    TherapistName = ts.TherapistUser.UserName,
-                    DayOfWeek = ts.DayOfWeek,
-                    StartWorkingTime = ts.StartWorkingTime,
-                    EndWorkingTime = ts.EndWorkingTime,
-                    TimeSlots = ts.TimeSlots.Where(slot => slot.TimeSlot.StartTime >= startTime && slot.TimeSlot.EndTime <= endTime)
-                                            .Select(slot => new TherapistTimeSlotDTO
-                                            {
-                                                TimeSlotId = slot.TimeSlotId,
-                                                TimeSlotDescription = slot.TimeSlot.Description,
-                                                IsBooked = slot.IsAvailable
-                                            }).ToList()
-                }).ToListAsync();
-        }
-
-        // Get schedules by therapist ID
-        public async Task<IEnumerable<TherapistScheduleDTO>> GetScheduleByTherapistIdAsync(int therapistId)
-        {
-            return await _context.TherapistSchedules
-                .Include(ts => ts.TherapistUser)
-                .Include(ts => ts.TimeSlots)
-                .Where(ts => ts.TherapistId == therapistId)
                 .Select(ts => new TherapistScheduleDTO
                 {
                     ScheduleId = ts.ScheduleId,
@@ -303,9 +283,67 @@ namespace SkinCareBookingSystem.Implements
                     {
                         TimeSlotId = slot.TimeSlotId,
                         TimeSlotDescription = slot.TimeSlot.Description,
-                        IsBooked = slot.IsAvailable
+                        Status = SlotStatus.Available
                     }).ToList()
                 }).ToListAsync();
+        }
+
+        // Get therapists working in a specific time range
+        public async Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingInTimeRangeAsync(TimeSpan startTime, TimeSpan endTime)
+        {
+            return await _context.TherapistSchedules
+                .Where(ts => ts.StartWorkingTime <= endTime && ts.EndWorkingTime >= startTime)
+                .Include(ts => ts.TherapistUser)
+                .Include(ts => ts.TimeSlots)
+                .ThenInclude(ts => ts.TimeSlot)
+                .Select(ts => new TherapistScheduleDTO
+                {
+                    ScheduleId = ts.ScheduleId,
+                    TherapistId = ts.TherapistId,
+                    TherapistName = ts.TherapistUser.UserName,
+                    DayOfWeek = ts.DayOfWeek,
+                    StartWorkingTime = ts.StartWorkingTime,
+                    EndWorkingTime = ts.EndWorkingTime,
+                    TimeSlots = ts.TimeSlots.Select(slot => new TherapistTimeSlotDTO
+                    {
+                        TimeSlotId = slot.TimeSlotId,
+                        TimeSlotDescription = slot.TimeSlot.Description,
+                        Status = SlotStatus.Available
+                    }).ToList()
+                }).ToListAsync();
+        }
+
+        // Get schedule by therapist id
+        public async Task<TherapistScheduleDTO> GetScheduleByTherapistIdAsync(int therapistId)
+        {
+            var schedule = await _context.TherapistSchedules
+                .Include(ts => ts.TherapistUser)
+                .Include(ts => ts.TimeSlots)
+                .ThenInclude(ts => ts.TimeSlot)
+                .FirstOrDefaultAsync(ts => ts.TherapistId == therapistId);
+
+            if (schedule == null) return null;
+
+            return new TherapistScheduleDTO
+            {
+                ScheduleId = schedule.ScheduleId,
+                TherapistId = schedule.TherapistId,
+                TherapistName = schedule.TherapistUser.UserName,
+                DayOfWeek = schedule.DayOfWeek,
+                StartWorkingTime = schedule.StartWorkingTime,
+                EndWorkingTime = schedule.EndWorkingTime,
+                TimeSlots = schedule.TimeSlots.Select(slot => new TherapistTimeSlotDTO
+                {
+                    TimeSlotId = slot.TimeSlotId,
+                    TimeSlotDescription = slot.TimeSlot.Description,
+                    Status = SlotStatus.Available
+                }).ToList()
+            };
+        }
+
+        Task<IEnumerable<TherapistScheduleDTO>> ITherapistScheduleService.GetScheduleByTherapistIdAsync(int therapistId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

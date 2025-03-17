@@ -3,6 +3,7 @@ using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using SkinCareBookingSystem.Enums;
 
 namespace SkinCareBookingSystem.Controllers
 {
@@ -35,17 +36,28 @@ namespace SkinCareBookingSystem.Controllers
         [HttpPost("{scheduleId}")]
         public async Task<ActionResult<TherapistTimeSlotDTO>> CreateTimeSlotForTherapist(int scheduleId)
         {
-            var newTimeSlot = await _timeSlotService.CreateTimeSlotForTherapistAsync(scheduleId);
-            return CreatedAtAction(nameof(GetTimeSlotById), new { id = newTimeSlot.ScheduleId }, newTimeSlot);
+            // Get the list of created time slots
+            var newTimeSlots = await _timeSlotService.CreateTimeSlotForTherapistAsync(scheduleId);
+
+            // Check if the list is not empty
+            if (newTimeSlots == null || !newTimeSlots.Any())
+            {
+                return BadRequest("No time slots were created.");
+            }
+            var firstTimeSlot = newTimeSlots.First();
+            return CreatedAtAction(nameof(GetTimeSlotById), new { id = firstTimeSlot.Id }, firstTimeSlot);
         }
 
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTimeSlot(int id, [FromBody] bool isBooked)
+        public async Task<IActionResult> UpdateTimeSlot(int id, [FromBody] SlotStatus status)
         {
-            var updated = await _timeSlotService.UpdateTimeSlotAsync(id, isBooked);
+            var updated = await _timeSlotService.UpdateTimeSlotAsync(id, status);
             if (!updated) return NotFound();
             return NoContent();
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTimeSlot(int id)

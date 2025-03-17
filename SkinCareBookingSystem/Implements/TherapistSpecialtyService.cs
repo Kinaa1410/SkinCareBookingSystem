@@ -21,6 +21,7 @@ namespace SkinCareBookingSystem.Implements
                 .Include(ts => ts.ServiceCategory)
                 .Select(ts => new TherapistSpecialtyDTO
                 {
+                    Id  = ts.Id,
                     TherapistId = ts.TherapistId,
                     ServiceCategoryId = ts.ServiceCategoryId,
                 }).ToListAsync();

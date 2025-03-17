@@ -10,8 +10,6 @@ namespace SkinCareBookingSystem.Models
 
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
-
-        [Required]
         public string ImageURL { get; set; } = string.Empty;
 
         public Service Service { get; set; } = null!;

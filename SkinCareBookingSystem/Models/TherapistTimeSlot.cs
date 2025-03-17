@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SkinCareBookingSystem.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SkinCareBookingSystem.Models
@@ -14,7 +15,7 @@ namespace SkinCareBookingSystem.Models
         [ForeignKey("TimeSlot")]
         public int TimeSlotId { get; set; }
 
-        public bool IsAvailable { get; set; } = true;
+        public SlotStatus Status { get; set; } = SlotStatus.Available;
 
         public TherapistSchedule TherapistSchedule { get; set; } = null!;
         public TimeSlot TimeSlot { get; set; } = null!;
