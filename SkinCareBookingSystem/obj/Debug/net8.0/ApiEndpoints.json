@@ -325,14 +325,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ServiceId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "ImageFile",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
+        "Name": "createDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateImageServiceDTO",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -351,14 +346,9 @@
         "IsRequired": true
       },
       {
-        "Name": "ServiceId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "ImageFile",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
+        "Name": "updateDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateImageServiceDTO",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -1506,39 +1496,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "UserId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "FirstName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "LastName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Address",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Gender",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Avatar",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "avatarFile",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
+        "Name": "userDetailsDTO",
+        "Type": "SkinCareBookingSystem.DTOs.CreateUserDetailsDTO",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -1552,39 +1512,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "UserId",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "FirstName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "LastName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Address",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Gender",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Avatar",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "avatarFile",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
+        "Name": "updateUserDetailsDTO",
+        "Type": "SkinCareBookingSystem.DTOs.UpdateUserDetailsDTO",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

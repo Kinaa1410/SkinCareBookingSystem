@@ -2,7 +2,6 @@
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using FluentValidation;
-using SkinCareBookingSystem.Validators;
 
 namespace SkinCareBookingSystem.Controllers
 {
@@ -14,7 +13,9 @@ namespace SkinCareBookingSystem.Controllers
         private readonly IValidator<CreateImageServiceDTO> _createValidator;
         private readonly IValidator<UpdateImageServiceDTO> _updateValidator;
 
-        public ImageServiceController(IImageService imageService, IValidator<CreateImageServiceDTO> createValidator, IValidator<UpdateImageServiceDTO> updateValidator)
+        public ImageServiceController(IImageService imageService,
+            IValidator<CreateImageServiceDTO> createValidator,
+            IValidator<UpdateImageServiceDTO> updateValidator)
         {
             _imageService = imageService;
             _createValidator = createValidator;
@@ -22,7 +23,7 @@ namespace SkinCareBookingSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateImageService([FromForm] CreateImageServiceDTO createDTO)
+        public async Task<IActionResult> CreateImageService([FromBody] CreateImageServiceDTO createDTO)
         {
             var validationResult = await _createValidator.ValidateAsync(createDTO);
             if (!validationResult.IsValid)
@@ -35,7 +36,7 @@ namespace SkinCareBookingSystem.Controllers
         }
 
         [HttpPut("{imageServiceId}")]
-        public async Task<IActionResult> UpdateImageService(int imageServiceId, [FromForm] UpdateImageServiceDTO updateDTO)
+        public async Task<IActionResult> UpdateImageService(int imageServiceId, [FromBody] UpdateImageServiceDTO updateDTO)
         {
             var validationResult = await _updateValidator.ValidateAsync(updateDTO);
             if (!validationResult.IsValid)

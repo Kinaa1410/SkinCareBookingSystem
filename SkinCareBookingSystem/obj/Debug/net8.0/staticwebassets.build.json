@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "fqDzv9YbF534gcgukzlMXG2ZR2RSi7iZIssMsaSZhUw=",
+  "Hash": "RrnrDRIqCj80PrMfpflLo6NILTHZtb9F0ADCYitLUSQ=",
   "Source": "SkinCareBookingSystem",
   "BasePath": "_content/SkinCareBookingSystem",
   "Mode": "Default",
@@ -72,6 +72,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\iroha.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\Service Images\\733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
+      "SourceId": "SkinCareBookingSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "BasePath": "_content/SkinCareBookingSystem",
+      "RelativePath": "Service Images/733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Service Images\\733a1f4f-9b89-430b-9fd0-9e26daa88216.png"
     }
   ]
 }
