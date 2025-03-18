@@ -15,7 +15,7 @@ namespace SkinCareBookingSystem.DTOs
         public int ServiceId { get; set; }
 
         [Required]
-        public IFormFile ImageFile { get; set; } // For the image file upload
+        public string ImageURL { get; set; } 
     }
 
     public class UpdateImageServiceDTO
@@ -23,6 +23,6 @@ namespace SkinCareBookingSystem.DTOs
         [Required]
         public int ServiceId { get; set; }
 
-        public IFormFile? ImageFile { get; set; } // Image file is optional for update
+        public string? ImageURL { get; set; }
     }
 }

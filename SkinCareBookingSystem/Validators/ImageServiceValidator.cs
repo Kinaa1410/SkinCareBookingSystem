@@ -10,9 +10,9 @@ namespace SkinCareBookingSystem.Validators
             RuleFor(x => x.ServiceId)
                 .GreaterThan(0).WithMessage("ServiceId must be a positive integer.");
 
-            RuleFor(x => x.ImageFile)
-                .NotNull().WithMessage("Image file is required.")
-                .Must(file => file.ContentType.Contains("image")).WithMessage("The file must be an image.");
+            RuleFor(x => x.ImageURL)
+                .NotEmpty().WithMessage("Image URL is required.")
+                .Must(url => Uri.TryCreate(url, UriKind.Absolute, out _)).WithMessage("Image URL must be a valid absolute URL.");
         }
     }
 
@@ -23,8 +23,9 @@ namespace SkinCareBookingSystem.Validators
             RuleFor(x => x.ServiceId)
                 .GreaterThan(0).WithMessage("ServiceId must be a positive integer.");
 
-            RuleFor(x => x.ImageFile)
-                .Must(file => file == null || file.ContentType.Contains("image")).WithMessage("The file must be an image.");
+            RuleFor(x => x.ImageURL)
+                .Must(url => string.IsNullOrEmpty(url) || Uri.TryCreate(url, UriKind.Absolute, out _))
+                .WithMessage("Image URL must be a valid absolute URL when provided.");
         }
     }
 }

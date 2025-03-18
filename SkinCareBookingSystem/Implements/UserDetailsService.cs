@@ -3,14 +3,12 @@ using SkinCareBookingSystem.Data;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Models;
-using System.IO;
 
 namespace SkinCareBookingSystem.Implements
 {
     public class UserDetailsService : IUserDetailsService
     {
         private readonly BookingDbContext _context;
-        private readonly string _imageDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
         public UserDetailsService(BookingDbContext context)
         {
@@ -51,23 +49,8 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetails, IFormFile? avatarFile)
+        public async Task<UserDetailsDTO> CreateUserDetailsAsync(CreateUserDetailsDTO userDetails)
         {
-            if (!Directory.Exists(_imageDirectory))
-            {
-                Directory.CreateDirectory(_imageDirectory);
-            }
-
-            if (avatarFile != null && avatarFile.Length > 0)
-            {
-                var avatarPath = Path.Combine(_imageDirectory, avatarFile.FileName);
-                using (var stream = new FileStream(avatarPath, FileMode.Create))
-                {
-                    await avatarFile.CopyToAsync(stream);
-                }
-                userDetails.Avatar = Path.Combine("images", avatarFile.FileName);
-            }
-
             var userDetail = new UserDetails
             {
                 UserId = userDetails.UserId,
@@ -75,7 +58,7 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetails.LastName,
                 Address = userDetails.Address,
                 Gender = userDetails.Gender,
-                Avatar = userDetails.Avatar
+                Avatar = userDetails.Avatar // Now expects Cloudinary URL
             };
 
             _context.UserDetails.Add(userDetail);
@@ -92,18 +75,15 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        public async Task<UserDetailsDTO> UpdateUserDetailsAsync(UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile? avatarFile)
+        public async Task<UserDetailsDTO> UpdateUserDetailsAsync(UpdateUserDetailsDTO updateUserDetailsDTO)
         {
-            // Find the user by UserId
             var userDetails = await _context.UserDetails.FirstOrDefaultAsync(ud => ud.UserId == updateUserDetailsDTO.UserId);
 
-            // If user not found, throw error
             if (userDetails == null)
             {
                 throw new KeyNotFoundException("User not found.");
             }
 
-            // Update the user's details only if new values are provided
             if (!string.IsNullOrEmpty(updateUserDetailsDTO.FirstName))
             {
                 userDetails.FirstName = updateUserDetailsDTO.FirstName;
@@ -124,24 +104,13 @@ namespace SkinCareBookingSystem.Implements
                 userDetails.Gender = updateUserDetailsDTO.Gender;
             }
 
-            if (avatarFile != null && avatarFile.Length > 0)
+            if (!string.IsNullOrEmpty(updateUserDetailsDTO.Avatar))
             {
-                var avatarPath = Path.Combine(_imageDirectory, avatarFile.FileName);
-
-                // Save the new avatar file to disk
-                using (var stream = new FileStream(avatarPath, FileMode.Create))
-                {
-                    await avatarFile.CopyToAsync(stream);
-                }
-
-                // Store the relative file path in the Avatar field
-                userDetails.Avatar = Path.Combine("images", avatarFile.FileName);
+                userDetails.Avatar = updateUserDetailsDTO.Avatar; // Now updates with Cloudinary URL
             }
 
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
-            // Return the updated user details
             return new UserDetailsDTO
             {
                 UserId = userDetails.UserId,
@@ -149,15 +118,9 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetails.LastName,
                 Address = userDetails.Address,
                 Gender = userDetails.Gender,
-                Avatar = userDetails.Avatar // Return the updated file path
+                Avatar = userDetails.Avatar
             };
         }
-
-
-
-
-
-
 
         public async Task<bool> DeleteUserDetailsAsync(int userId)
         {

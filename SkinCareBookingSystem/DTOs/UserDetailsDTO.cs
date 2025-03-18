@@ -26,8 +26,6 @@ namespace SkinCareBookingSystem.DTOs
         public string Address { get; set; } = string.Empty;
 
         public string Gender { get; set; } = string.Empty;
-
-        [SwaggerIgnore]
         public string Avatar { get; set; } = string.Empty; 
     }
 
@@ -38,7 +36,6 @@ namespace SkinCareBookingSystem.DTOs
         public string LastName { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
-        [SwaggerIgnore]
         public string Avatar { get; set; } = string.Empty;
     }
 }

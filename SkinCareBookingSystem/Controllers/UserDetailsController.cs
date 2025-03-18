@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 
@@ -44,7 +43,7 @@ namespace SkinCareBookingSystem.Controllers
         }
 
         [HttpPost("CreateUserDetail")]
-        public async Task<IActionResult> CreateUserDetails([FromForm] CreateUserDetailsDTO userDetailsDTO, IFormFile? avatarFile)
+        public async Task<IActionResult> CreateUserDetails([FromBody] CreateUserDetailsDTO userDetailsDTO)
         {
             var validationResult = await _createValidator.ValidateAsync(userDetailsDTO);
             if (!validationResult.IsValid)
@@ -52,24 +51,23 @@ namespace SkinCareBookingSystem.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
-            var userDetails = await _userDetailsService.CreateUserDetailsAsync(userDetailsDTO, avatarFile);
+            var userDetails = await _userDetailsService.CreateUserDetailsAsync(userDetailsDTO);
             return CreatedAtAction(nameof(GetUserDetails), new { userId = userDetails.UserId }, userDetails);
         }
 
         [HttpPut("UpdateUser")]
-        public async Task<IActionResult> UpdateUserDetails([FromForm] UpdateUserDetailsDTO updateUserDetailsDTO, IFormFile? avatarFile)
+        public async Task<IActionResult> UpdateUserDetails([FromBody] UpdateUserDetailsDTO updateUserDetailsDTO)
         {
             // Validate incoming update request directly
             //var validationResult = await _updateValidator.ValidateAsync(updateUserDetailsDTO);
             //if (!validationResult.IsValid)
             //{
-              //  return BadRequest(validationResult.Errors);
+            //    return BadRequest(validationResult.Errors);
             //}
 
             try
             {
-                // Update the user details
-                var updatedUserDetails = await _userDetailsService.UpdateUserDetailsAsync(updateUserDetailsDTO, avatarFile);
+                var updatedUserDetails = await _userDetailsService.UpdateUserDetailsAsync(updateUserDetailsDTO);
                 return Ok(new { Message = "User details updated successfully.", UserDetails = updatedUserDetails });
             }
             catch (KeyNotFoundException)
@@ -77,9 +75,6 @@ namespace SkinCareBookingSystem.Controllers
                 return NotFound("User not found.");
             }
         }
-
-
-
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{userId}")]
