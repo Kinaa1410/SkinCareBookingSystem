@@ -38,6 +38,12 @@ namespace SkinCareBookingSystem.Implements
 
             if (userDetails == null) return null;
 
+            var isServiceImage = await _context.ImageServices.AnyAsync(img => img.ImageURL == userDetails.Avatar);
+            if (isServiceImage)
+            {
+                userDetails.Avatar = null;
+            }
+
             return new UserDetailsDTO
             {
                 UserId = userDetails.UserId,
