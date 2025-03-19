@@ -87,11 +87,12 @@ namespace SkinCareBookingSystem.Controllers
         {
             long orderId = long.Parse(orderCode);
             var transaction = await _context.Transactions.FirstOrDefaultAsync(x => x.ID == orderId);
-            var booking = await _context.Bookings.FirstOrDefaultAsync(x => x.BookingId == transaction.BookingID);
+            var booking = await _context.Bookings.Include(x => x.TherapistTimeSlot).FirstOrDefaultAsync(x => x.BookingId == transaction.BookingID);
 
             if (code == "00" && status == "PAID")
             {
                 booking.IsPaid = true;
+                booking.TherapistTimeSlot.Status = SlotStatus.Booked;
             }
 
             _context.Bookings.Update(booking);
