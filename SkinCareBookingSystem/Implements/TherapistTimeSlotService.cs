@@ -127,5 +127,29 @@ namespace SkinCareBookingSystem.Implements
 
             return true;
         }
+
+        public async Task ResetWeeklyTimeSlotsAsync()
+        {
+            var currentWeek = System.DateTime.Now.DayOfYear / 7; // Rough week calculation
+            var timeSlots = await _context.TherapistTimeSlots
+                .Include(ts => ts.TimeSlot)
+                .ToListAsync();
+
+            foreach (var timeSlot in timeSlots)
+            {
+                var booking = await _context.Bookings
+                    .FirstOrDefaultAsync(b => b.TimeSlotId == timeSlot.Id);
+                if (booking != null)
+                {
+                    var bookingWeek = booking.AppointmentDate.DayOfYear / 7;
+                    if (bookingWeek < currentWeek && timeSlot.Status != SlotStatus.Available)
+                    {
+                        timeSlot.Status = SlotStatus.Available;
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

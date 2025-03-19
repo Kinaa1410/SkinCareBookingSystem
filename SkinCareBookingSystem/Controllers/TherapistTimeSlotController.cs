@@ -4,6 +4,8 @@ using SkinCareBookingSystem.Interfaces;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using SkinCareBookingSystem.Enums;
+using Microsoft.AspNetCore.Authorization;
+using SkinCareBookingSystem.Implements;
 
 namespace SkinCareBookingSystem.Controllers
 {
@@ -65,6 +67,13 @@ namespace SkinCareBookingSystem.Controllers
             var deleted = await _timeSlotService.DeleteTimeSlotAsync(id);
             if (!deleted) return NotFound();
             return NoContent();
+        }
+
+        [HttpPost("reset-weekly-timeslots")]
+        public async Task<IActionResult> ResetWeeklyTimeSlots()
+        {
+            await _timeSlotService.ResetWeeklyTimeSlotsAsync();
+            return Ok(new { message = "Weekly time slots reset successfully" });
         }
     }
 }

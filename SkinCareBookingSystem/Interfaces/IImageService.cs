@@ -8,5 +8,6 @@ namespace SkinCareBookingSystem.Interfaces
         Task<ImageServiceDTO> UpdateImageServiceAsync(int imageServiceId, UpdateImageServiceDTO imageServiceDTO);
         Task<bool> DeleteImageServiceAsync(int imageServiceId);
         Task<ImageServiceDTO> GetImageServiceAsync(int imageServiceId);
+        Task<IEnumerable<ImageServiceDTO>> GetImageServiceByServiceIdAsync(int serviceId);
     }
 }

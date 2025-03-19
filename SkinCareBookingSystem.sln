@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SkinCareBookingSystem", "SkinCareBookingSystem\SkinCareBookingSystem.csproj", "{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkinCareBookingSystem", "SkinCareBookingSystem\SkinCareBookingSystem.csproj", "{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayOSService", "PayOSService\PayOSService.csproj", "{6B34FD44-E5D8-4BA0-A81F-A37DD0B6CB06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA8D76A8-6B60-4E70-A633-6E6AC5C04723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B34FD44-E5D8-4BA0-A81F-A37DD0B6CB06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B34FD44-E5D8-4BA0-A81F-A37DD0B6CB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B34FD44-E5D8-4BA0-A81F-A37DD0B6CB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B34FD44-E5D8-4BA0-A81F-A37DD0B6CB06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

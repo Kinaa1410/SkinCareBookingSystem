@@ -1,18 +1,103 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using PayOSService.Config;
+using PayOSService.DTO;
+using PayOSService.Services;
+using SkinCareBookingSystem.Data;
+using SkinCareBookingSystem.Enums;
 using SkinCareBookingSystem.Implements;
+using SkinCareBookingSystem.Interfaces;
+using SkinCareBookingSystem.Util;
 
 namespace SkinCareBookingSystem.Controllers
 {
     public class PaymentController : Controller
     {
         private readonly VNPAYPayment _vnpayPayment;
-
+        private readonly IBookingService _bookingService;
+        private readonly BookingDbContext _context;
+        private readonly PayOSConfig _payOSConfig;
+        private readonly IPayOSService _payOsService;
+        private readonly ITherapistScheduleService _therapistScheduleService;
         // Constructor to inject the VNPAYPayment service
-        public PaymentController()
+        public PaymentController(IBookingService bookingService, PayOSConfig payOsConfig, BookingDbContext context, IPayOSService payOsService, IOptions<PayOSConfig> payOSConfig, ITherapistScheduleService therapistScheduleService)
         {
             var tmnCode = "YourMerchantCode"; // Replace with your actual Merchant Code
             var secretKey = "YourSecretKey";  // Replace with your actual Secret Key
-            _vnpayPayment = new VNPAYPayment(tmnCode, secretKey);
+            _bookingService = bookingService;
+            _context = context;
+            _vnpayPayment = new VNPAYPayment(tmnCode, secretKey, context);
+            _payOsService = payOsService;
+            _payOSConfig = payOSConfig.Value;
+            _therapistScheduleService = therapistScheduleService;
+        }
+
+        [HttpPost("create-payos-payment")]
+        public async Task<IActionResult> CreatePayment(int bookingID)
+        {
+            string paymentLink = "";
+            var booking = await _context.Bookings.FirstOrDefaultAsync(x => x.BookingId == bookingID);
+            if (booking == null) return NotFound();
+
+            var transactions = await _context.Transactions.FirstOrDefaultAsync(x => x.BookingID == bookingID);
+
+            if (transactions != null && !string.IsNullOrEmpty(transactions.PaymentLink))
+            {
+                return Ok(new { paymentLink = transactions.PaymentLink });
+            }
+
+            var code = ApplicationUtil.GetNewID();
+            paymentLink = await _payOsService.CreatePaymentAsync(new CreatePaymentDTO()
+            {
+                OrderCode = code,
+                Content = "Thanh toan",
+                RequiredAmount = (int)booking.TotalPrice,
+            });
+
+            await _vnpayPayment.AddTransactionAsync(code, booking.BookingId, paymentLink, (decimal)booking.TotalPrice);
+
+            // Do not set to Booked here; wait for payment confirmation
+            return Ok(new { paymentLink });
+        }
+
+        [HttpPost("confirm-payment")]
+        public async Task<IActionResult> ConfirmPayment(int bookingId)
+        {
+            var booking = await _context.Bookings.FirstOrDefaultAsync(x => x.BookingId == bookingId);
+            if (booking == null) return NotFound();
+
+            var timeSlot = await _context.TherapistTimeSlots.FindAsync(booking.TimeSlotId);
+            if (timeSlot != null)
+            {
+                await _therapistScheduleService.CompletePaymentAsync(timeSlot.TimeSlotId);
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("payment-return")]
+        public async Task<IActionResult> PaymentReturn(
+        [FromQuery] string code,
+        [FromQuery] string id,
+        [FromQuery] string cancel,
+        [FromQuery] string status,
+        [FromQuery] string orderCode)
+        {
+            long orderId = long.Parse(orderCode);
+            var transaction = await _context.Transactions.FirstOrDefaultAsync(x => x.ID == orderId);
+            var booking = await _context.Bookings.FirstOrDefaultAsync(x => x.BookingId == transaction.BookingID);
+
+            if (code == "00" && status == "PAID")
+            {
+                booking.IsPaid = true;
+            }
+
+            _context.Bookings.Update(booking);
+            await _context.SaveChangesAsync();
+
+            return Redirect(_payOSConfig.ClientRedirectUrl);
         }
 
         // Action to redirect to VNPAY
@@ -62,6 +147,8 @@ namespace SkinCareBookingSystem.Controllers
             var paymentUrl = _vnpayPayment.BuildPaymentUrl(orderRef, amount);
             return Ok(new { PaymentUrl = paymentUrl });
         }
+
+
 
 
     }

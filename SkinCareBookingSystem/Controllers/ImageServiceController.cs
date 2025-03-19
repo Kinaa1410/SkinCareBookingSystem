@@ -80,5 +80,19 @@ namespace SkinCareBookingSystem.Controllers
                 return NotFound("Image service not found.");
             }
         }
+
+        [HttpGet("service/{serviceId}")]
+        public async Task<IActionResult> GetImageServiceByServiceId(int serviceId)
+        {
+            try
+            {
+                var imageServices = await _imageService.GetImageServiceByServiceIdAsync(serviceId);
+                return Ok(imageServices);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("No image services found for this service.");
+            }
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace SkinCareBookingSystem.Interfaces
         Task<TherapistScheduleDTO> CreateScheduleAsync(CreateTherapistScheduleDTO scheduleDTO);
         Task<bool> UpdateScheduleAsync(int scheduleId, UpdateTherapistScheduleDTO scheduleDTO);
         Task<bool> DeleteScheduleAsync(int scheduleId);
+        Task<bool> BookTimeSlotAsync(int timeSlotId, int userId);
+        Task<bool> CompletePaymentAsync(int timeSlotId);
         Task<IEnumerable<TherapistScheduleDTO>> GetScheduleByTherapistIdAsync(int therapistId);
         Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingInTimeRangeAsync(TimeSpan startTime, TimeSpan endTime);
         Task<IEnumerable<TherapistScheduleDTO>> GetTherapistsWorkingOnDayInTimeRangeAsync(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime);

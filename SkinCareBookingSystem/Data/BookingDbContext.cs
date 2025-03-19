@@ -26,6 +26,7 @@ namespace SkinCareBookingSystem.Data
         public DbSet<ServiceRecommendation> ServiceRecommendations { get; set; } // ✅ Added
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<TherapistSpecialty> TherapistSpecialties { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -131,6 +132,10 @@ namespace SkinCareBookingSystem.Data
                 .WithMany(sc => sc.TherapistSpecialties)  // A ServiceCategory can have many therapists
                 .HasForeignKey(ts => ts.ServiceCategoryId)  // Foreign key in the TherapistSpecialty table
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Amount)
+                .HasColumnType("decimal(18,0)");
 
             base.OnModelCreating(modelBuilder);
         }

@@ -141,14 +141,12 @@ namespace SkinCareBookingSystem.Implements
                 throw new InvalidOperationException("Time slot is either already booked or unavailable.");
             }
 
-            // Set slot to InProcess (booking initiated)
-            slot.Status = SlotStatus.InProcess; // Correct usage of SlotStatus enum
+            slot.Status = SlotStatus.InProcess;
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        // Method to handle payment completion
         public async Task<bool> CompletePaymentAsync(int timeSlotId)
         {
             var slot = await _context.TherapistTimeSlots
@@ -159,8 +157,7 @@ namespace SkinCareBookingSystem.Implements
                 throw new InvalidOperationException("Time slot is not in process or already booked.");
             }
 
-            // Complete the booking and set status to Booked
-            slot.Status = SlotStatus.Booked; // Correct usage of SlotStatus enum
+            slot.Status = SlotStatus.Booked;
             await _context.SaveChangesAsync();
 
             return true;

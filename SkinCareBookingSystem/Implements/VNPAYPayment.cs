@@ -2,7 +2,9 @@
 using System.Collections.Specialized;
 using System.Security.Cryptography;
 using System.Text;
+using System.Transactions;
 using System.Web;
+using SkinCareBookingSystem.Data;
 
 namespace SkinCareBookingSystem.Implements
 {
@@ -10,11 +12,13 @@ namespace SkinCareBookingSystem.Implements
     {
         private readonly string _tmnCode;
         private readonly string _secretKey;
+        private readonly BookingDbContext _context;
 
-        public VNPAYPayment(string tmnCode, string secretKey)
+        public VNPAYPayment(string tmnCode, string secretKey, BookingDbContext context)
         {
             _tmnCode = tmnCode;
             _secretKey = secretKey;
+            _context = context;
         }
 
         // Build Payment URL with parameters
@@ -72,6 +76,22 @@ namespace SkinCareBookingSystem.Implements
                 var hashBytes = sha512.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
                 return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
             }
+        }
+
+        public async Task AddTransactionAsync(long id, int bookingID, string paymentLink, decimal amount)
+        {
+            var transaction = new Models.Transaction
+            {
+                ID = id,
+                BookingID = bookingID,
+                PaymentLink = paymentLink,
+                Amount = amount,
+                Date = DateTime.UtcNow
+            };
+
+            await _context.Transactions.AddAsync(transaction);
+            await _context.SaveChangesAsync();
+
         }
     }
 }

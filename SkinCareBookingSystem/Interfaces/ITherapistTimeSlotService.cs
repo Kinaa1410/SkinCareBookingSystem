@@ -21,5 +21,6 @@ namespace SkinCareBookingSystem.Interfaces
 
         // Delete a therapist's time slot
         Task<bool> DeleteTimeSlotAsync(int timeSlotId);
+        Task ResetWeeklyTimeSlotsAsync();
     }
 }
