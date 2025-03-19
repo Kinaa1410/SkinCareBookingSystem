@@ -14,22 +14,21 @@ namespace SkinCareBookingSystem.Implements
     public class BookingService : IBookingService
     {
         private readonly BookingDbContext _context;
+        private readonly ITherapistScheduleService _therapistScheduleService;
 
-        public BookingService(BookingDbContext context)
+        public BookingService(BookingDbContext context, ITherapistScheduleService therapistScheduleService)
         {
             _context = context;
+            _therapistScheduleService = therapistScheduleService;
         }
 
-        // Check if a time slot is available
         private async Task<bool> IsTimeSlotAvailableAsync(int timeSlotId)
         {
             var timeSlot = await _context.TherapistTimeSlots
                 .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId && ts.Status == SlotStatus.Available);
-
             return timeSlot != null && timeSlot.Status == SlotStatus.Available;
         }
 
-        // Get a booking by ID
         public async Task<BookingDTO> GetBookingByIdAsync(int bookingId)
         {
             var booking = await _context.Bookings
@@ -54,7 +53,6 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        // Get all bookings
         public async Task<IEnumerable<BookingDTO>> GetAllBookingsAsync()
         {
             return await _context.Bookings
@@ -75,22 +73,17 @@ namespace SkinCareBookingSystem.Implements
                 }).ToListAsync();
         }
 
-        // Create a new booking
         public async Task<BookingDTO> CreateBookingAsync(CreateBookingDTO bookingDTO)
         {
             var service = await _context.Services.FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
             if (service == null) throw new InvalidOperationException("Service not found.");
 
-            var timeSlot = await _context.TherapistTimeSlots.FindAsync(bookingDTO.TimeSlotId);
-            if (timeSlot == null || timeSlot.Status != SlotStatus.Available)
-                throw new InvalidOperationException("Selected time slot is not available.");
-
-            timeSlot.Status = SlotStatus.InProcess;
+            await _therapistScheduleService.BookTimeSlotAsync(bookingDTO.TimeSlotId, bookingDTO.UserId);
 
             var booking = new Booking
             {
                 UserId = bookingDTO.UserId,
-                TimeSlotId = timeSlot.TimeSlotId,
+                TimeSlotId = bookingDTO.TimeSlotId,
                 DateCreated = DateTime.Now,
                 TotalPrice = (float)service.Price,
                 Status = true,
@@ -106,7 +99,6 @@ namespace SkinCareBookingSystem.Implements
             return await GetBookingByIdAsync(booking.BookingId);
         }
 
-        // Update an existing booking
         public async Task<bool> UpdateBookingAsync(int bookingId, UpdateBookingDTO bookingDTO)
         {
             var booking = await _context.Bookings.FindAsync(bookingId);
@@ -121,7 +113,6 @@ namespace SkinCareBookingSystem.Implements
             return true;
         }
 
-        // Delete a booking
         public async Task<bool> DeleteBookingAsync(int bookingId)
         {
             var booking = await _context.Bookings.FindAsync(bookingId);
@@ -139,22 +130,21 @@ namespace SkinCareBookingSystem.Implements
             return true;
         }
 
-        // Book with a random available therapist
         public async Task<BookingDTO> BookWithRandomTherapistAsync(CreateBookingDTO bookingDTO)
         {
             var availableTimeSlot = await _context.TherapistTimeSlots
                 .Where(ts => ts.Status == SlotStatus.Available)
-                .OrderBy(r => Guid.NewGuid())  // Randomly order the available slots
+                .OrderBy(r => Guid.NewGuid())
                 .FirstOrDefaultAsync();
 
             if (availableTimeSlot == null)
                 throw new InvalidOperationException("No available time slots.");
 
+            await _therapistScheduleService.BookTimeSlotAsync(availableTimeSlot.TimeSlotId, bookingDTO.UserId);
             bookingDTO.TimeSlotId = availableTimeSlot.TimeSlotId;
             return await CreateBookingAsync(bookingDTO);
         }
 
-        // Book with a specific therapist
         public async Task<BookingDTO> BookWithSpecificTherapistAsync(CreateBookingDTO bookingDTO)
         {
             var availableTimeSlot = await _context.TherapistTimeSlots
@@ -163,6 +153,7 @@ namespace SkinCareBookingSystem.Implements
             if (availableTimeSlot == null)
                 throw new InvalidOperationException("No available time slots for this therapist.");
 
+            await _therapistScheduleService.BookTimeSlotAsync(availableTimeSlot.TimeSlotId, bookingDTO.UserId);
             bookingDTO.TimeSlotId = availableTimeSlot.TimeSlotId;
             return await CreateBookingAsync(bookingDTO);
         }

@@ -386,6 +386,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.ImageServiceController",
+    "Method": "GetImageServiceByServiceId",
+    "RelativePath": "api/ImageService/service/{serviceId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "serviceId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.PaymentController",
     "Method": "GeneratePaymentUrl",
     "RelativePath": "api/payment/generate-url",
@@ -1337,6 +1353,16 @@
     ]
   },
   {
+    "ContainingType": "SkinCareBookingSystem.Controllers.TherapistTimeSlotController",
+    "Method": "ResetWeeklyTimeSlots",
+    "RelativePath": "api/TherapistTimeSlot/reset-weekly-timeslots",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "SkinCareBookingSystem.Controllers.TimeSlotController",
     "Method": "GetAllTimeSlots",
     "RelativePath": "api/TimeSlot",
@@ -1697,6 +1723,74 @@
         "Name": "updateUserDTO",
         "Type": "SkinCareBookingSystem.DTOs.UpdateUserDTO",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.PaymentController",
+    "Method": "ConfirmPayment",
+    "RelativePath": "confirm-payment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.PaymentController",
+    "Method": "CreatePayment",
+    "RelativePath": "create-payos-payment",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "bookingID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SkinCareBookingSystem.Controllers.PaymentController",
+    "Method": "PaymentReturn",
+    "RelativePath": "payment-return",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "code",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "cancel",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "status",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "orderCode",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

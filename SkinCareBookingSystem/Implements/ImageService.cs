@@ -19,7 +19,7 @@ namespace SkinCareBookingSystem.Implements
             var imageService = new Models.ImageService
             {
                 ServiceId = imageServiceDTO.ServiceId,
-                ImageURL = imageServiceDTO.ImageURL // Store Cloudinary URL directly
+                ImageURL = imageServiceDTO.ImageURL
             };
 
             _context.ImageServices.Add(imageService);
@@ -92,6 +92,25 @@ namespace SkinCareBookingSystem.Implements
                 ServiceId = imageService.ServiceId,
                 ImageURL = imageService.ImageURL
             };
+        }
+
+        public async Task<IEnumerable<ImageServiceDTO>> GetImageServiceByServiceIdAsync(int serviceId)
+        {
+            var imageServices = await _context.ImageServices
+                .Where(img => img.ServiceId == serviceId)
+                .ToListAsync();
+
+            if (imageServices == null || !imageServices.Any())
+            {
+                throw new KeyNotFoundException("No image services found for this service.");
+            }
+
+            return imageServices.Select(img => new ImageServiceDTO
+            {
+                ImageServiceId = img.ImageServiceId,
+                ServiceId = img.ServiceId,
+                ImageURL = img.ImageURL
+            });
         }
     }
 }

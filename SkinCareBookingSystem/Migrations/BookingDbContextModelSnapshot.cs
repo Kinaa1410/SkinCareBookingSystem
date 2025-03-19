@@ -406,6 +406,31 @@ namespace SkinCareBookingSystem.Migrations
                     b.ToTable("TimeSlots");
                 });
 
+            modelBuilder.Entity("SkinCareBookingSystem.Models.Transaction", b =>
+                {
+                    b.Property<long>("ID")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,0)");
+
+                    b.Property<int>("BookingID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BookingID");
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("SkinCareBookingSystem.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -682,6 +707,17 @@ namespace SkinCareBookingSystem.Migrations
                     b.Navigation("TherapistSchedule");
 
                     b.Navigation("TimeSlot");
+                });
+
+            modelBuilder.Entity("SkinCareBookingSystem.Models.Transaction", b =>
+                {
+                    b.HasOne("SkinCareBookingSystem.Models.Booking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
                 });
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.User", b =>
