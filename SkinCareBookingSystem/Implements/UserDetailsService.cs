@@ -64,7 +64,7 @@ namespace SkinCareBookingSystem.Implements
                 LastName = userDetails.LastName,
                 Address = userDetails.Address,
                 Gender = userDetails.Gender,
-                Avatar = userDetails.Avatar // Now expects Cloudinary URL
+                Avatar = userDetails.Avatar
             };
 
             _context.UserDetails.Add(userDetail);
@@ -112,7 +112,7 @@ namespace SkinCareBookingSystem.Implements
 
             if (!string.IsNullOrEmpty(updateUserDetailsDTO.Avatar))
             {
-                userDetails.Avatar = updateUserDetailsDTO.Avatar; // Now updates with Cloudinary URL
+                userDetails.Avatar = updateUserDetailsDTO.Avatar;
             }
 
             await _context.SaveChangesAsync();
