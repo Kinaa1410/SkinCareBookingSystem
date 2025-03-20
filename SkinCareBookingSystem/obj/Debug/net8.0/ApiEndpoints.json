@@ -1763,7 +1763,7 @@
     "ContainingType": "SkinCareBookingSystem.Controllers.PaymentController",
     "Method": "PaymentReturn",
     "RelativePath": "payment-return",
-    "HttpMethod": "GET",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [

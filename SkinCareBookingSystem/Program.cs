@@ -152,18 +152,18 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 
-if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
-{
+//if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+//{
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SkinCareBookingSystem API v1");
     });
-}
+//}
+app.UseCors("AllowAll");
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
