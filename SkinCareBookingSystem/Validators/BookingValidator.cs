@@ -14,10 +14,6 @@ namespace SkinCareBookingSystem.Validators
                 .NotEmpty().WithMessage("Time Slot ID is required.")
                 .GreaterThan(0).WithMessage("Invalid Time Slot ID.");
 
-            RuleFor(booking => booking.AppointmentDate)
-                .NotEmpty().WithMessage("Appointment date is required.")
-                .GreaterThan(DateTime.Now).WithMessage("Appointment date must be in the future.");
-
             RuleFor(booking => booking.TherapistId)
                 .GreaterThan(0).When(booking => booking.TherapistId.HasValue)
                 .WithMessage("Invalid Therapist ID.");
