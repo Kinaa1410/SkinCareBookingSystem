@@ -27,7 +27,6 @@ namespace SkinCareBookingSystem.Data
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<TherapistSpecialty> TherapistSpecialties { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Define composite keys
