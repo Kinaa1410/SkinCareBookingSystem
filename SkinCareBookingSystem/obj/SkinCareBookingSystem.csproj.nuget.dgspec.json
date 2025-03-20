@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj": {}
+    "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj": {
+    "D:\\SkinCareProject\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj",
+        "projectUniqueName": "D:\\SkinCareProject\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj",
         "projectName": "PayOSService",
-        "projectPath": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj",
-        "packagesPath": "C:\\Users\\hoang\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\PayOSService\\obj\\",
+        "projectPath": "D:\\SkinCareProject\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj",
+        "packagesPath": "C:\\Users\\acer\\.nuget\\packages\\",
+        "outputPath": "D:\\SkinCareProject\\SkinCareBookingSystem\\PayOSService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\hoang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\acer\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "c:\\program files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -44,7 +44,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -75,24 +76,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj": {
+    "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
+        "projectUniqueName": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
         "projectName": "SkinCareBookingSystem",
-        "projectPath": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
-        "packagesPath": "C:\\Users\\hoang\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\obj\\",
+        "projectPath": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\SkinCareBookingSystem.csproj",
+        "packagesPath": "C:\\Users\\acer\\.nuget\\packages\\",
+        "outputPath": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\hoang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\acer\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -101,15 +102,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
+          "c:\\program files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj": {
-                "projectPath": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj"
+              "D:\\SkinCareProject\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj": {
+                "projectPath": "D:\\SkinCareProject\\SkinCareBookingSystem\\PayOSService\\PayOSService.csproj"
               }
             }
           }
@@ -123,7 +124,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -197,7 +199,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

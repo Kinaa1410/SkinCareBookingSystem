@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "RrnrDRIqCj80PrMfpflLo6NILTHZtb9F0ADCYitLUSQ=",
+  "Hash": "srr4Zy9rWzOj7PXSsPsP1OhFhwjVpkpJ5QQAH2i1fW8=",
   "Source": "SkinCareBookingSystem",
   "BasePath": "_content/SkinCareBookingSystem",
   "Mode": "Default",
@@ -10,87 +10,425 @@
     {
       "Name": "SkinCareBookingSystem\\wwwroot",
       "Source": "SkinCareBookingSystem",
-      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "ContentRoot": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
       "BasePath": "_content/SkinCareBookingSystem",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\ciel.jpg",
+      "Identity": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\ciel.jpg",
       "SourceId": "SkinCareBookingSystem",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "ContentRoot": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
       "BasePath": "_content/SkinCareBookingSystem",
-      "RelativePath": "images/ciel.jpg",
+      "RelativePath": "images/ciel#[.{fingerprint}]?.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeBehavior": "",
       "AssetMergeSource": "",
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
+      "Fingerprint": "mdjchzlkji",
+      "Integrity": "GlqFaayndHlhTH6fVvtnNN3P0TgLpU6y8SSMMOVpPOs=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\ciel.jpg"
     },
     {
-      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\cutber.jpg",
+      "Identity": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\cutber.jpg",
       "SourceId": "SkinCareBookingSystem",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "ContentRoot": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
       "BasePath": "_content/SkinCareBookingSystem",
-      "RelativePath": "images/cutber.jpg",
+      "RelativePath": "images/cutber#[.{fingerprint}]?.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeBehavior": "",
       "AssetMergeSource": "",
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
+      "Fingerprint": "0do4qnahi0",
+      "Integrity": "VEqdK8wao28m3PB/CL1MRur7h3S9d97bxV8sgiGmGLI=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\cutber.jpg"
     },
     {
-      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\iroha.jpg",
+      "Identity": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\iroha.jpg",
       "SourceId": "SkinCareBookingSystem",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "ContentRoot": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
       "BasePath": "_content/SkinCareBookingSystem",
-      "RelativePath": "images/iroha.jpg",
+      "RelativePath": "images/iroha#[.{fingerprint}]?.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeBehavior": "",
       "AssetMergeSource": "",
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
+      "Fingerprint": "cp6us0rsz8",
+      "Integrity": "kDYknM2Tq4jIoEWcxMR2SmthwLISTF4MzK5CLUDwUfI=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\iroha.jpg"
     },
     {
-      "Identity": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\Service Images\\733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
+      "Identity": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\Service Images\\733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
       "SourceId": "SkinCareBookingSystem",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\hoang\\Desktop\\DOTNET\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
+      "ContentRoot": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\",
       "BasePath": "_content/SkinCareBookingSystem",
-      "RelativePath": "Service Images/733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
+      "RelativePath": "Service Images/733a1f4f-9b89-430b-9fd0-9e26daa88216#[.{fingerprint}]?.png",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeBehavior": "",
       "AssetMergeSource": "",
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
+      "Fingerprint": "1flf3e8xao",
+      "Integrity": "00qKBS4uc4SmBafRw/wbX1/Xs13sk1KwjDx3YSsZan8=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Service Images\\733a1f4f-9b89-430b-9fd0-9e26daa88216.png"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "images/ciel.jpg",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\ciel.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1218397"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"GlqFaayndHlhTH6fVvtnNN3P0TgLpU6y8SSMMOVpPOs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-GlqFaayndHlhTH6fVvtnNN3P0TgLpU6y8SSMMOVpPOs="
+        }
+      ]
+    },
+    {
+      "Route": "images/ciel.mdjchzlkji.jpg",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\ciel.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1218397"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"GlqFaayndHlhTH6fVvtnNN3P0TgLpU6y8SSMMOVpPOs=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "mdjchzlkji"
+        },
+        {
+          "Name": "label",
+          "Value": "images/ciel.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-GlqFaayndHlhTH6fVvtnNN3P0TgLpU6y8SSMMOVpPOs="
+        }
+      ]
+    },
+    {
+      "Route": "images/cutber.0do4qnahi0.jpg",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\cutber.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "125401"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"VEqdK8wao28m3PB/CL1MRur7h3S9d97bxV8sgiGmGLI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "0do4qnahi0"
+        },
+        {
+          "Name": "label",
+          "Value": "images/cutber.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-VEqdK8wao28m3PB/CL1MRur7h3S9d97bxV8sgiGmGLI="
+        }
+      ]
+    },
+    {
+      "Route": "images/cutber.jpg",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\cutber.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "125401"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"VEqdK8wao28m3PB/CL1MRur7h3S9d97bxV8sgiGmGLI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-VEqdK8wao28m3PB/CL1MRur7h3S9d97bxV8sgiGmGLI="
+        }
+      ]
+    },
+    {
+      "Route": "images/iroha.cp6us0rsz8.jpg",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\iroha.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "339015"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"kDYknM2Tq4jIoEWcxMR2SmthwLISTF4MzK5CLUDwUfI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "cp6us0rsz8"
+        },
+        {
+          "Name": "label",
+          "Value": "images/iroha.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-kDYknM2Tq4jIoEWcxMR2SmthwLISTF4MzK5CLUDwUfI="
+        }
+      ]
+    },
+    {
+      "Route": "images/iroha.jpg",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\images\\iroha.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "339015"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"kDYknM2Tq4jIoEWcxMR2SmthwLISTF4MzK5CLUDwUfI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-kDYknM2Tq4jIoEWcxMR2SmthwLISTF4MzK5CLUDwUfI="
+        }
+      ]
+    },
+    {
+      "Route": "Service Images/733a1f4f-9b89-430b-9fd0-9e26daa88216.1flf3e8xao.png",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\Service Images\\733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "519833"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"00qKBS4uc4SmBafRw/wbX1/Xs13sk1KwjDx3YSsZan8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "1flf3e8xao"
+        },
+        {
+          "Name": "label",
+          "Value": "Service Images/733a1f4f-9b89-430b-9fd0-9e26daa88216.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-00qKBS4uc4SmBafRw/wbX1/Xs13sk1KwjDx3YSsZan8="
+        }
+      ]
+    },
+    {
+      "Route": "Service Images/733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
+      "AssetFile": "D:\\SkinCareProject\\SkinCareBookingSystem\\SkinCareBookingSystem\\wwwroot\\Service Images\\733a1f4f-9b89-430b-9fd0-9e26daa88216.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "519833"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"00qKBS4uc4SmBafRw/wbX1/Xs13sk1KwjDx3YSsZan8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 20 Mar 2025 13:11:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-00qKBS4uc4SmBafRw/wbX1/Xs13sk1KwjDx3YSsZan8="
+        }
+      ]
     }
   ]
 }

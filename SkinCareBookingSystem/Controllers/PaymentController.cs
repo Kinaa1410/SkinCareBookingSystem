@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -77,7 +78,8 @@ namespace SkinCareBookingSystem.Controllers
             return Ok();
         }
 
-        [HttpGet("payment-return")]
+        [HttpPost("payment-return")]
+        [AllowAnonymous]
         public async Task<IActionResult> PaymentReturn(
         [FromQuery] string code,
         [FromQuery] string id,
@@ -93,12 +95,13 @@ namespace SkinCareBookingSystem.Controllers
             {
                 booking.IsPaid = true;
                 booking.TherapistTimeSlot.Status = SlotStatus.Booked;
+                _context.Bookings.Update(booking);
+                await _context.SaveChangesAsync();
+                return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
+
+
             }
-
-            _context.Bookings.Update(booking);
-            await _context.SaveChangesAsync();
-
-            return Redirect(_payOSConfig.ClientRedirectUrl);
+            return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
         }
 
         // Action to redirect to VNPAY
