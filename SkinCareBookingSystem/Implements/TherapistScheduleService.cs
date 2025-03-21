@@ -39,7 +39,7 @@ namespace SkinCareBookingSystem.Implements
                     {
                         TimeSlotId = slot.TimeSlotId,
                         TimeSlotDescription = slot.TimeSlot.Description,
-                        Status = SlotStatus.Available
+                        Status = slot.Status
                     }).ToList()
                 }).ToListAsync();
         }
