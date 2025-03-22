@@ -98,10 +98,14 @@ namespace SkinCareBookingSystem.Controllers
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
                 return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
-
-
             }
-            return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
+            else
+            {
+                booking.TherapistTimeSlot.Status = SlotStatus.Available;
+                _context.Bookings.Update(booking);
+                await _context.SaveChangesAsync();
+                return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
+            }
         }
 
         // Action to redirect to VNPAY
