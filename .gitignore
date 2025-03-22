@@ -16,5 +16,8 @@ publish/
 *.pdb
 *.sourcelink.json
 
+# Ignore Visual Studio publish profiles
+Properties/PublishProfiles/
+
 # Ignore backup files
 *~
