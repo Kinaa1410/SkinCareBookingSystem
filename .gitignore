@@ -1,6 +1,7 @@
 # Ignore Visual Studio files
 .vs/
 obj/
+bin/
 publish/
 
 # Ignore user-specific files
@@ -9,5 +10,11 @@ publish/
 *.suo
 *.sln.docstates
 
+# Ignore .NET build output
+*.dll
+*.exe
+*.pdb
+*.sourcelink.json
+
 # Ignore backup files
-*~ 
+*~
