@@ -85,7 +85,7 @@ namespace SkinCareBookingSystem.Implements
             var existingBooking = await _context.Bookings
                 .FirstOrDefaultAsync(b => b.AppointmentDate == bookingDTO.AppointmentDate && b.TimeSlotId == bookingDTO.TimeSlotId);
 
-            if (existingBooking != null) throw new InvalidOperationException("Booking already exists for this date and time slot.");
+            if (existingBooking != null) throw new InvalidOperationException("Booking already exists for this date and time slot.");    
 
             var service = await _context.Services.FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
             if (service == null) throw new InvalidOperationException("Service not found.");

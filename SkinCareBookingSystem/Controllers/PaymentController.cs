@@ -155,9 +155,5 @@ namespace SkinCareBookingSystem.Controllers
             var paymentUrl = _vnpayPayment.BuildPaymentUrl(orderRef, amount);
             return Ok(new { PaymentUrl = paymentUrl });
         }
-
-
-
-
     }
 }
