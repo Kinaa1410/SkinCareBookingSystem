@@ -20,7 +20,6 @@
         public int UserId { get; set; }
         public int? TherapistId { get; set; }
         public int TimeSlotId { get; set; } 
-        public DateTime AppointmentDate { get; set; }
         public bool UseWallet { get; set; }
         public string Note { get; set; } = string.Empty;
         public int ServiceId { get; set; }
