@@ -4,6 +4,7 @@ using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Models;
 using SkinCareBookingSystem.Enums;
+using System;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
@@ -19,7 +20,6 @@ namespace SkinCareBookingSystem.Implements
             _context = context;
         }
 
-        // Get all therapist time slots
         public async Task<IEnumerable<TherapistTimeSlotDTO>> GetAllTimeSlotsAsync()
         {
             return await _context.TherapistTimeSlots
@@ -35,7 +35,6 @@ namespace SkinCareBookingSystem.Implements
                 .ToListAsync();
         }
 
-        // Get a therapist time slot by ID
         public async Task<TherapistTimeSlotDTO> GetTimeSlotByIdAsync(int timeSlotId)
         {
             var timeSlot = await _context.TherapistTimeSlots
@@ -55,7 +54,6 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-        // Create time slots for a therapist based on the schedule
         public async Task<IEnumerable<TherapistTimeSlotDTO>> CreateTimeSlotForTherapistAsync(int scheduleId)
         {
             var schedule = await _context.TherapistSchedules
@@ -70,7 +68,6 @@ namespace SkinCareBookingSystem.Implements
 
             foreach (var timeSlot in timeSlots)
             {
-                // Check if time slot is within the therapist's working hours
                 if (schedule.StartWorkingTime <= timeSlot.StartTime && schedule.EndWorkingTime >= timeSlot.EndTime)
                 {
                     var therapistTimeSlot = new TherapistTimeSlot
@@ -85,17 +82,17 @@ namespace SkinCareBookingSystem.Implements
                     newTimeSlots.Add(new TherapistTimeSlotDTO
                     {
                         ScheduleId = scheduleId,
-                        TimeSlotDescription = timeSlot.Description
+                        TimeSlotId = timeSlot.TimeSlotId,
+                        TimeSlotDescription = timeSlot.Description,
+                        Status = SlotStatus.Available
                     });
                 }
             }
 
             await _context.SaveChangesAsync();
-
             return newTimeSlots;
         }
 
-        // Update the status of a time slot (for booking or availability)
         public async Task<bool> UpdateTimeSlotAsync(int timeSlotId, SlotStatus status)
         {
             var timeSlot = await _context.TherapistTimeSlots
@@ -104,16 +101,13 @@ namespace SkinCareBookingSystem.Implements
             if (timeSlot == null)
                 return false;
 
-            // Update the status of the time slot
             timeSlot.Status = status;
-
             _context.Entry(timeSlot).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        // Delete a therapist's time slot
         public async Task<bool> DeleteTimeSlotAsync(int timeSlotId)
         {
             var timeSlot = await _context.TherapistTimeSlots
@@ -130,7 +124,8 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task ResetWeeklyTimeSlotsAsync()
         {
-            var currentWeek = System.DateTime.Now.DayOfYear / 7; // Rough week calculation
+            var currentDate = DateTime.Now;
+            var startOfCurrentWeek = currentDate.Date.AddDays(-(int)currentDate.DayOfWeek);
             var timeSlots = await _context.TherapistTimeSlots
                 .Include(ts => ts.TimeSlot)
                 .ToListAsync();
@@ -139,10 +134,11 @@ namespace SkinCareBookingSystem.Implements
             {
                 var booking = await _context.Bookings
                     .FirstOrDefaultAsync(b => b.TimeSlotId == timeSlot.Id);
+
                 if (booking != null)
                 {
-                    var bookingWeek = booking.AppointmentDate.DayOfYear / 7;
-                    if (bookingWeek < currentWeek && timeSlot.Status != SlotStatus.Available)
+                    var startOfBookingWeek = booking.AppointmentDate.Date.AddDays(-(int)booking.AppointmentDate.DayOfWeek);
+                    if (startOfBookingWeek < startOfCurrentWeek && timeSlot.Status != SlotStatus.Available && !booking.Status)
                     {
                         timeSlot.Status = SlotStatus.Available;
                     }
@@ -150,6 +146,39 @@ namespace SkinCareBookingSystem.Implements
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync()
+        {
+            return await _context.TherapistTimeSlots
+                .Include(ts => ts.TimeSlot)
+                .Where(ts => ts.Status == SlotStatus.Available)
+                .Select(ts => new TherapistTimeSlotDTO
+                {
+                    Id = ts.Id,
+                    ScheduleId = ts.ScheduleId,
+                    TimeSlotId = ts.TimeSlotId,
+                    TimeSlotDescription = ts.TimeSlot.Description,
+                    Status = ts.Status
+                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync(int therapistId)
+        {
+            return await _context.TherapistTimeSlots
+                .Include(ts => ts.TimeSlot)
+                .Include(ts => ts.TherapistSchedule)
+                .Where(ts => ts.Status == SlotStatus.Available && ts.TherapistSchedule.TherapistId == therapistId)
+                .Select(ts => new TherapistTimeSlotDTO
+                {
+                    Id = ts.Id,
+                    ScheduleId = ts.ScheduleId,
+                    TimeSlotId = ts.TimeSlotId,
+                    TimeSlotDescription = ts.TimeSlot.Description,
+                    Status = ts.Status
+                })
+                .ToListAsync();
         }
     }
 }

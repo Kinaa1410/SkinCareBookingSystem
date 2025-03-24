@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using PayOSService.Config;
 using PayOSService.DTO;
 using PayOSService.Services;
@@ -11,9 +10,13 @@ using SkinCareBookingSystem.Enums;
 using SkinCareBookingSystem.Implements;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Util;
+using System;
+using System.Threading.Tasks;
 
 namespace SkinCareBookingSystem.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class PaymentController : Controller
     {
         private readonly VNPAYPayment _vnpayPayment;
@@ -21,122 +24,158 @@ namespace SkinCareBookingSystem.Controllers
         private readonly BookingDbContext _context;
         private readonly PayOSConfig _payOSConfig;
         private readonly IPayOSService _payOsService;
-        private readonly ITherapistScheduleService _therapistScheduleService;
-        // Constructor to inject the VNPAYPayment service
-        public PaymentController(IBookingService bookingService, PayOSConfig payOsConfig, BookingDbContext context, IPayOSService payOsService, IOptions<PayOSConfig> payOSConfig, ITherapistScheduleService therapistScheduleService)
+
+        public PaymentController(
+            IBookingService bookingService,
+            PayOSConfig payOsConfig,
+            BookingDbContext context,
+            IPayOSService payOsService,
+            IOptions<PayOSConfig> payOSConfig)
         {
-            var tmnCode = "YourMerchantCode"; // Replace with your actual Merchant Code
-            var secretKey = "YourSecretKey";  // Replace with your actual Secret Key
+            var tmnCode = "YourMerchantCode";
+            var secretKey = "YourSecretKey";
             _bookingService = bookingService;
             _context = context;
             _vnpayPayment = new VNPAYPayment(tmnCode, secretKey, context);
             _payOsService = payOsService;
             _payOSConfig = payOSConfig.Value;
-            _therapistScheduleService = therapistScheduleService;
         }
 
         [HttpPost("create-payos-payment")]
         public async Task<IActionResult> CreatePayment(int bookingID)
         {
-            string paymentLink = "";
-            var booking = await _context.Bookings.FirstOrDefaultAsync(x => x.BookingId == bookingID);
-            if (booking == null) return NotFound();
-
-            var transactions = await _context.Transactions.FirstOrDefaultAsync(x => x.BookingID == bookingID);
-
-            if (transactions != null && !string.IsNullOrEmpty(transactions.PaymentLink))
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                return Ok(new { paymentLink = transactions.PaymentLink });
+                var booking = await _context.Bookings
+                    .Include(b => b.TherapistTimeSlot)
+                    .FirstOrDefaultAsync(x => x.BookingId == bookingID);
+                if (booking == null) return NotFound();
+
+                if (booking.TherapistTimeSlot.Status != SlotStatus.InProcess)
+                    return BadRequest(new { message = "Time slot is not in process state." });
+
+                var existingTransaction = await _context.Transactions
+                    .FirstOrDefaultAsync(x => x.BookingID == bookingID);
+
+                if (existingTransaction != null && !string.IsNullOrEmpty(existingTransaction.PaymentLink))
+                {
+                    return Ok(new { paymentLink = existingTransaction.PaymentLink });
+                }
+
+                var code = ApplicationUtil.GetNewID();
+                var paymentLink = await _payOsService.CreatePaymentAsync(new CreatePaymentDTO
+                {
+                    OrderCode = code,
+                    Content = "Thanh toan",
+                    RequiredAmount = (int)booking.TotalPrice,
+                });
+
+                await _vnpayPayment.AddTransactionAsync(code, booking.BookingId, paymentLink, (decimal)booking.TotalPrice);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return Ok(new { paymentLink });
             }
-
-            var code = ApplicationUtil.GetNewID();
-            paymentLink = await _payOsService.CreatePaymentAsync(new CreatePaymentDTO()
+            catch (Exception ex)
             {
-                OrderCode = code,
-                Content = "Thanh toan",
-                RequiredAmount = (int)booking.TotalPrice,
-            });
-
-            await _vnpayPayment.AddTransactionAsync(code, booking.BookingId, paymentLink, (decimal)booking.TotalPrice);
-
-            // Do not set to Booked here; wait for payment confirmation
-            return Ok(new { paymentLink });
+                await transaction.RollbackAsync();
+                return StatusCode(500, new { message = $"Error creating payment: {ex.Message}" });
+            }
         }
 
-        [HttpPost("confirm-payment")]
-        public async Task<IActionResult> ConfirmPayment(int bookingId)
-        {
-            var booking = await _context.Bookings.FirstOrDefaultAsync(x => x.BookingId == bookingId);
-            if (booking == null) return NotFound();
-
-            var timeSlot = await _context.TherapistTimeSlots.FindAsync(booking.TimeSlotId);
-            if (timeSlot != null)
-            {
-                await _therapistScheduleService.CompletePaymentAsync(timeSlot.TimeSlotId);
-            }
-
-            return Ok();
-        }
-
-        [HttpPost("payment-return")]
+        [HttpGet("payment-return")]
         [AllowAnonymous]
         public async Task<IActionResult> PaymentReturn(
-        [FromQuery] string code,
-        [FromQuery] string id,
-        [FromQuery] string cancel,
-        [FromQuery] string status,
-        [FromQuery] string orderCode)
+            [FromQuery] string code,
+            [FromQuery] string id,
+            [FromQuery] string cancel,
+            [FromQuery] string status,
+            [FromQuery] string orderCode)
         {
-            long orderId = long.Parse(orderCode);
-            var transaction = await _context.Transactions.FirstOrDefaultAsync(x => x.ID == orderId);
-            var booking = await _context.Bookings.Include(x => x.TherapistTimeSlot).FirstOrDefaultAsync(x => x.BookingId == transaction.BookingID);
-
-            if (code == "00" && status == "PAID")
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                booking.IsPaid = true;
-                booking.TherapistTimeSlot.Status = SlotStatus.Booked;
+                if (!long.TryParse(orderCode, out long orderId))
+                {
+                    return BadRequest(new { success = false, message = "Invalid orderCode." });
+                }
+
+                var transactionRecord = await _context.Transactions
+                    .Include(t => t.Booking)
+                    .ThenInclude(b => b.TherapistTimeSlot)
+                    .FirstOrDefaultAsync(x => x.ID == orderId);
+                if (transactionRecord == null)
+                {
+                    return BadRequest(new { success = false, message = "Transaction not found." });
+                }
+
+                var booking = transactionRecord.Booking;
+                if (booking == null || booking.TherapistTimeSlot == null)
+                {
+                    return BadRequest(new { success = false, message = "Booking or TherapistTimeSlot not found." });
+                }
+
+                if (booking.TherapistTimeSlot.Status != SlotStatus.InProcess)
+                {
+                    return BadRequest(new { success = false, message = "TherapistTimeSlot is not in process state." });
+                }
+
+                Console.WriteLine($"PaymentReturn: orderId={orderId}, code={code}, status={status}, cancel={cancel}");
+
+                if (code == "00" && status == "PAID")
+                {
+                    booking.IsPaid = true;
+                    booking.Status = true;
+                    booking.TherapistTimeSlot.Status = SlotStatus.Booked;
+                }
+                else
+                {
+                    booking.IsPaid = false;
+                    booking.Status = false;
+                    booking.TherapistTimeSlot.Status = SlotStatus.Available;
+                }
+
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
                 return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
             }
-            else
+            catch (Exception ex)
             {
-                booking.TherapistTimeSlot.Status = SlotStatus.Available;
-                _context.Bookings.Update(booking);
-                await _context.SaveChangesAsync();
-                return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
+                await transaction.RollbackAsync();
+                Console.WriteLine($"PaymentReturn Error: {ex.Message}");
+                return StatusCode(500, new { success = false, message = "An error occurred while processing the payment return." });
             }
         }
-
-        // Action to redirect to VNPAY
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult RedirectToVNPAY(string orderRef, string amount)
         {
             var paymentUrl = _vnpayPayment.BuildPaymentUrl(orderRef, amount);
             return Redirect(paymentUrl);
         }
-
-        // Action to handle the return URL from VNPAY
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult ReturnUrl()
         {
             var response = Request.Query;
-
-            // Extract parameters and verify the secure hash
             string secureHash = response["vnp_SecureHash"];
             if (VerifySecureHash(response, secureHash))
             {
                 string paymentStatus = response["vnp_ResponseCode"];
-                if (paymentStatus == "00") // 00 means success
+                if (paymentStatus == "00")
                 {
-                    return View("PaymentSuccess");  // Show success page
+                    return View("PaymentSuccess");
                 }
                 else
                 {
-                    return View("PaymentFailure");  // Show failure page
+                    return View("PaymentFailure");
                 }
             }
-            return View("Error");  // In case of hash mismatch or error
+            return View("Error");
         }
-
+        [ApiExplorerSettings(IgnoreApi = true)]
         private bool VerifySecureHash(Microsoft.AspNetCore.Http.IQueryCollection response, string secureHash)
         {
             var parameters = new System.Collections.Specialized.NameValueCollection();

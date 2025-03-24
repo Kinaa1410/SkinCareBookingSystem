@@ -17,6 +17,7 @@ using SkinCareBookingSystem.Config;
 using PayOSService.Services;
 using PayOSService.Config;
 using Microsoft.Extensions.Options;
+using SkinCareBookingSystem.BackgroundServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -89,6 +90,7 @@ builder.Services.AddScoped<IValidator<CreateTimeSlotDTO>, CreateTimeSlotDTOValid
 builder.Services.AddScoped<IValidator<UpdateTimeSlotDTO>, UpdateTimeSlotDTOValidator>();
 builder.Services.AddScoped<ITherapistSpecialtyService, TherapistSpecialtyService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddHostedService<TimeSlotStatusCheckerService>();
 
 builder.Services.AddScoped<IPayOSService, PayOSService.Services.PayOSService>();
 

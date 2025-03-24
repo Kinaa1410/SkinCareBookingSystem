@@ -26,5 +26,7 @@ namespace SkinCareBookingSystem.Interfaces
 
         // Book with a specific therapist
         Task<BookingDTO> BookWithSpecificTherapistAsync(CreateBookingDTO bookingDTO);
+
+        Task<IEnumerable<BookingDTO>> GetBookingsByTherapistIdAsync(int therapistId);
     }
 }

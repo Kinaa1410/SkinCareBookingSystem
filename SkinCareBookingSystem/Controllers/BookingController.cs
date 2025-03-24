@@ -98,5 +98,12 @@ namespace SkinCareBookingSystem.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("therapist/{therapistId}/bookings")]
+        public async Task<ActionResult<IEnumerable<BookingDTO>>> GetBookingsByTherapistId(int therapistId)
+        {
+            var bookings = await _bookingService.GetBookingsByTherapistIdAsync(therapistId);
+            return Ok(bookings);
+        }
     }
 }

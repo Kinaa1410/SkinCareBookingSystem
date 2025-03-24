@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using SkinCareBookingSystem.Enums;
 using Microsoft.AspNetCore.Authorization;
 using SkinCareBookingSystem.Implements;
+using SkinCareBookingSystem.Models;
 
 namespace SkinCareBookingSystem.Controllers
 {
@@ -74,6 +75,20 @@ namespace SkinCareBookingSystem.Controllers
         {
             await _timeSlotService.ResetWeeklyTimeSlotsAsync();
             return Ok(new { message = "Weekly time slots reset successfully" });
+        }
+
+        [HttpGet("available")]
+        public async Task<ActionResult<IEnumerable<TherapistTimeSlotDTO>>> GetAvailableTimeSlots()
+        {
+            var availableTimeSlots = await _timeSlotService.GetAvailableTimeSlotsAsync();
+            return Ok(availableTimeSlots);
+        }
+
+        [HttpGet("therapist/{therapistId}")]
+        public async Task<ActionResult<IEnumerable<TherapistTimeSlotDTO>>> GetTimeSlotsByTherapistId(int therapistId)
+        {
+            var timeSlots = await _timeSlotService.GetAvailableTimeSlotsAsync(therapistId);
+            return Ok(timeSlots);
         }
     }
 }
