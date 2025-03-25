@@ -3,30 +3,21 @@
     public class FeedbackDTO
     {
         public int FeedbackId { get; set; }
-        public int BookingId { get; set; }
-        public DateTime DateCreated { get; set; }
-        public int RatingService { get; set; }
-        public int RatingTherapist { get; set; }
-        public string CommentService { get; set; } = string.Empty;
-        public string CommentTherapist { get; set; } = string.Empty;
-        public bool Status { get; set; }
+        public int ServiceId { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 
     public class CreateFeedbackDTO
     {
-        public int BookingId { get; set; }
-        public int RatingService { get; set; }
-        public int RatingTherapist { get; set; }
-        public string CommentService { get; set; } = string.Empty;
-        public string CommentTherapist { get; set; } = string.Empty;
+        public int ServiceId { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 
     public class UpdateFeedbackDTO
     {
-        public int RatingService { get; set; }
-        public int RatingTherapist { get; set; }
-        public string CommentService { get; set; } = string.Empty;
-        public string CommentTherapist { get; set; } = string.Empty;
-        public bool Status { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; } = string.Empty;
     }
 }

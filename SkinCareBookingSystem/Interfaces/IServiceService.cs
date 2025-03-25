@@ -10,7 +10,7 @@ namespace SkinCareBookingSystem.Interfaces
         Task<bool> UpdateServiceAsync(int serviceId, UpdateServiceDTO serviceDTO);
         Task<bool> DeleteServiceAsync(int serviceId);
         Task<IEnumerable<ServiceDTO>> GetAllServicesByCategoryIdAsync(int serviceCategoryId);
-        Task<float> CalculateAverageRatingAsync(int serviceId);
-        Task UpdateServiceRatingAsync(int serviceId);
+        //Task<float> CalculateAverageRatingAsync(int serviceId);
+        //Task UpdateServiceRatingAsync(int serviceId);
     }
 }

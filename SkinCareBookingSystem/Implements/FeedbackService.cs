@@ -17,74 +17,58 @@ namespace SkinCareBookingSystem.Implements
             _service = service;
         }
 
-        public async Task<FeedbackDTO> GetFeedbackByBookingIdAsync(int bookingId)
+        public async Task<FeedbackDTO> GetFeedbackByServiceIdAsync(int serviceId)
         {
             var feedback = await _context.Feedbacks
-                .Include(f => f.Booking)
-                .ThenInclude(b => b.TherapistTimeSlot)
-                .ThenInclude(ts => ts.TherapistSchedule)
-                .ThenInclude(ts => ts.TherapistUser)
-                .FirstOrDefaultAsync(f => f.BookingId == bookingId);
+                .Include(f => f.Service)
+                .FirstOrDefaultAsync(f => f.ServiceId == serviceId);
 
             if (feedback == null) return null;
 
             return new FeedbackDTO
             {
                 FeedbackId = feedback.FeedbackId,
-                BookingId = feedback.BookingId,
-                DateCreated = feedback.DateCreated,
-                RatingService = feedback.RatingService,
-                RatingTherapist = feedback.RatingTherapist,
-                CommentService = feedback.CommentService,
-                CommentTherapist = feedback.CommentTherapist,
-                Status = feedback.Status
+                ServiceId = feedback.ServiceId,
+                Rating = feedback.Rating,
+                Comment = feedback.Comment
             };
         }
 
         public async Task<IEnumerable<FeedbackDTO>> GetAllFeedbacksAsync()
         {
             return await _context.Feedbacks
-                .Include(f => f.Booking)
-                .ThenInclude(b => b.TherapistTimeSlot)
-                .ThenInclude(ts => ts.TherapistSchedule)
-                .ThenInclude(ts => ts.TherapistUser)
+                .Include(f => f.Service)
                 .Select(f => new FeedbackDTO
                 {
                     FeedbackId = f.FeedbackId,
-                    BookingId = f.BookingId,
-                    DateCreated = f.DateCreated,
-                    RatingService = f.RatingService,
-                    RatingTherapist = f.RatingTherapist,
-                    CommentService = f.CommentService,
-                    CommentTherapist = f.CommentTherapist,
-                    Status = f.Status
+                    ServiceId = f.ServiceId,
+                    Rating = f.Rating,
+                    Comment = f.Comment
                 }).ToListAsync();
         }
 
         public async Task<FeedbackDTO> CreateFeedbackAsync(CreateFeedbackDTO feedbackDTO)
         {
-            var booking = await _context.Bookings.FindAsync(feedbackDTO.BookingId);
-            if (booking == null) throw new InvalidOperationException("Booking not found.");
+            var service = await _context.Services.FindAsync(feedbackDTO.ServiceId);
+            if (service == null) throw new InvalidOperationException("Service not found.");
 
             var feedback = new Feedback
             {
-                BookingId = feedbackDTO.BookingId,
-                RatingService = feedbackDTO.RatingService,
-                RatingTherapist = feedbackDTO.RatingTherapist,
-                CommentService = feedbackDTO.CommentService,
-                CommentTherapist = feedbackDTO.CommentTherapist,
-                DateCreated = DateTime.Now,
-                Status = true
+                ServiceId = feedbackDTO.ServiceId,
+                Rating = feedbackDTO.Rating,
+                Comment = feedbackDTO.Comment
             };
             _context.Feedbacks.Add(feedback);
             await _context.SaveChangesAsync();
-            var serviceId = booking.BookingDetails.FirstOrDefault()?.ServiceId;
-            if (serviceId.HasValue)
-            {
-                await _service.UpdateServiceRatingAsync(serviceId.Value);  
-            }
+            //await _service.UpdateServiceRatingAsync(feedbackDTO.ServiceId);
 
-            return await GetFeedbackByBookingIdAsync(feedback.FeedbackId);
+            return new FeedbackDTO
+            {
+                FeedbackId = feedback.FeedbackId,
+                ServiceId = feedback.ServiceId,
+                Rating = feedback.Rating,
+                Comment = feedback.Comment
+            };
         }
 
         public async Task<bool> UpdateFeedbackAsync(int feedbackId, UpdateFeedbackDTO feedbackDTO)
@@ -92,14 +76,12 @@ namespace SkinCareBookingSystem.Implements
             var feedback = await _context.Feedbacks.FindAsync(feedbackId);
             if (feedback == null) return false;
 
-            feedback.RatingService = feedbackDTO.RatingService;
-            feedback.RatingTherapist = feedbackDTO.RatingTherapist;
-            feedback.CommentService = feedbackDTO.CommentService;
-            feedback.CommentTherapist = feedbackDTO.CommentTherapist;
-            feedback.Status = feedbackDTO.Status;
+            feedback.Rating = feedbackDTO.Rating;
+            feedback.Comment = feedbackDTO.Comment;
 
             _context.Entry(feedback).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+            //await _service.UpdateServiceRatingAsync(feedback.ServiceId);
             return true;
         }
 
@@ -111,25 +93,6 @@ namespace SkinCareBookingSystem.Implements
             _context.Feedbacks.Remove(feedback);
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        public async Task<IEnumerable<int>> GetTherapistRatingsAsync(int therapistId)
-        {
-            var ratings = await _context.Feedbacks
-                .Where(f => f.Booking.TherapistTimeSlot.TherapistSchedule.TherapistId == therapistId)
-                .Select(f => f.RatingTherapist)
-                .ToListAsync();
-
-            return ratings;
-        }
-
-        public async Task<double> GetAverageTherapistRatingAsync(int therapistId)
-        {
-            var averageRating = await _context.Feedbacks
-                .Where(f => f.Booking.TherapistTimeSlot.TherapistSchedule.TherapistId == therapistId)
-                .AverageAsync(f => f.RatingTherapist);
-
-            return averageRating;
         }
     }
 }

@@ -98,7 +98,7 @@ namespace SkinCareBookingSystem.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Feedback Relationship
-            modelBuilder.Entity<Feedback>().HasOne(f => f.Booking).WithMany().HasForeignKey(f => f.BookingId);
+            modelBuilder.Entity<Feedback>().HasOne(f => f.Service).WithMany().HasForeignKey(f => f.ServiceId);
 
             // CartItem Relationships
             modelBuilder.Entity<CartItem>().HasOne(ci => ci.User).WithMany().HasForeignKey(ci => ci.UserId);

@@ -16,14 +16,13 @@ namespace SkinCareBookingSystem.Controllers
             _feedbackService = feedbackService;
         }
 
-        [HttpGet("{bookingId}")]
-        public async Task<IActionResult> GetFeedbackByBookingId(int bookingId)
+        [HttpGet("{serviceId}")]
+        public async Task<IActionResult> GetFeedbackByServiceId(int serviceId)
         {
-            var feedback = await _feedbackService.GetFeedbackByBookingIdAsync(bookingId);
+            var feedback = await _feedbackService.GetFeedbackByServiceIdAsync(serviceId);
             if (feedback == null) return NotFound("Feedback not found.");
             return Ok(feedback);
         }
-
 
         [HttpGet]
         public async Task<IActionResult> GetAllFeedbacks()
@@ -41,7 +40,7 @@ namespace SkinCareBookingSystem.Controllers
             try
             {
                 var feedback = await _feedbackService.CreateFeedbackAsync(feedbackDTO);
-                return CreatedAtAction(nameof(GetFeedbackByBookingId), new { bookingId = feedback.BookingId }, feedback);
+                return CreatedAtAction(nameof(GetFeedbackByServiceId), new { serviceId = feedback.ServiceId }, feedback);
             }
             catch (InvalidOperationException ex)
             {
@@ -66,22 +65,6 @@ namespace SkinCareBookingSystem.Controllers
             var result = await _feedbackService.DeleteFeedbackAsync(feedbackId);
             if (!result) return NotFound("Feedback not found.");
             return Ok("Feedback is deleted");
-        }
-
-
-        [HttpGet("ratings/{therapistId}")]
-        public async Task<IActionResult> GetTherapistRatings(int therapistId)
-        {
-            var ratings = await _feedbackService.GetTherapistRatingsAsync(therapistId);
-            if (ratings == null || !ratings.Any()) return NotFound("No ratings found for this therapist.");
-            return Ok(ratings);
-        }
-
-        [HttpGet("average-rating/{therapistId}")]
-        public async Task<IActionResult> GetAverageTherapistRating(int therapistId)
-        {
-            var averageRating = await _feedbackService.GetAverageTherapistRatingAsync(therapistId);
-            return Ok(new { AverageRating = averageRating });
         }
     }
 }

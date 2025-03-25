@@ -128,35 +128,8 @@ namespace SkinCareBookingSystem.Implements
                 })
                 .ToListAsync();
         }
+      
 
-        public async Task<float> CalculateAverageRatingAsync(int serviceId)
-        {
-            var feedbacks = await _context.Feedbacks
-                .Where(f => _context.BookingDetails
-                                .Where(bd => bd.ServiceId == serviceId)
-                                .Select(bd => bd.BookingId)
-                                .Contains(f.BookingId))
-                .ToListAsync();
-            if (feedbacks.Count == 0)
-            {
-                return 0;
-            }
-            var averageRating = feedbacks.Average(f => f.RatingService);
-
-            return (float)Math.Round(averageRating, 2);
-        }
-
-        public async Task UpdateServiceRatingAsync(int serviceId)
-        {
-            float averageRating = await CalculateAverageRatingAsync(serviceId);
-            var service = await _context.Services.FindAsync(serviceId);
-            if (service != null)
-            {
-                service.Rating = averageRating;
-                _context.Entry(service).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-        }
-
+      
     }
 }
