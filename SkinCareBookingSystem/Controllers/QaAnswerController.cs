@@ -88,5 +88,15 @@ namespace SkinCareBookingSystem.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("submit-and-recommend")]
+        public async Task<IActionResult> SubmitAnswersAndGetRecommendations([FromBody] List<CreateQaAnswerDTO> qaAnswersDTO)
+        {
+            if (qaAnswersDTO == null || !qaAnswersDTO.Any())
+                return BadRequest("No answers provided.");
+
+            var recommendations = await _qaAnswerService.SubmitAnswersAndGetRecommendationsAsync(qaAnswersDTO);
+            return Ok(recommendations);
+        }
     }
 }

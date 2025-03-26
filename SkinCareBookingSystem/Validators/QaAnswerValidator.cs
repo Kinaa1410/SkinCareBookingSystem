@@ -9,7 +9,8 @@ namespace SkinCareBookingSystem.Validators
         {
             RuleFor(qaAnswer => qaAnswer.Answer)
                 .NotEmpty().WithMessage("Answer is required.")
-                .MinimumLength(5).WithMessage("Answer must be at least 5 characters.");
+                .Must(a => a.Equals("Yes", StringComparison.OrdinalIgnoreCase) || a.Equals("No", StringComparison.OrdinalIgnoreCase))
+                .WithMessage("Answer must be 'Yes' or 'No'.");
         }
     }
 
@@ -19,7 +20,8 @@ namespace SkinCareBookingSystem.Validators
         {
             RuleFor(qaAnswer => qaAnswer.Answer)
                 .NotEmpty().WithMessage("Answer is required.")
-                .MinimumLength(5).WithMessage("Answer must be at least 5 characters.");
+                .Must(a => a.Equals("Yes", StringComparison.OrdinalIgnoreCase) || a.Equals("No", StringComparison.OrdinalIgnoreCase))
+                .WithMessage("Answer must be 'Yes' or 'No'.");
         }
     }
 }

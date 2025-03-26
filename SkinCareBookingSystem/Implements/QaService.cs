@@ -90,5 +90,19 @@ namespace SkinCareBookingSystem.Implements
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<QaDTO>> GetQasByServiceCategoryAsync(int serviceCategoryId)
+        {
+            return await _context.Qas
+                .Where(qa => qa.ServiceCategoryId == serviceCategoryId)
+                .Select(qa => new QaDTO
+                {
+                    QaId = qa.QaId,
+                    ServiceCategoryId = qa.ServiceCategoryId,
+                    Question = qa.Question,
+                    Type = qa.Type,
+                    Status = qa.Status
+                }).ToListAsync();
+        }
     }
 }

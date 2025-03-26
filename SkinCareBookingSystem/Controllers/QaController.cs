@@ -41,7 +41,7 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(qa);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Staff")]
         [HttpPost]
         public async Task<IActionResult> CreateQa([FromBody] CreateQaDTO qaDTO)
         {
@@ -55,7 +55,7 @@ namespace SkinCareBookingSystem.Controllers
             return CreatedAtAction(nameof(GetQa), new { qaId = qa.QaId }, qa);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Staff")]
         [HttpPut("{qaId}")]
         public async Task<IActionResult> UpdateQa(int qaId, [FromBody] UpdateQaDTO qaDTO)
         {
@@ -74,7 +74,7 @@ namespace SkinCareBookingSystem.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{qaId}")]
         public async Task<IActionResult> DeleteQa(int qaId)
         {
@@ -85,6 +85,13 @@ namespace SkinCareBookingSystem.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("servicecategory/{serviceCategoryId}")]
+        public async Task<IActionResult> GetQasByServiceCategory(int serviceCategoryId)
+        {
+            var qas = await _qaService.GetQasByServiceCategoryAsync(serviceCategoryId);
+            return Ok(qas);
         }
     }
 }

@@ -12,7 +12,8 @@ namespace SkinCareBookingSystem.Validators
 
             RuleFor(sr => sr.AnswerOption)
                 .NotEmpty().WithMessage("AnswerOption is required.")
-                .Length(1).WithMessage("AnswerOption must be a single character (A, B, C, D).");
+                .Must(ao => ao == "Yes" || ao == "No")
+                .WithMessage("AnswerOption must be either 'Yes' or 'No'.");
 
             RuleFor(sr => sr.ServiceId)
                 .GreaterThan(0).WithMessage("ServiceId must be greater than 0.");

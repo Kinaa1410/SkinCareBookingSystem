@@ -90,19 +90,25 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<IEnumerable<ServiceDTO>> GetRecommendedServicesAsync(List<QaAnswerDTO> answers)
         {
+            if (answers == null || !answers.Any())
+                return new List<ServiceDTO>();
+
             var serviceRecommendations = await _context.ServiceRecommendations.ToListAsync();
 
-            var recommendedServiceIds = serviceRecommendations
-                .Where(sr => answers.Any(a => a.QaId == sr.QaId && a.Answer == sr.AnswerOption))
+            var serviceScores = serviceRecommendations
+                .Where(sr => answers.Any(a => a.QaId == sr.QaId &&
+                                             a.Answer.Equals(sr.AnswerOption, StringComparison.OrdinalIgnoreCase)))
                 .GroupBy(sr => sr.ServiceId)
                 .Select(g => new { ServiceId = g.Key, Score = g.Sum(sr => sr.Weight) })
                 .OrderByDescending(g => g.Score)
-                .Select(g => g.ServiceId)
+                .ThenBy(g => g.ServiceId)
                 .ToList();
-            if (!recommendedServiceIds.Any())
-            {
+
+            if (!serviceScores.Any())
                 return new List<ServiceDTO>();
-            }
+
+            var recommendedServiceIds = serviceScores.Select(s => s.ServiceId).ToList();
+
             var recommendedServices = await _context.Services
                 .Where(s => recommendedServiceIds.Contains(s.ServiceId))
                 .Select(s => new ServiceDTO
@@ -117,7 +123,9 @@ namespace SkinCareBookingSystem.Implements
                     Exist = s.Exist
                 })
                 .ToListAsync();
-            return recommendedServices;
+
+            return recommendedServices
+                .OrderBy(s => recommendedServiceIds.IndexOf(s.ServiceId));
         }
 
 

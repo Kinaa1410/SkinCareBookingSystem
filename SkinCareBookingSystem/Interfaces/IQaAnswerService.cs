@@ -9,5 +9,6 @@ namespace SkinCareBookingSystem.Interfaces
         Task<QaAnswerDTO> CreateQaAnswerAsync(CreateQaAnswerDTO qaAnswerDTO);
         Task<bool> UpdateQaAnswerAsync(int userId, int qaId, UpdateQaAnswerDTO qaAnswerDTO);
         Task<bool> DeleteQaAnswerAsync(int userId, int qaId);
+        Task<IEnumerable<ServiceDTO>> SubmitAnswersAndGetRecommendationsAsync(List<CreateQaAnswerDTO> qaAnswersDTO);
     }
 }

@@ -9,10 +9,12 @@ namespace SkinCareBookingSystem.Implements
     public class QaAnswerService : IQaAnswerService
     {
         private readonly BookingDbContext _context;
+        private readonly IServiceRecommendationService _recommendationService;
 
-        public QaAnswerService(BookingDbContext context)
+        public QaAnswerService(BookingDbContext context, IServiceRecommendationService recommendationService)
         {
             _context = context;
+            _recommendationService = recommendationService;
         }
 
         public async Task<IEnumerable<QaAnswerDTO>> GetAllQaAnswersAsync()
@@ -82,6 +84,39 @@ namespace SkinCareBookingSystem.Implements
             _context.QaAnswers.Remove(qaAnswer);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<ServiceDTO>> SubmitAnswersAndGetRecommendationsAsync(List<CreateQaAnswerDTO> qaAnswersDTO)
+        {
+            if (qaAnswersDTO == null || !qaAnswersDTO.Any())
+                return new List<ServiceDTO>();
+            foreach (var dto in qaAnswersDTO)
+            {
+                var existingAnswer = await _context.QaAnswers
+                    .FirstOrDefaultAsync(a => a.UserId == dto.UserId && a.QaId == dto.QaId);
+                if (existingAnswer != null)
+                {
+                    existingAnswer.Answer = dto.Answer;
+                    _context.Entry(existingAnswer).State = EntityState.Modified;
+                }
+                else
+                {
+                    _context.QaAnswers.Add(new QaAnswer
+                    {
+                        UserId = dto.UserId,
+                        QaId = dto.QaId,
+                        Answer = dto.Answer
+                    });
+                }
+            }
+            await _context.SaveChangesAsync();
+            var answerDTOs = qaAnswersDTO.Select(dto => new QaAnswerDTO
+            {
+                UserId = dto.UserId,
+                QaId = dto.QaId,
+                Answer = dto.Answer
+            }).ToList();
+            return await _recommendationService.GetRecommendedServicesAsync(answerDTOs);
         }
     }
 }
