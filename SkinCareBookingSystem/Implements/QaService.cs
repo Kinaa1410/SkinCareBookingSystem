@@ -93,7 +93,7 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<IEnumerable<QaDTO>> GetQasByServiceCategoryAsync(int serviceCategoryId)
         {
-            return await _context.Qas
+            var results = await _context.Qas
                 .Where(qa => qa.ServiceCategoryId == serviceCategoryId)
                 .Select(qa => new QaDTO
                 {
@@ -102,7 +102,10 @@ namespace SkinCareBookingSystem.Implements
                     Question = qa.Question,
                     Type = qa.Type,
                     Status = qa.Status
-                }).ToListAsync();
+                })
+                .ToListAsync();
+
+            return results;
         }
     }
 }
