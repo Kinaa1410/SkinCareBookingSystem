@@ -77,7 +77,7 @@ namespace SkinCareBookingSystem.BackgroundServices
                     if (!booking.IsPaid)
                     {
                         timeSlot.Status = SlotStatus.Available;
-                        booking.Status = false;
+                        booking.Status = BookingStatus.Failed;
                         context.Bookings.Update(booking);
                         _logger.LogInformation($"TimeSlot {timeSlot.TimeSlotId} has been in InProcess for over 10 minutes without payment. Set to Available.");
                     }

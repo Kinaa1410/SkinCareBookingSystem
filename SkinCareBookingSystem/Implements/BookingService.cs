@@ -34,24 +34,24 @@ namespace SkinCareBookingSystem.Implements
             return therapistTimeSlot.TherapistSchedule.DayOfWeek;
         }
 
-        private DateTime GetDateOfDayOfWeekInSameWeek(DateTime startDate, DayOfWeek targetDay)
+        // Updated method to allow same-day booking based on TimeSlot StartTime
+        private async Task<DateTime> GetNextDateOfDayOfWeek(DateTime startDate, DayOfWeek targetDay, int timeSlotId)
         {
-            if (startDate < DateTime.MinValue.AddDays(7) || startDate > DateTime.MaxValue.AddDays(-7))
-                throw new ArgumentOutOfRangeException(nameof(startDate), "Start date is too close to DateTime.MinValue or DateTime.MaxValue.");
+            var timeSlot = await _context.TherapistTimeSlots
+                .Include(ts => ts.TimeSlot)
+                .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId);
+            if (timeSlot == null || timeSlot.TimeSlot == null)
+                throw new InvalidOperationException("Time slot details not found.");
 
-            DateTime startOfWeek = startDate.Date.AddDays(-(int)startDate.DayOfWeek);
-            int daysToAdd = ((int)targetDay - (int)DayOfWeek.Sunday + 7) % 7;
-            DateTime calculatedDate = startOfWeek.AddDays(daysToAdd);
+            TimeSpan slotStartTime = timeSlot.TimeSlot.StartTime;
+            int daysToAdd = ((int)targetDay - (int)startDate.DayOfWeek + 7) % 7;
+            var candidateDate = startDate.Date.AddDays(daysToAdd);
 
-            if (calculatedDate < startDate.Date)
-            {
-                if (calculatedDate > DateTime.MaxValue.AddDays(-7))
-                    throw new InvalidOperationException("Cannot calculate a future date; result would exceed DateTime.MaxValue.");
+            // If today is the target day, check if the slot's start time is still in the future
+            if (candidateDate == startDate.Date && startDate.TimeOfDay >= slotStartTime)
+                daysToAdd += 7; // Move to next week if slot time has passed
 
-                calculatedDate = calculatedDate.AddDays(7);
-            }
-
-            return calculatedDate;
+            return startDate.Date.AddDays(daysToAdd);
         }
 
         public async Task<BookingDTO> GetBookingByIdAsync(int bookingId)
@@ -119,7 +119,7 @@ namespace SkinCareBookingSystem.Implements
                 var service = await _context.Services.FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
                 if (service == null) throw new InvalidOperationException("Service not found.");
 
-                DateTime appointmentDate = GetDateOfDayOfWeekInSameWeek(DateTime.Now, therapistTimeSlot.TherapistSchedule.DayOfWeek);
+                DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistTimeSlot.TherapistSchedule.DayOfWeek, bookingDTO.TimeSlotId);
 
                 if (appointmentDate.Date < DateTime.Now.Date)
                     throw new InvalidOperationException("Cannot book an appointment in the past.");
@@ -132,7 +132,7 @@ namespace SkinCareBookingSystem.Implements
                     TimeSlotId = bookingDTO.TimeSlotId,
                     DateCreated = DateTime.Now,
                     TotalPrice = (float)service.Price,
-                    Status = true,
+                    Status = BookingStatus.Pending,
                     IsPaid = false,
                     UseWallet = bookingDTO.UseWallet,
                     Note = bookingDTO.Note,
@@ -145,8 +145,9 @@ namespace SkinCareBookingSystem.Implements
                 await transaction.CommitAsync();
                 return await GetBookingByIdAsync(booking.BookingId);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Booking creation failed: {ex.Message}");
                 await transaction.RollbackAsync();
                 throw;
             }
@@ -175,7 +176,8 @@ namespace SkinCareBookingSystem.Implements
             if (timeSlot != null)
             {
                 var hasOtherBookings = await _context.Bookings
-                    .AnyAsync(b => b.TimeSlotId == booking.TimeSlotId && b.BookingId != bookingId);
+                    .AnyAsync(b => b.TimeSlotId == booking.TimeSlotId && b.BookingId != bookingId &&
+                                   b.Status != BookingStatus.Completed && b.Status != BookingStatus.Canceled && b.Status != BookingStatus.Failed);
 
                 timeSlot.Status = hasOtherBookings ? SlotStatus.Booked : SlotStatus.Available;
             }
@@ -192,7 +194,7 @@ namespace SkinCareBookingSystem.Implements
             try
             {
                 DayOfWeek therapistDayOfWeek = await GetTherapistDayOfWeekFromTimeSlotAsync(bookingDTO.TimeSlotId);
-                DateTime appointmentDate = GetDateOfDayOfWeekInSameWeek(DateTime.Now, therapistDayOfWeek);
+                DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistDayOfWeek, bookingDTO.TimeSlotId);
 
                 if (appointmentDate.Date < DateTime.Now.Date)
                     throw new InvalidOperationException("Cannot book an appointment in the past.");
@@ -229,7 +231,7 @@ namespace SkinCareBookingSystem.Implements
             try
             {
                 DayOfWeek therapistDayOfWeek = await GetTherapistDayOfWeekFromTimeSlotAsync(bookingDTO.TimeSlotId);
-                DateTime appointmentDate = GetDateOfDayOfWeekInSameWeek(DateTime.Now, therapistDayOfWeek);
+                DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistDayOfWeek, bookingDTO.TimeSlotId);
 
                 if (appointmentDate.Date < DateTime.Now.Date)
                     throw new InvalidOperationException("Cannot book an appointment in the past.");

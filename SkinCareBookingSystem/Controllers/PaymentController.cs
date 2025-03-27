@@ -127,13 +127,13 @@ namespace SkinCareBookingSystem.Controllers
                 if (code == "00" && status == "PAID")
                 {
                     booking.IsPaid = true;
-                    booking.Status = true;
+                    booking.Status = BookingStatus.Booked; // Success → Booked
                     booking.TherapistTimeSlot.Status = SlotStatus.Booked;
                 }
                 else
                 {
                     booking.IsPaid = false;
-                    booking.Status = false;
+                    booking.Status = BookingStatus.Failed; // Failure → Failed
                     booking.TherapistTimeSlot.Status = SlotStatus.Available;
                 }
 
@@ -150,12 +150,14 @@ namespace SkinCareBookingSystem.Controllers
                 return StatusCode(500, new { success = false, message = "An error occurred while processing the payment return." });
             }
         }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult RedirectToVNPAY(string orderRef, string amount)
         {
             var paymentUrl = _vnpayPayment.BuildPaymentUrl(orderRef, amount);
             return Redirect(paymentUrl);
         }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult ReturnUrl()
         {
@@ -175,6 +177,7 @@ namespace SkinCareBookingSystem.Controllers
             }
             return View("Error");
         }
+
         [ApiExplorerSettings(IgnoreApi = true)]
         private bool VerifySecureHash(Microsoft.AspNetCore.Http.IQueryCollection response, string secureHash)
         {

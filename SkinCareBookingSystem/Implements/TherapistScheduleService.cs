@@ -124,7 +124,6 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<bool> BookTimeSlotAsync(int timeSlotId, int userId, DateTime appointmentDate, int therapistId)
         {
-            // Không cần BeginTransaction vì giao dịch đã được quản lý bởi CreateBookingAsync
             Console.WriteLine($"Checking TimeSlotId: {timeSlotId}, Date: {appointmentDate}, TherapistId: {therapistId}");
 
             var timeSlot = await _context.TherapistTimeSlots
@@ -139,29 +138,19 @@ namespace SkinCareBookingSystem.Implements
             if (timeSlot.TherapistSchedule.DayOfWeek != expectedDayOfWeek)
                 throw new InvalidOperationException($"Time slot is not available on {expectedDayOfWeek}. It is only available on {timeSlot.TherapistSchedule.DayOfWeek}.");
 
+            var anyActiveBooking = await _context.Bookings
+                .FirstOrDefaultAsync(b => b.TimeSlotId == timeSlotId &&
+                                         (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
+            if (anyActiveBooking != null)
+                throw new InvalidOperationException("Time slot is marked Available but has an active booking.");
+
             var existingBooking = await _context.Bookings
                 .FirstOrDefaultAsync(b => b.AppointmentDate.Date == appointmentDate.Date && b.TimeSlotId == timeSlotId);
-
             if (existingBooking != null)
-            {
-                timeSlot.Status = SlotStatus.Booked;
-                await _context.SaveChangesAsync();
-                Console.WriteLine($"Found existing booking for TimeSlotId: {timeSlotId}, Date: {appointmentDate}");
                 throw new InvalidOperationException("Time slot is already booked for this date.");
-            }
-
-            var hasOtherBookings = await _context.Bookings
-                .AnyAsync(b => b.TimeSlotId == timeSlotId && b.AppointmentDate.Date != appointmentDate.Date);
-
-            if (!hasOtherBookings)
-            {
-                timeSlot.Status = SlotStatus.Available;
-            }
 
             if (timeSlot.Status != SlotStatus.Available)
-            {
-                Console.WriteLine($"Warning: TimeSlotId {timeSlotId} has Status {timeSlot.Status}, but no booking exists for {appointmentDate}. Proceeding with booking.");
-            }
+                throw new InvalidOperationException($"Time slot is not available. Current status: {timeSlot.Status}");
 
             timeSlot.Status = SlotStatus.InProcess;
             await _context.SaveChangesAsync();
@@ -252,7 +241,8 @@ namespace SkinCareBookingSystem.Implements
             foreach (var slot in timeSlots)
             {
                 var hasFutureBookings = await _context.Bookings
-                    .AnyAsync(b => b.TimeSlotId == slot.TimeSlotId && b.AppointmentDate.Date >= currentDate.Date);
+                    .AnyAsync(b => b.TimeSlotId == slot.TimeSlotId && b.AppointmentDate.Date >= currentDate.Date &&
+                                   (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
 
                 slot.Status = hasFutureBookings ? SlotStatus.Booked : SlotStatus.Available;
             }
@@ -370,6 +360,35 @@ namespace SkinCareBookingSystem.Implements
                 }).ToListAsync();
 
             return schedules;
+        }
+
+        public async Task ResetCompletedBookingsAsync()
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var currentDate = DateTime.Now.Date;
+                var completedBookings = await _context.Bookings
+                    .Include(b => b.TherapistTimeSlot)
+                    .Where(b => b.Status == BookingStatus.Booked && b.IsPaid && b.AppointmentDate.Date < currentDate)
+                    .ToListAsync();
+
+                foreach (var booking in completedBookings)
+                {
+                    booking.Status = BookingStatus.Completed; // Mark as completed
+                    booking.TherapistTimeSlot.Status = SlotStatus.Available;
+                    Console.WriteLine($"Reset Booking {booking.BookingId}: Slot {booking.TimeSlotId} set to Available.");
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine($"Error resetting completed bookings: {ex.Message}");
+                throw;
+            }
         }
     }
 }

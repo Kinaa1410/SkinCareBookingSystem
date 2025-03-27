@@ -138,7 +138,8 @@ namespace SkinCareBookingSystem.Implements
                 if (booking != null)
                 {
                     var startOfBookingWeek = booking.AppointmentDate.Date.AddDays(-(int)booking.AppointmentDate.DayOfWeek);
-                    if (startOfBookingWeek < startOfCurrentWeek && timeSlot.Status != SlotStatus.Available && !booking.Status)
+                    if (startOfBookingWeek < startOfCurrentWeek && timeSlot.Status != SlotStatus.Available &&
+                        (booking.Status == BookingStatus.Failed || booking.Status == BookingStatus.Canceled || booking.Status == BookingStatus.Completed))
                     {
                         timeSlot.Status = SlotStatus.Available;
                     }

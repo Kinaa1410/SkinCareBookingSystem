@@ -28,7 +28,7 @@ namespace SkinCareBookingSystem.Validators
         public UpdateBookingDTOValidator()
         {
             RuleFor(booking => booking.Status)
-                .NotNull().WithMessage("Status is required.");
+                .IsInEnum().WithMessage("Invalid booking status value."); // Validates against BookingStatus enum
 
             RuleFor(booking => booking.IsPaid)
                 .NotNull().WithMessage("Payment status is required.");
