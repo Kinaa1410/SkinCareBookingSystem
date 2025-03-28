@@ -19,24 +19,20 @@ namespace SkinCareBookingSystem.Controllers
         [HttpGet("{serviceId}")]
         public async Task<IActionResult> GetFeedbackByServiceId(int serviceId)
         {
-            var feedback = await _feedbackService.GetFeedbackByServiceIdAsync(serviceId);
-            if (feedback == null) return NotFound("Feedback not found.");
-            return Ok(feedback);
+            var feedbacks = await _feedbackService.GetFeedbackByServiceIdAsync(serviceId);
+            return feedbacks.Any() ? Ok(feedbacks) : NotFound("Feedback not found.");
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllFeedbacks()
         {
-            var feedbacks = await _feedbackService.GetAllFeedbacksAsync();
-            return Ok(feedbacks);
+            return Ok(await _feedbackService.GetAllFeedbacksAsync());
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackDTO feedbackDTO)
         {
-            if (feedbackDTO == null)
-                return BadRequest("Invalid feedback data.");
-
+            if (feedbackDTO == null) return BadRequest("Invalid feedback data.");
             try
             {
                 var feedback = await _feedbackService.CreateFeedbackAsync(feedbackDTO);
@@ -51,20 +47,14 @@ namespace SkinCareBookingSystem.Controllers
         [HttpPut("{feedbackId}")]
         public async Task<IActionResult> UpdateFeedback(int feedbackId, [FromBody] UpdateFeedbackDTO feedbackDTO)
         {
-            if (feedbackDTO == null)
-                return BadRequest("Invalid feedback data.");
-
-            var result = await _feedbackService.UpdateFeedbackAsync(feedbackId, feedbackDTO);
-            if (!result) return NotFound("Feedback not found.");
-            return Ok("Feedback is updated");
+            if (feedbackDTO == null) return BadRequest("Invalid feedback data.");
+            return await _feedbackService.UpdateFeedbackAsync(feedbackId, feedbackDTO) ? Ok("Feedback is updated") : NotFound("Feedback not found.");
         }
 
         [HttpDelete("{feedbackId}")]
         public async Task<IActionResult> DeleteFeedback(int feedbackId)
         {
-            var result = await _feedbackService.DeleteFeedbackAsync(feedbackId);
-            if (!result) return NotFound("Feedback not found.");
-            return Ok("Feedback is deleted");
+            return await _feedbackService.DeleteFeedbackAsync(feedbackId) ? Ok("Feedback is deleted") : NotFound("Feedback not found.");
         }
     }
 }

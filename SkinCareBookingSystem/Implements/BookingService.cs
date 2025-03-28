@@ -280,5 +280,29 @@ namespace SkinCareBookingSystem.Implements
                 })
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<BookingDTO>> GetBookingsByUserIdAsync(int userId)
+        {
+            return await _context.Bookings
+                .Include(b => b.TherapistTimeSlot)
+                .ThenInclude(ts => ts.TherapistSchedule)
+                .ThenInclude(ts => ts.TherapistUser)
+                .Where(b => b.UserId == userId)
+                .Select(b => new BookingDTO
+                {
+                    BookingId = b.BookingId,
+                    UserId = b.UserId,
+                    TherapistId = b.TherapistTimeSlot.TherapistSchedule.TherapistId,
+                    TimeSlotId = b.TimeSlotId,
+                    DateCreated = b.DateCreated,
+                    TotalPrice = b.TotalPrice,
+                    Note = b.Note,
+                    Status = b.Status,
+                    IsPaid = b.IsPaid,
+                    UseWallet = b.UseWallet,
+                    AppointmentDate = b.AppointmentDate
+                })
+                .ToListAsync();
+        }
     }
 }

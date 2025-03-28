@@ -7,7 +7,6 @@ namespace SkinCareBookingSystem.Data
     {
         public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options) { }
 
-        // Define all database tables (DbSets)
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserDetails> UserDetails { get; set; }
@@ -23,18 +22,17 @@ namespace SkinCareBookingSystem.Data
         public DbSet<QaAnswer> QaAnswers { get; set; }
         public DbSet<TherapistSchedule> TherapistSchedules { get; set; }
         public DbSet<TherapistTimeSlot> TherapistTimeSlots { get; set; }
-        public DbSet<ServiceRecommendation> ServiceRecommendations { get; set; } // ✅ Added
+        public DbSet<ServiceRecommendation> ServiceRecommendations { get; set; }
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<TherapistSpecialty> TherapistSpecialties { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Define composite keys
             modelBuilder.Entity<BookingDetails>().HasKey(bd => new { bd.BookingId, bd.ServiceId });
             modelBuilder.Entity<CartItem>().HasKey(ci => new { ci.UserId, ci.ServiceId });
             modelBuilder.Entity<QaAnswer>().HasKey(qa => new { qa.UserId, qa.QaId });
 
-            // ServiceRecommendation Relationships
             modelBuilder.Entity<ServiceRecommendation>()
                 .HasOne(sr => sr.Qa)
                 .WithMany()
@@ -47,12 +45,10 @@ namespace SkinCareBookingSystem.Data
                 .HasForeignKey(sr => sr.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // User Relationships
             modelBuilder.Entity<User>().HasOne(u => u.Role).WithMany().HasForeignKey(u => u.RoleId);
             modelBuilder.Entity<User>().HasOne(u => u.UserDetails).WithOne(ud => ud.User).HasForeignKey<UserDetails>(ud => ud.UserId);
             modelBuilder.Entity<User>().HasOne(u => u.Wallet).WithOne(w => w.User).HasForeignKey<Wallet>(w => w.UserId);
 
-            // TherapistSchedule & TherapistTimeSlot Relationship
             modelBuilder.Entity<TherapistSchedule>()
                 .HasMany(ts => ts.TimeSlots)
                 .WithOne(ts => ts.TherapistSchedule)
@@ -60,12 +56,11 @@ namespace SkinCareBookingSystem.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TherapistTimeSlot>()
-                .HasOne(ts => ts.TimeSlot) // A TherapistTimeSlot links to a predefined TimeSlot
-                .WithMany() // A TimeSlot can be linked to many TherapistTimeSlots
+                .HasOne(ts => ts.TimeSlot)
+                .WithMany()
                 .HasForeignKey(ts => ts.TimeSlotId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Booking Relationships
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.User)
                 .WithMany(u => u.CustomerBookings)
@@ -84,7 +79,6 @@ namespace SkinCareBookingSystem.Data
                 .HasForeignKey(b => b.TimeSlotId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // BookingDetails Relationships
             modelBuilder.Entity<BookingDetails>()
                 .HasOne(bd => bd.Booking)
                 .WithMany(b => b.BookingDetails)
@@ -97,19 +91,25 @@ namespace SkinCareBookingSystem.Data
                 .HasForeignKey(bd => bd.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Feedback Relationship
-            modelBuilder.Entity<Feedback>().HasOne(f => f.Service).WithMany().HasForeignKey(f => f.ServiceId);
+            modelBuilder.Entity<Feedback>()
+                .HasOne(f => f.Service)
+                .WithMany()
+                .HasForeignKey(f => f.ServiceId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // CartItem Relationships
+            modelBuilder.Entity<Feedback>()
+                .HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<CartItem>().HasOne(ci => ci.User).WithMany().HasForeignKey(ci => ci.UserId);
             modelBuilder.Entity<CartItem>().HasOne(ci => ci.Service).WithMany().HasForeignKey(ci => ci.ServiceId);
 
-            // Qa & Related Entities
             modelBuilder.Entity<Qa>().HasOne(q => q.ServiceCategory).WithMany().HasForeignKey(q => q.ServiceCategoryId);
             modelBuilder.Entity<QaAnswer>().HasOne(qa => qa.User).WithMany().HasForeignKey(qa => qa.UserId);
             modelBuilder.Entity<QaAnswer>().HasOne(qa => qa.Qa).WithMany().HasForeignKey(qa => qa.QaId);
 
-            // TherapistSchedule Relationship
             modelBuilder.Entity<TherapistSchedule>()
                 .HasOne(ts => ts.TherapistUser)
                 .WithMany()
@@ -117,19 +117,18 @@ namespace SkinCareBookingSystem.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TherapistSpecialty>()
-            .HasKey(ts => ts.Id);
+                .HasKey(ts => ts.Id);
 
             modelBuilder.Entity<TherapistSpecialty>()
-            .HasOne(ts => ts.Therapist)   // Each TherapistSpecialty is associated with one User (Therapist)
-            .WithMany(u => u.TherapistSpecialties)  // A User (Therapist) can have many specialties
-            .HasForeignKey(ts => ts.TherapistId)   // Foreign key in the TherapistSpecialty table
-            .OnDelete(DeleteBehavior.Cascade);  // If a Therapist is deleted, also delete associated specialties
+                .HasOne(ts => ts.Therapist)
+                .WithMany(u => u.TherapistSpecialties)
+                .HasForeignKey(ts => ts.TherapistId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // ServiceCategory to TherapistSpecialty relationship (one-to-many)
             modelBuilder.Entity<TherapistSpecialty>()
-                .HasOne(ts => ts.ServiceCategory)  // Each TherapistSpecialty is associated with one ServiceCategory
-                .WithMany(sc => sc.TherapistSpecialties)  // A ServiceCategory can have many therapists
-                .HasForeignKey(ts => ts.ServiceCategoryId)  // Foreign key in the TherapistSpecialty table
+                .HasOne(ts => ts.ServiceCategory)
+                .WithMany(sc => sc.TherapistSpecialties)
+                .HasForeignKey(ts => ts.ServiceCategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Transaction>()
@@ -138,6 +137,5 @@ namespace SkinCareBookingSystem.Data
 
             base.OnModelCreating(modelBuilder);
         }
-
     }
 }

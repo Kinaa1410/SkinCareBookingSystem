@@ -11,6 +11,9 @@ namespace SkinCareBookingSystem.Models
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
 
+        [ForeignKey("User")]
+        public int UserId { get; set; }
+
         [Range(1, 5)]
         public int Rating { get; set; } = 0;
 
@@ -18,5 +21,6 @@ namespace SkinCareBookingSystem.Models
         public string Comment { get; set; } = string.Empty;
 
         public Service Service { get; set; } = null!;
+        public User User { get; set; } = null!;
     }
 }

@@ -11,6 +11,10 @@ namespace SkinCareBookingSystem.Validators
                 .NotEmpty().WithMessage("Service ID is required.")
                 .GreaterThan(0).WithMessage("Invalid Service ID.");
 
+            RuleFor(feedback => feedback.UserId)
+                .NotEmpty().WithMessage("User ID is required.")
+                .GreaterThan(0).WithMessage("Invalid User ID.");
+
             RuleFor(feedback => feedback.Rating)
                 .InclusiveBetween(1, 5).WithMessage("Rating must be between 1 and 5.");
 

@@ -17,31 +17,34 @@ namespace SkinCareBookingSystem.Implements
             _service = service;
         }
 
-        public async Task<FeedbackDTO> GetFeedbackByServiceIdAsync(int serviceId)
+        public async Task<List<FeedbackDTO>> GetFeedbackByServiceIdAsync(int serviceId)
         {
-            var feedback = await _context.Feedbacks
+            var feedbacks = await _context.Feedbacks
                 .Include(f => f.Service)
-                .FirstOrDefaultAsync(f => f.ServiceId == serviceId);
+                .Include(f => f.User)
+                .Where(f => f.ServiceId == serviceId)
+                .ToListAsync();
 
-            if (feedback == null) return null;
-
-            return new FeedbackDTO
+            return feedbacks.Any() ? feedbacks.Select(f => new FeedbackDTO
             {
-                FeedbackId = feedback.FeedbackId,
-                ServiceId = feedback.ServiceId,
-                Rating = feedback.Rating,
-                Comment = feedback.Comment
-            };
+                FeedbackId = f.FeedbackId,
+                ServiceId = f.ServiceId,
+                UserId = f.UserId,
+                Rating = f.Rating,
+                Comment = f.Comment
+            }).ToList() : new List<FeedbackDTO>();
         }
 
         public async Task<IEnumerable<FeedbackDTO>> GetAllFeedbacksAsync()
         {
             return await _context.Feedbacks
                 .Include(f => f.Service)
+                .Include(f => f.User)
                 .Select(f => new FeedbackDTO
                 {
                     FeedbackId = f.FeedbackId,
                     ServiceId = f.ServiceId,
+                    UserId = f.UserId,
                     Rating = f.Rating,
                     Comment = f.Comment
                 }).ToListAsync();
@@ -52,20 +55,24 @@ namespace SkinCareBookingSystem.Implements
             var service = await _context.Services.FindAsync(feedbackDTO.ServiceId);
             if (service == null) throw new InvalidOperationException("Service not found.");
 
+            var user = await _context.Users.FindAsync(feedbackDTO.UserId);
+            if (user == null) throw new InvalidOperationException("User not found.");
+
             var feedback = new Feedback
             {
                 ServiceId = feedbackDTO.ServiceId,
+                UserId = feedbackDTO.UserId,
                 Rating = feedbackDTO.Rating,
                 Comment = feedbackDTO.Comment
             };
             _context.Feedbacks.Add(feedback);
             await _context.SaveChangesAsync();
-            //await _service.UpdateServiceRatingAsync(feedbackDTO.ServiceId);
 
             return new FeedbackDTO
             {
                 FeedbackId = feedback.FeedbackId,
                 ServiceId = feedback.ServiceId,
+                UserId = feedback.UserId,
                 Rating = feedback.Rating,
                 Comment = feedback.Comment
             };
@@ -81,7 +88,6 @@ namespace SkinCareBookingSystem.Implements
 
             _context.Entry(feedback).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            //await _service.UpdateServiceRatingAsync(feedback.ServiceId);
             return true;
         }
 
