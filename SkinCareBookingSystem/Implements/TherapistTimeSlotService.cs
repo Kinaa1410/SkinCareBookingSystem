@@ -70,6 +70,16 @@ namespace SkinCareBookingSystem.Implements
             {
                 if (schedule.StartWorkingTime <= timeSlot.StartTime && schedule.EndWorkingTime >= timeSlot.EndTime)
                 {
+                    var existingSlot = await _context.TherapistTimeSlots
+                        .Include(ts => ts.TimeSlot)
+                        .Where(ts => ts.ScheduleId == scheduleId &&
+                                     ts.TimeSlot.StartTime == timeSlot.StartTime &&
+                                     ts.TimeSlot.EndTime == timeSlot.EndTime)
+                        .FirstOrDefaultAsync();
+
+                    if (existingSlot != null)
+                        continue;
+
                     var therapistTimeSlot = new TherapistTimeSlot
                     {
                         ScheduleId = scheduleId,

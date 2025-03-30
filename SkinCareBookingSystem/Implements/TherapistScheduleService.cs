@@ -20,6 +20,12 @@ namespace SkinCareBookingSystem.Implements
             _context = context;
         }
 
+        private static DateTime ConvertToVietnamTime(DateTime dateTime)
+        {
+            var vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh");
+            return TimeZoneInfo.ConvertTimeFromUtc(dateTime.ToUniversalTime(), vietnamTimeZone);
+        }
+
         public async Task<IEnumerable<TherapistScheduleDTO>> GetAllSchedulesAsync()
         {
             return await _context.TherapistSchedules
@@ -124,38 +130,77 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<bool> BookTimeSlotAsync(int timeSlotId, int userId, DateTime appointmentDate, int therapistId)
         {
-            Console.WriteLine($"Checking TimeSlotId: {timeSlotId}, Date: {appointmentDate}, TherapistId: {therapistId}");
+            try
+            {
+                Console.WriteLine($"Checking TimeSlotId: {timeSlotId}, Date: {appointmentDate}, TherapistId: {therapistId}");
 
-            var timeSlot = await _context.TherapistTimeSlots
-                .Include(ts => ts.TherapistSchedule)
-                .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId && ts.TherapistSchedule.TherapistId == therapistId);
+                var expectedDayOfWeek = appointmentDate.DayOfWeek;
+                var timeSlot = await _context.TherapistTimeSlots
+                    .Include(ts => ts.TherapistSchedule)
+                    .Include(ts => ts.TimeSlot)
+                    .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId &&
+                                                ts.TherapistSchedule.TherapistId == therapistId &&
+                                                ts.TherapistSchedule.DayOfWeek == expectedDayOfWeek);
 
-            if (timeSlot == null)
-                throw new InvalidOperationException("Time slot does not exist for the specified therapist.");
+                if (timeSlot == null)
+                    throw new InvalidOperationException("Time slot does not exist for the specified therapist on this day.");
 
-            var expectedDayOfWeek = appointmentDate.DayOfWeek;
-            Console.WriteLine($"Expected DayOfWeek: {expectedDayOfWeek}, Schedule DayOfWeek: {timeSlot.TherapistSchedule.DayOfWeek}");
-            if (timeSlot.TherapistSchedule.DayOfWeek != expectedDayOfWeek)
-                throw new InvalidOperationException($"Time slot is not available on {expectedDayOfWeek}. It is only available on {timeSlot.TherapistSchedule.DayOfWeek}.");
+                if (timeSlot.TimeSlot.StartTime < timeSlot.TherapistSchedule.StartWorkingTime ||
+                    timeSlot.TimeSlot.EndTime > timeSlot.TherapistSchedule.EndWorkingTime)
+                    throw new InvalidOperationException($"Time slot {timeSlot.TimeSlot.StartTime} - {timeSlot.TimeSlot.EndTime} is outside the therapist's working hours: {timeSlot.TherapistSchedule.StartWorkingTime} - {timeSlot.TherapistSchedule.EndWorkingTime}.");
 
-            var anyActiveBooking = await _context.Bookings
-                .FirstOrDefaultAsync(b => b.TimeSlotId == timeSlotId &&
-                                         (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
-            if (anyActiveBooking != null)
-                throw new InvalidOperationException("Time slot is marked Available but has an active booking.");
+                var overlappingSlot = await _context.TherapistTimeSlots
+                    .Include(ts => ts.TherapistSchedule)
+                    .Include(ts => ts.TimeSlot)
+                    .Where(ts => ts.TherapistSchedule.TherapistId == therapistId &&
+                                 ts.Id != timeSlot.Id &&
+                                 ts.TherapistSchedule.DayOfWeek == expectedDayOfWeek)
+                    .Join(_context.Bookings,
+                        ts => ts.Id,
+                        b => b.TimeSlotId,
+                        (ts, b) => new { TherapistTimeSlot = ts, Booking = b })
+                    .Where(x => x.Booking.AppointmentDate.Date == appointmentDate.Date &&
+                                 (x.Booking.Status == BookingStatus.Pending || x.Booking.Status == BookingStatus.Booked) &&
+                                 ((x.TherapistTimeSlot.TimeSlot.StartTime >= timeSlot.TimeSlot.StartTime && x.TherapistTimeSlot.TimeSlot.StartTime < timeSlot.TimeSlot.EndTime) ||
+                                  (x.TherapistTimeSlot.TimeSlot.EndTime > timeSlot.TimeSlot.StartTime && x.TherapistTimeSlot.TimeSlot.EndTime <= timeSlot.TimeSlot.EndTime)))
+                    .FirstOrDefaultAsync();
 
-            var existingBooking = await _context.Bookings
-                .FirstOrDefaultAsync(b => b.AppointmentDate.Date == appointmentDate.Date && b.TimeSlotId == timeSlotId);
-            if (existingBooking != null)
-                throw new InvalidOperationException("Time slot is already booked for this date.");
+                if (overlappingSlot != null)
+                    throw new InvalidOperationException("Another time slot for this therapist overlaps with the requested time on this date.");
 
-            if (timeSlot.Status != SlotStatus.Available)
-                throw new InvalidOperationException($"Time slot is not available. Current status: {timeSlot.Status}");
+                var now = ConvertToVietnamTime(DateTime.UtcNow);
+                if (appointmentDate.Date == now.Date)
+                {
+                    var currentTime = now.TimeOfDay;
+                    if (currentTime > timeSlot.TimeSlot.StartTime)
+                        throw new InvalidOperationException($"Cannot book a time slot in the past. Current time: {currentTime}, Slot start time: {timeSlot.TimeSlot.StartTime}.");
+                }
 
-            timeSlot.Status = SlotStatus.InProcess;
-            await _context.SaveChangesAsync();
+                var anyActiveBooking = await _context.Bookings
+                    .FirstOrDefaultAsync(b => b.TimeSlotId == timeSlot.Id &&
+                                                (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
+                if (anyActiveBooking != null)
+                    throw new InvalidOperationException("Time slot is marked Available but has an active booking.");
 
-            return true;
+                var existingBooking = await _context.Bookings
+                    .FirstOrDefaultAsync(b => b.AppointmentDate.Date == appointmentDate.Date &&
+                                                b.TimeSlotId == timeSlot.Id &&
+                                                (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
+                if (existingBooking != null)
+                    throw new InvalidOperationException("Time slot is already booked for this date.");
+
+                if (timeSlot.Status != SlotStatus.Available)
+                    throw new InvalidOperationException($"Time slot is not available. Current status: {timeSlot.Status}");
+
+                timeSlot.Status = SlotStatus.InProcess;
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<bool> UpdateScheduleAsync(int scheduleId, UpdateTherapistScheduleDTO scheduleDTO)
@@ -242,7 +287,7 @@ namespace SkinCareBookingSystem.Implements
             {
                 var hasFutureBookings = await _context.Bookings
                     .AnyAsync(b => b.TimeSlotId == slot.TimeSlotId && b.AppointmentDate.Date >= currentDate.Date &&
-                                   (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
+                                    (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
 
                 slot.Status = hasFutureBookings ? SlotStatus.Booked : SlotStatus.Available;
             }
@@ -367,17 +412,37 @@ namespace SkinCareBookingSystem.Implements
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var currentDate = DateTime.Now.Date;
-                var completedBookings = await _context.Bookings
+                var currentTime = ConvertToVietnamTime(DateTime.UtcNow);
+                var bookedBookings = await _context.Bookings
                     .Include(b => b.TherapistTimeSlot)
-                    .Where(b => b.Status == BookingStatus.Booked && b.IsPaid && b.AppointmentDate.Date < currentDate)
+                    .ThenInclude(ts => ts.TimeSlot)
+                    .Where(b => b.Status == BookingStatus.Booked && b.IsPaid)
                     .ToListAsync();
 
-                foreach (var booking in completedBookings)
+                foreach (var booking in bookedBookings)
                 {
-                    booking.Status = BookingStatus.Completed; // Mark as completed
-                    booking.TherapistTimeSlot.Status = SlotStatus.Available;
-                    Console.WriteLine($"Reset Booking {booking.BookingId}: Slot {booking.TimeSlotId} set to Available.");
+                    if (booking.TherapistTimeSlot?.TimeSlot == null)
+                        continue;
+
+                    // Combine AppointmentDate with TimeSlot's EndTime
+                    var endTimeOnDate = booking.AppointmentDate.Date
+                        .Add(booking.TherapistTimeSlot.TimeSlot.EndTime); // Directly add the TimeSpan
+
+                    // Add 1 hour to the end time
+                    var resetTime = endTimeOnDate.AddHours(1);
+
+                    // Check if current time is past the reset time
+                    if (currentTime >= resetTime)
+                    {
+                        booking.Status = BookingStatus.Completed;
+                        booking.TherapistTimeSlot.Status = SlotStatus.Available;
+
+                        // Mark properties as modified
+                        _context.Entry(booking).Property(b => b.Status).IsModified = true;
+                        _context.Entry(booking.TherapistTimeSlot).Property(ts => ts.Status).IsModified = true;
+
+                        Console.WriteLine($"Reset Booking {booking.BookingId}: Slot {booking.TimeSlotId} set to Available. EndTime: {endTimeOnDate}, ResetTime: {resetTime}");
+                    }
                 }
 
                 await _context.SaveChangesAsync();

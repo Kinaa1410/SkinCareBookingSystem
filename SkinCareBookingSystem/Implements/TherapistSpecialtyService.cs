@@ -55,7 +55,14 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<TherapistSpecialtyDTO> CreateTherapistSpecialtyAsync(TherapistSpecialtyDTO specialtyDTO)
         {
-            var therapistSpecialty = new TherapistSpecialty
+            bool exists = await _context.TherapistSpecialties.AnyAsync(ts =>
+                ts.TherapistId == specialtyDTO.TherapistId && ts.ServiceCategoryId == specialtyDTO.ServiceCategoryId);
+
+            if (exists)
+            {
+                throw new InvalidOperationException($"TherapistId {specialtyDTO.TherapistId} already has ServiceCategoryId {specialtyDTO.ServiceCategoryId}.");
+            }
+                var therapistSpecialty = new TherapistSpecialty
             {
                 TherapistId = specialtyDTO.TherapistId,
                 ServiceCategoryId = specialtyDTO.ServiceCategoryId

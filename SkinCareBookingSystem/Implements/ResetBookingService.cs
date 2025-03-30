@@ -19,7 +19,7 @@ namespace SkinCareBookingSystem.Implements
                 using var scope = _services.CreateScope();
                 var service = scope.ServiceProvider.GetRequiredService<ITherapistScheduleService>();
                 await service.ResetCompletedBookingsAsync();
-                await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
             }
         }
     }

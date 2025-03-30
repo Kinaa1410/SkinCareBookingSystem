@@ -11,10 +11,9 @@ namespace SkinCareBookingSystem.DTOs
         public DateTime DateCreated { get; set; }
         public float TotalPrice { get; set; }
         public string Note { get; set; } = string.Empty;
-        public BookingStatus Status { get; set; } // Changed to enum
+        public BookingStatus Status { get; set; } 
         public bool IsPaid { get; set; }
         public DateTime AppointmentDate { get; set; }
-        public bool UseWallet { get; set; }
     }
 
     public class CreateBookingDTO
@@ -22,14 +21,13 @@ namespace SkinCareBookingSystem.DTOs
         public int UserId { get; set; }
         public int? TherapistId { get; set; }
         public int TimeSlotId { get; set; }
-        public bool UseWallet { get; set; }
         public string Note { get; set; } = string.Empty;
         public int ServiceId { get; set; }
     }
 
     public class UpdateBookingDTO
     {
-        public BookingStatus Status { get; set; } // Changed to enum
+        public BookingStatus Status { get; set; }
         public bool IsPaid { get; set; }
     }
 }

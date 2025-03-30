@@ -52,8 +52,12 @@ namespace SkinCareBookingSystem.Controllers
                     .FirstOrDefaultAsync(x => x.BookingId == bookingID);
                 if (booking == null) return NotFound();
 
-                if (booking.TherapistTimeSlot.Status != SlotStatus.InProcess)
-                    return BadRequest(new { message = "Time slot is not in process state." });
+                // Explicitly set initial status
+                booking.Status = BookingStatus.Pending; // 0
+                booking.TherapistTimeSlot.Status = SlotStatus.InProcess; // 1
+                _context.Entry(booking).Property(b => b.Status).IsModified = true;
+                _context.Entry(booking.TherapistTimeSlot).Property(ts => ts.Status).IsModified = true;
+                Console.WriteLine($"Set Booking {bookingID} to Pending, TherapistTimeSlot {booking.TherapistTimeSlot.Id} to InProcess.");
 
                 var existingTransaction = await _context.Transactions
                     .FirstOrDefaultAsync(x => x.BookingID == bookingID);
@@ -117,9 +121,10 @@ namespace SkinCareBookingSystem.Controllers
                     return BadRequest(new { success = false, message = "Booking or TherapistTimeSlot not found." });
                 }
 
-                if (booking.TherapistTimeSlot.Status != SlotStatus.InProcess)
+                // Relax the InProcess check to allow updates if the timeslot is not Booked
+                if (booking.TherapistTimeSlot.Status == SlotStatus.Booked)
                 {
-                    return BadRequest(new { success = false, message = "TherapistTimeSlot is not in process state." });
+                    return BadRequest(new { success = false, message = "TherapistTimeSlot is already booked." });
                 }
 
                 Console.WriteLine($"PaymentReturn: orderId={orderId}, code={code}, status={status}, cancel={cancel}");
@@ -127,20 +132,41 @@ namespace SkinCareBookingSystem.Controllers
                 if (code == "00" && status == "PAID")
                 {
                     booking.IsPaid = true;
-                    booking.Status = BookingStatus.Booked; // Success → Booked
+                    booking.Status = BookingStatus.Booked; // Success → Booked (1)
                     booking.TherapistTimeSlot.Status = SlotStatus.Booked;
+                    Console.WriteLine($"Booking {booking.BookingId} set to Booked, TimeSlot {booking.TherapistTimeSlot.Id} set to Booked.");
+                }
+                else if (status == "CANCELLED" && cancel == "true")
+                {
+                    // Check if the cancellation is immediate (within 1 minute of transaction creation)
+                    var timeSinceTransaction = DateTime.Now - transactionRecord.Date;
+                    if (timeSinceTransaction.TotalMinutes < 1)
+                    {
+                        // Likely an auto-cancellation by PayOS; do not update status
+                        Console.WriteLine($"Booking {booking.BookingId} not updated by PaymentReturn due to immediate cancellation. Awaiting user action or timeout. Code: {code}, Status: {status}, Cancel: {cancel}");
+                    }
+                    else
+                    {
+                        // Assume user-initiated cancellation
+                        booking.IsPaid = false;
+                        booking.Status = BookingStatus.Failed; // Failure → Failed (4)
+                        booking.TherapistTimeSlot.Status = SlotStatus.Available;
+                        Console.WriteLine($"Booking {booking.BookingId} set to Failed, TimeSlot {booking.TherapistTimeSlot.Id} set to Available due to user cancellation. Code: {code}, Status: {status}, Cancel: {cancel}");
+                    }
                 }
                 else
                 {
-                    booking.IsPaid = false;
-                    booking.Status = BookingStatus.Failed; // Failure → Failed
-                    booking.TherapistTimeSlot.Status = SlotStatus.Available;
+                    // Do not change status; let TimeSlotStatusCheckerService handle timeouts
+                    Console.WriteLine($"Booking {booking.BookingId} not updated by PaymentReturn. Awaiting user action or timeout. Code: {code}, Status: {status}, Cancel: {cancel}");
                 }
 
-                _context.Bookings.Update(booking);
-                await _context.SaveChangesAsync();
+                _context.Entry(booking).Property(b => b.Status).IsModified = true;
+                _context.Entry(booking).Property(b => b.IsPaid).IsModified = true;
+                _context.Entry(booking.TherapistTimeSlot).Property(ts => ts.Status).IsModified = true;
 
+                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+
                 return Ok(new { success = true, redirectUrl = _payOSConfig.ClientRedirectUrl });
             }
             catch (Exception ex)

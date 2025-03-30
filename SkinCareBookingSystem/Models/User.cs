@@ -9,7 +9,7 @@ namespace SkinCareBookingSystem.Models
         public int UserId { get; set; }
 
         [ForeignKey("Role")]
-        public int RoleId { get; set; }  // 1 = User, 2 = Therapist, 3 = Staff
+        public int RoleId { get; set; }
 
         [Required]
         public string UserName { get; set; } = string.Empty;
@@ -24,7 +24,6 @@ namespace SkinCareBookingSystem.Models
 
         public Role Role { get; set; } = null!;  
         public UserDetails? UserDetails { get; set; } 
-        public Wallet? Wallet { get; set; }  
 
         public ICollection<Booking> CustomerBookings { get; set; } = new List<Booking>();
         public ICollection<TherapistSpecialty> TherapistSpecialties { get; set; } = new List<TherapistSpecialty>();

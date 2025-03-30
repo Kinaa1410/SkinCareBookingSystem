@@ -147,6 +147,32 @@ namespace SkinCareBookingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TherapistSpecialties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TherapistId = table.Column<int>(type: "int", nullable: false),
+                    ServiceCategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TherapistSpecialties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TherapistSpecialties_ServiceCategories_ServiceCategoryId",
+                        column: x => x.ServiceCategoryId,
+                        principalTable: "ServiceCategories",
+                        principalColumn: "ServiceCategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TherapistSpecialties_Users_TherapistId",
+                        column: x => x.TherapistId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserDetails",
                 columns: table => new
                 {
@@ -162,25 +188,6 @@ namespace SkinCareBookingSystem.Migrations
                     table.PrimaryKey("PK_UserDetails", x => x.UserId);
                     table.ForeignKey(
                         name: "FK_UserDetails_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wallets",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<float>(type: "real", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wallets", x => x.UserId);
-                    table.ForeignKey(
-                        name: "FK_Wallets_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -213,28 +220,31 @@ namespace SkinCareBookingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CartItems",
+                name: "Feedbacks",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    FeedbackId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ServiceId = table.Column<int>(type: "int", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => new { x.UserId, x.ServiceId });
+                    table.PrimaryKey("PK_Feedbacks", x => x.FeedbackId);
                     table.ForeignKey(
-                        name: "FK_CartItems_Services_ServiceId",
+                        name: "FK_Feedbacks_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
                         principalColumn: "ServiceId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_CartItems_Users_UserId",
+                        name: "FK_Feedbacks_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,7 +303,7 @@ namespace SkinCareBookingSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ScheduleId = table.Column<int>(type: "int", nullable: false),
                     TimeSlotId = table.Column<int>(type: "int", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -324,10 +334,9 @@ namespace SkinCareBookingSystem.Migrations
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalPrice = table.Column<float>(type: "real", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
-                    AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UseWallet = table.Column<bool>(type: "bit", nullable: false)
+                    AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -353,60 +362,25 @@ namespace SkinCareBookingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookingDetails",
+                name: "Transactions",
                 columns: table => new
                 {
-                    BookingId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
-                    StockBooking = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false)
+                    ID = table.Column<long>(type: "bigint", nullable: false),
+                    BookingID = table.Column<int>(type: "int", nullable: false),
+                    PaymentLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,0)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookingDetails", x => new { x.BookingId, x.ServiceId });
+                    table.PrimaryKey("PK_Transactions", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_BookingDetails_Bookings_BookingId",
-                        column: x => x.BookingId,
-                        principalTable: "Bookings",
-                        principalColumn: "BookingId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BookingDetails_Services_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "Services",
-                        principalColumn: "ServiceId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Feedbacks",
-                columns: table => new
-                {
-                    FeedbackId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BookingId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RatingService = table.Column<int>(type: "int", nullable: false),
-                    RatingTherapist = table.Column<int>(type: "int", nullable: false),
-                    CommentService = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CommentTherapist = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Feedbacks", x => x.FeedbackId);
-                    table.ForeignKey(
-                        name: "FK_Feedbacks_Bookings_BookingId",
-                        column: x => x.BookingId,
+                        name: "FK_Transactions_Bookings_BookingID",
+                        column: x => x.BookingID,
                         principalTable: "Bookings",
                         principalColumn: "BookingId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookingDetails_ServiceId",
-                table: "BookingDetails",
-                column: "ServiceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_StaffId",
@@ -424,14 +398,14 @@ namespace SkinCareBookingSystem.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_ServiceId",
-                table: "CartItems",
+                name: "IX_Feedbacks_ServiceId",
+                table: "Feedbacks",
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_BookingId",
+                name: "IX_Feedbacks_UserId",
                 table: "Feedbacks",
-                column: "BookingId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ImageServices_ServiceId",
@@ -469,6 +443,16 @@ namespace SkinCareBookingSystem.Migrations
                 column: "TherapistId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TherapistSpecialties_ServiceCategoryId",
+                table: "TherapistSpecialties",
+                column: "ServiceCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TherapistSpecialties_TherapistId",
+                table: "TherapistSpecialties",
+                column: "TherapistId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TherapistTimeSlots_ScheduleId",
                 table: "TherapistTimeSlots",
                 column: "ScheduleId");
@@ -479,6 +463,11 @@ namespace SkinCareBookingSystem.Migrations
                 column: "TimeSlotId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Transactions_BookingID",
+                table: "Transactions",
+                column: "BookingID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
@@ -487,12 +476,6 @@ namespace SkinCareBookingSystem.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "BookingDetails");
-
-            migrationBuilder.DropTable(
-                name: "CartItems");
-
             migrationBuilder.DropTable(
                 name: "Feedbacks");
 
@@ -506,13 +489,13 @@ namespace SkinCareBookingSystem.Migrations
                 name: "ServiceRecommendations");
 
             migrationBuilder.DropTable(
+                name: "TherapistSpecialties");
+
+            migrationBuilder.DropTable(
+                name: "Transactions");
+
+            migrationBuilder.DropTable(
                 name: "UserDetails");
-
-            migrationBuilder.DropTable(
-                name: "Wallets");
-
-            migrationBuilder.DropTable(
-                name: "Bookings");
 
             migrationBuilder.DropTable(
                 name: "Qas");
@@ -521,10 +504,13 @@ namespace SkinCareBookingSystem.Migrations
                 name: "Services");
 
             migrationBuilder.DropTable(
-                name: "TherapistTimeSlots");
+                name: "Bookings");
 
             migrationBuilder.DropTable(
                 name: "ServiceCategories");
+
+            migrationBuilder.DropTable(
+                name: "TherapistTimeSlots");
 
             migrationBuilder.DropTable(
                 name: "TherapistSchedules");

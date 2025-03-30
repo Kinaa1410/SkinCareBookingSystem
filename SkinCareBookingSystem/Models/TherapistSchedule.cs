@@ -13,13 +13,11 @@ namespace SkinCareBookingSystem.Models
 
         public DayOfWeek DayOfWeek { get; set; }
 
-        // This defines the start and end of the working hours for the therapist
         public TimeSpan StartWorkingTime { get; set; }
         public TimeSpan EndWorkingTime { get; set; }
 
         public User TherapistUser { get; set; } = null!;
 
-        // This is the list of time slots associated with this schedule (many-to-one relationship)
         public ICollection<TherapistTimeSlot> TimeSlots { get; set; } = new List<TherapistTimeSlot>();
     }
 }

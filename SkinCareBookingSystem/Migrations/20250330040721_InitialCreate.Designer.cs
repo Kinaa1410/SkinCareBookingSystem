@@ -12,8 +12,8 @@ using SkinCareBookingSystem.Data;
 namespace SkinCareBookingSystem.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
-    [Migration("20250327083554_ChangeBookingStatusToEnum")]
-    partial class ChangeBookingStatusToEnum
+    [Migration("20250330040721_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,9 +119,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.Property<float>("TotalPrice")
                         .HasColumnType("real");
 
-                    b.Property<bool>("UseWallet")
-                        .HasColumnType("bit");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -134,47 +131,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
-                });
-
-            modelBuilder.Entity("SkinCareBookingSystem.Models.BookingDetails", b =>
-                {
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int")
-                        .HasColumnOrder(2);
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<int>("StockBooking")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookingId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("BookingDetails");
-                });
-
-            modelBuilder.Entity("SkinCareBookingSystem.Models.CartItem", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.Feedback", b =>
@@ -195,9 +151,14 @@ namespace SkinCareBookingSystem.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("FeedbackId");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Feedbacks");
                 });
@@ -484,22 +445,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.ToTable("UserDetails");
                 });
 
-            modelBuilder.Entity("SkinCareBookingSystem.Models.Wallet", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("Wallets");
-                });
-
             modelBuilder.Entity("TherapistSpecialty", b =>
                 {
                     b.Property<int>("Id")
@@ -560,53 +505,23 @@ namespace SkinCareBookingSystem.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SkinCareBookingSystem.Models.BookingDetails", b =>
+            modelBuilder.Entity("SkinCareBookingSystem.Models.Feedback", b =>
                 {
-                    b.HasOne("SkinCareBookingSystem.Models.Booking", "Booking")
-                        .WithMany("BookingDetails")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Service", "Service")
                         .WithMany()
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Booking");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("SkinCareBookingSystem.Models.CartItem", b =>
-                {
-                    b.HasOne("Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SkinCareBookingSystem.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Service");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SkinCareBookingSystem.Models.Feedback", b =>
-                {
-                    b.HasOne("Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.ImageService", b =>
@@ -732,17 +647,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SkinCareBookingSystem.Models.Wallet", b =>
-                {
-                    b.HasOne("SkinCareBookingSystem.Models.User", "User")
-                        .WithOne("Wallet")
-                        .HasForeignKey("SkinCareBookingSystem.Models.Wallet", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TherapistSpecialty", b =>
                 {
                     b.HasOne("ServiceCategory", "ServiceCategory")
@@ -769,11 +673,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.Navigation("TherapistSpecialties");
                 });
 
-            modelBuilder.Entity("SkinCareBookingSystem.Models.Booking", b =>
-                {
-                    b.Navigation("BookingDetails");
-                });
-
             modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistSchedule", b =>
                 {
                     b.Navigation("TimeSlots");
@@ -786,8 +685,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.Navigation("TherapistSpecialties");
 
                     b.Navigation("UserDetails");
-
-                    b.Navigation("Wallet");
                 });
 #pragma warning restore 612, 618
         }

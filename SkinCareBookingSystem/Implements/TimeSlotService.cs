@@ -47,17 +47,12 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<TimeSlotDTO> CreateTimeSlotAsync(CreateTimeSlotDTO timeSlotDTO)
         {
-            // Check if a time slot with the same StartTime and EndTime already exists in the database
             var existingTimeSlot = await _context.TimeSlots
                 .FirstOrDefaultAsync(ts => ts.StartTime == timeSlotDTO.StartTime && ts.EndTime == timeSlotDTO.EndTime);
-
-            // If a duplicate time slot is found, return an error message or throw an exception
             if (existingTimeSlot != null)
             {
                 throw new InvalidOperationException("A time slot with the same start and end time already exists.");
             }
-
-            // If no duplicate is found, create and save the new time slot
             var timeSlot = new TimeSlot
             {
                 StartTime = timeSlotDTO.StartTime,

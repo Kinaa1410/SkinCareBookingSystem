@@ -21,14 +21,12 @@ namespace SkinCareBookingSystem.Models
         public DateTime DateCreated { get; set; }
         public float TotalPrice { get; set; }
         public string Note { get; set; } = string.Empty;
-        public BookingStatus Status { get; set; } // Replaced bool with enum
+        public BookingStatus Status { get; set; }
         public bool IsPaid { get; set; }
         public DateTime AppointmentDate { get; set; }
-        public bool UseWallet { get; set; }
 
         public User User { get; set; }
         public User StaffUser { get; set; }
         public TherapistTimeSlot TherapistTimeSlot { get; set; } = null!;
-        public ICollection<BookingDetails> BookingDetails { get; set; } = new List<BookingDetails>();
     }
 }

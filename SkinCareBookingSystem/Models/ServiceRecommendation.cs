@@ -12,7 +12,7 @@ namespace SkinCareBookingSystem.Models
         public int QaId { get; set; }
 
         [Required]
-        public string AnswerOption { get; set; } = string.Empty; // "A", "B", "C", "D"
+        public string AnswerOption { get; set; } = string.Empty;
 
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
