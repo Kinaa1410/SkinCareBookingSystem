@@ -118,6 +118,10 @@ namespace SkinCareBookingSystem.Implements
                     throw new InvalidOperationException("Therapist time slot or schedule not found for the specified therapist.");
                 var service = await _context.Services.FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
                 if (service == null) throw new InvalidOperationException("Service not found.");
+                var therapistSpecialty = await _context.TherapistSpecialties
+            .AnyAsync(ts => ts.TherapistId == bookingDTO.TherapistId && ts.ServiceCategoryId == service.ServiceCategoryId);
+                if (!therapistSpecialty)
+                    throw new InvalidOperationException("Therapist does not offer this service category.");
                 DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistTimeSlot.TherapistSchedule.DayOfWeek, bookingDTO.TimeSlotId);
                 if (appointmentDate.Date < DateTime.Now.Date)
                     throw new InvalidOperationException("Cannot book an appointment in the past.");
