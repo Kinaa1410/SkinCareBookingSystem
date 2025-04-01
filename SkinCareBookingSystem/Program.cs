@@ -91,7 +91,7 @@ builder.Services.AddHostedService<TimeSlotStatusCheckerService>();
 builder.Services.AddHostedService<ResetBookingService>();
 
 builder.Services.AddScoped<IPayOSService, PayOSService.Services.PayOSService>();
-
+builder.Services.AddHostedService<BookingCompletionService>();
 builder.Services.Configure<PayOSConfig>(
     builder.Configuration.GetSection(PayOSConfig.ConfigName));
 builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<PayOSConfig>>().Value);
