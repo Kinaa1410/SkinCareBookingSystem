@@ -55,6 +55,8 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<ServiceDTO> CreateServiceAsync(CreateServiceDTO serviceDTO)
         {
+            if (_context.Services.Any(s => s.Name == serviceDTO.Name))
+                throw new Exception("Service with this name already exists");
             var service = new Service
             {
                 ServiceCategoryId = serviceDTO.ServiceCategoryId,

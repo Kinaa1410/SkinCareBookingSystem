@@ -68,7 +68,7 @@ namespace SkinCareBookingSystem.Controllers
                 return NotFound("Service not found");
             }
 
-            return NoContent();
+            return Ok("Service updated !!!");
         }
 
         [HttpDelete("{serviceId}")]
@@ -80,7 +80,7 @@ namespace SkinCareBookingSystem.Controllers
                 return NotFound("Service not found");
             }
 
-            return NoContent();
+            return Ok("Delete service success");
         }
 
         [HttpGet("category/{serviceCategoryId}")]

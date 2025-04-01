@@ -56,7 +56,7 @@ namespace SkinCareBookingSystem.Controllers
             if (!updated)
                 return NotFound();
 
-            return NoContent();
+            return Ok("Update success");
         }
 
         // Delete a therapist schedule
