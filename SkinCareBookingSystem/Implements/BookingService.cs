@@ -116,29 +116,22 @@ namespace SkinCareBookingSystem.Implements
 
                 if (therapistTimeSlot?.TherapistSchedule == null)
                     throw new InvalidOperationException("Therapist time slot or schedule not found for the specified therapist.");
-
                 var service = await _context.Services.FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
                 if (service == null) throw new InvalidOperationException("Service not found.");
-
                 DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistTimeSlot.TherapistSchedule.DayOfWeek, bookingDTO.TimeSlotId);
-
                 if (appointmentDate.Date < DateTime.Now.Date)
                     throw new InvalidOperationException("Cannot book an appointment in the past.");
-
                 var existingBooking = await _context.Bookings
                     .FirstOrDefaultAsync(b => b.TimeSlotId == therapistTimeSlot.Id &&
                                                  b.AppointmentDate.Date == appointmentDate.Date &&
                                                  (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
                 if (existingBooking != null)
                     throw new InvalidOperationException("A booking with Pending or Booked status already exists for this time slot on this date.");
-
-                // Update the time slot status within the same transaction.
                 var bookTimeSlotResult = await _therapistScheduleService.BookTimeSlotAsync(bookingDTO.TimeSlotId, bookingDTO.UserId, appointmentDate, (int)bookingDTO.TherapistId);
                 if (!bookTimeSlotResult)
                 {
                     throw new Exception("Unable to book timeslot");
                 }
-
                 var booking = new Booking
                 {
                     UserId = bookingDTO.UserId,
@@ -150,10 +143,8 @@ namespace SkinCareBookingSystem.Implements
                     Note = bookingDTO.Note,
                     AppointmentDate = appointmentDate
                 };
-
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
-
                 await transaction.CommitAsync();
                 return await GetBookingByIdAsync(booking.BookingId);
             }

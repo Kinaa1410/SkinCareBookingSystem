@@ -44,7 +44,6 @@ namespace SkinCareBookingSystem.Controllers
         [HttpPost("create-payos-payment")]
         public async Task<IActionResult> CreatePayment(int bookingID)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var booking = await _context.Bookings
@@ -52,40 +51,50 @@ namespace SkinCareBookingSystem.Controllers
                     .FirstOrDefaultAsync(x => x.BookingId == bookingID);
                 if (booking == null) return NotFound();
 
-                // Explicitly set initial status
-                booking.Status = BookingStatus.Pending; // 0
-                booking.TherapistTimeSlot.Status = SlotStatus.InProcess; // 1
+                // Update statuses before the transaction
+                booking.Status = BookingStatus.Pending;
+                booking.TherapistTimeSlot.Status = SlotStatus.InProcess;
                 _context.Entry(booking).Property(b => b.Status).IsModified = true;
                 _context.Entry(booking.TherapistTimeSlot).Property(ts => ts.Status).IsModified = true;
+                await _context.SaveChangesAsync();
                 Console.WriteLine($"Set Booking {bookingID} to Pending, TherapistTimeSlot {booking.TherapistTimeSlot.Id} to InProcess.");
 
-                var existingTransaction = await _context.Transactions
-                    .FirstOrDefaultAsync(x => x.BookingID == bookingID);
-
-                if (existingTransaction != null && !string.IsNullOrEmpty(existingTransaction.PaymentLink))
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
                 {
-                    return Ok(new { paymentLink = existingTransaction.PaymentLink });
+                    var existingTransaction = await _context.Transactions
+                        .FirstOrDefaultAsync(x => x.BookingID == bookingID);
+
+                    if (existingTransaction != null && !string.IsNullOrEmpty(existingTransaction.PaymentLink))
+                    {
+                        await transaction.CommitAsync();
+                        return Ok(new { paymentLink = existingTransaction.PaymentLink });
+                    }
+
+                    var code = ApplicationUtil.GetNewID();
+                    var paymentLink = await _payOsService.CreatePaymentAsync(new CreatePaymentDTO
+                    {
+                        OrderCode = code,
+                        Content = "Thanh toan",
+                        RequiredAmount = (int)booking.TotalPrice,
+                    });
+
+                    await _vnpayPayment.AddTransactionAsync(code, booking.BookingId, paymentLink, (decimal)booking.TotalPrice);
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    return Ok(new { paymentLink });
                 }
-
-                var code = ApplicationUtil.GetNewID();
-                var paymentLink = await _payOsService.CreatePaymentAsync(new CreatePaymentDTO
+                catch (Exception ex)
                 {
-                    OrderCode = code,
-                    Content = "Thanh toan",
-                    RequiredAmount = (int)booking.TotalPrice,
-                });
-
-                await _vnpayPayment.AddTransactionAsync(code, booking.BookingId, paymentLink, (decimal)booking.TotalPrice);
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return Ok(new { paymentLink });
+                    await transaction.RollbackAsync();
+                    return StatusCode(500, new { message = $"Error creating payment: {ex.Message}" });
+                }
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
-                return StatusCode(500, new { message = $"Error creating payment: {ex.Message}" });
+                return StatusCode(500, new { message = $"Error updating booking status: {ex.Message}" });
             }
         }
 
@@ -121,7 +130,6 @@ namespace SkinCareBookingSystem.Controllers
                     return BadRequest(new { success = false, message = "Booking or TherapistTimeSlot not found." });
                 }
 
-                // Relax the InProcess check to allow updates if the timeslot is not Booked
                 if (booking.TherapistTimeSlot.Status == SlotStatus.Booked)
                 {
                     return BadRequest(new { success = false, message = "TherapistTimeSlot is already booked." });
@@ -132,32 +140,20 @@ namespace SkinCareBookingSystem.Controllers
                 if (code == "00" && status == "PAID")
                 {
                     booking.IsPaid = true;
-                    booking.Status = BookingStatus.Booked; // Success → Booked (1)
+                    booking.Status = BookingStatus.Booked;
                     booking.TherapistTimeSlot.Status = SlotStatus.Booked;
                     Console.WriteLine($"Booking {booking.BookingId} set to Booked, TimeSlot {booking.TherapistTimeSlot.Id} set to Booked.");
                 }
                 else if (status == "CANCELLED" && cancel == "true")
                 {
-                    // Check if the cancellation is immediate (within 1 minute of transaction creation)
-                    var timeSinceTransaction = DateTime.Now - transactionRecord.Date;
-                    if (timeSinceTransaction.TotalMinutes < 1)
-                    {
-                        // Likely an auto-cancellation by PayOS; do not update status
-                        Console.WriteLine($"Booking {booking.BookingId} not updated by PaymentReturn due to immediate cancellation. Awaiting user action or timeout. Code: {code}, Status: {status}, Cancel: {cancel}");
-                    }
-                    else
-                    {
-                        // Assume user-initiated cancellation
-                        booking.IsPaid = false;
-                        booking.Status = BookingStatus.Failed; // Failure → Failed (4)
-                        booking.TherapistTimeSlot.Status = SlotStatus.Available;
-                        Console.WriteLine($"Booking {booking.BookingId} set to Failed, TimeSlot {booking.TherapistTimeSlot.Id} set to Available due to user cancellation. Code: {code}, Status: {status}, Cancel: {cancel}");
-                    }
+                    booking.IsPaid = false;
+                    booking.Status = BookingStatus.Failed;
+                    booking.TherapistTimeSlot.Status = SlotStatus.Available;
+                    Console.WriteLine($"Booking {booking.BookingId} set to Failed, TimeSlot {booking.TherapistTimeSlot.Id} set to Available due to cancellation. Code: {code}, Status: {status}, Cancel: {cancel}");
                 }
                 else
                 {
-                    // Do not change status; let TimeSlotStatusCheckerService handle timeouts
-                    Console.WriteLine($"Booking {booking.BookingId} not updated by PaymentReturn. Awaiting user action or timeout. Code: {code}, Status: {status}, Cancel: {cancel}");
+                    Console.WriteLine($"Booking {booking.BookingId} not updated by PaymentReturn. Code: {code}, Status: {status}, Cancel: {cancel}");
                 }
 
                 _context.Entry(booking).Property(b => b.Status).IsModified = true;

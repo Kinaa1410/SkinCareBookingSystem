@@ -214,9 +214,22 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<bool> DeleteUserAsync(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users
+                .Include(u => u.TherapistSpecialties)
+                .FirstOrDefaultAsync(u => u.UserId == id);
             if (user == null) return false;
 
+            var schedules = await _context.TherapistSchedules
+                .Include(ts => ts.TimeSlots)
+                .Where(ts => ts.TherapistId == id)
+                .ToListAsync();
+
+            foreach (var schedule in schedules)
+            {
+                _context.TherapistTimeSlots.RemoveRange(schedule.TimeSlots);
+            }
+            _context.TherapistSchedules.RemoveRange(schedules);
+            _context.TherapistSpecialties.RemoveRange(user.TherapistSpecialties);
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
