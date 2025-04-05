@@ -12,11 +12,16 @@ namespace SkinCareBookingSystem.Models
         [ForeignKey("User")]
         public int UserId { get; set; }
 
-        [ForeignKey("StaffUser")]
-        public int? StaffId { get; set; }
+        [ForeignKey("Therapist")]
+        public int TherapistId { get; set; }
+
+        [ForeignKey("Service")]
+        public int ServiceId { get; set; }
+
+        public int TimeSlotId { get; set; }
 
         [ForeignKey("TherapistTimeSlot")]
-        public int TimeSlotId { get; set; }
+        public int TherapistTimeSlotId { get; set; }
 
         public DateTime DateCreated { get; set; }
         public float TotalPrice { get; set; }
@@ -25,8 +30,9 @@ namespace SkinCareBookingSystem.Models
         public bool IsPaid { get; set; }
         public DateTime AppointmentDate { get; set; }
 
-        public User User { get; set; }
-        public User StaffUser { get; set; }
+        public User User { get; set; } = null!;
+        public User Therapist { get; set; } = null!;
+        public Service Service { get; set; } = null!;
         public TherapistTimeSlot TherapistTimeSlot { get; set; } = null!;
     }
 }

@@ -4,18 +4,18 @@
     {
         public int UserId { get; set; }
         public int QaId { get; set; }
-        public string Answer { get; set; } = string.Empty;
+        public int QaOptionId { get; set; }
     }
 
     public class CreateQaAnswerDTO
     {
         public int UserId { get; set; }
         public int QaId { get; set; }
-        public string Answer { get; set; } = string.Empty;
+        public int QaOptionId { get; set; }
     }
 
     public class UpdateQaAnswerDTO
     {
-        public string Answer { get; set; } = string.Empty;
+        public int QaOptionId { get; set; }
     }
 }

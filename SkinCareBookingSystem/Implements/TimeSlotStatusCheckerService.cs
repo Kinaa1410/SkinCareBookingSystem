@@ -33,11 +33,11 @@ namespace SkinCareBookingSystem.BackgroundServices
             {
                 try
                 {
-                    await CheckAndUpdateTimeSlotsAsync();
+                    await CheckAndUpdateTimeSlotLocksAsync();
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error occurred while checking TimeSlot statuses.");
+                    _logger.LogError(ex, "Error occurred while checking TimeSlotLock statuses.");
                 }
 
                 await Task.Delay(_checkInterval, stoppingToken);
@@ -46,7 +46,7 @@ namespace SkinCareBookingSystem.BackgroundServices
             _logger.LogInformation("TimeSlotStatusCheckerService stopped.");
         }
 
-        private async Task CheckAndUpdateTimeSlotsAsync()
+        private async Task CheckAndUpdateTimeSlotLocksAsync()
         {
             using var scope = _serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<BookingDbContext>();
@@ -54,72 +54,68 @@ namespace SkinCareBookingSystem.BackgroundServices
             using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var timeSlots = await context.TherapistTimeSlots
-                    .Where(ts => ts.Status == SlotStatus.InProcess)
+                var timeSlotLocks = await context.TherapistTimeSlotLocks
+                    .Where(tsl => tsl.Status == SlotStatus.InProcess)
                     .ToListAsync();
 
-                _logger.LogInformation($"Found {timeSlots.Count} InProcess time slots.");
+                _logger.LogInformation($"Found {timeSlotLocks.Count} InProcess time slot locks.");
 
-                foreach (var timeSlot in timeSlots)
+                foreach (var timeSlotLock in timeSlotLocks)
                 {
-                    var bookings = await context.Bookings
-                        .Where(b => b.TimeSlotId == timeSlot.Id && b.AppointmentDate.Date >= DateTime.Now.Date)
-                        .ToListAsync();
+                    var booking = await context.Bookings
+                        .FirstOrDefaultAsync(b => b.TherapistTimeSlotId == timeSlotLock.TherapistTimeSlotId &&
+                                                  b.AppointmentDate.Date == timeSlotLock.Date);
 
-                    _logger.LogInformation($"TimeSlot {timeSlot.Id}: Found {bookings.Count} bookings.");
-
-                    foreach (var booking in bookings)
+                    if (booking == null)
                     {
-                        // Skip if booking is already in a final state (Booked or Failed)
-                        if (booking.Status == BookingStatus.Booked || booking.Status == BookingStatus.Failed)
-                        {
-                            _logger.LogInformation($"Booking {booking.BookingId} already in final state ({booking.Status}). Skipping.");
+                        _logger.LogWarning($"No booking found for TimeSlotLock {timeSlotLock.Id}. Removing stale lock.");
+                        context.TherapistTimeSlotLocks.Remove(timeSlotLock);
+                        continue;
+                    }
+                    if (booking.Status == BookingStatus.Booked || booking.Status == BookingStatus.Failed)
+                    {
+                        _logger.LogInformation($"Booking {booking.BookingId} already in final state ({booking.Status}). Removing lock.");
+                        context.TherapistTimeSlotLocks.Remove(timeSlotLock);
+                        continue;
+                    }
+                    _logger.LogInformation($"Processing Booking {booking.BookingId}, Status: {booking.Status}, IsPaid: {booking.IsPaid}, DateCreated: {booking.DateCreated}");
+                    var transactionRecord = await context.Transactions
+                        .FirstOrDefaultAsync(t => t.BookingID == booking.BookingId);
+                    if (transactionRecord == null)
+                    {
+                        _logger.LogWarning($"No transaction found for Booking {booking.BookingId}. Using DateCreated for timeout check.");
+                        var timeSinceCreation = DateTime.Now - booking.DateCreated;
+                        if (timeSinceCreation < _timeoutInterval)
                             continue;
-                        }
-
-                        _logger.LogInformation($"Processing Booking {booking.BookingId}, Status: {booking.Status}, IsPaid: {booking.IsPaid}, DateCreated: {booking.DateCreated}");
-
-                        var transactionRecord = await context.Transactions
-                            .FirstOrDefaultAsync(t => t.BookingID == booking.BookingId);
-
-                        if (transactionRecord == null)
+                        if (!booking.IsPaid)
                         {
-                            _logger.LogWarning($"No transaction found for Booking {booking.BookingId}. Using DateCreated for timeout check.");
-                            var timeSinceCreation = DateTime.Now - booking.DateCreated;
-                            if (timeSinceCreation < _timeoutInterval)
-                                continue;
+                            booking.Status = BookingStatus.Failed;
+                            context.TherapistTimeSlotLocks.Remove(timeSlotLock);
+                            _logger.LogInformation($"TimeSlotLock {timeSlotLock.Id}, Booking {booking.BookingId} timed out (no transaction). Removed lock and set booking to Failed.");
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"Transaction found for Booking {booking.BookingId}, Date: {transactionRecord.Date}");
+                        var timeSinceTransaction = DateTime.Now - transactionRecord.Date;
 
+                        if (timeSinceTransaction >= _timeoutInterval)
+                        {
                             if (!booking.IsPaid)
                             {
                                 booking.Status = BookingStatus.Failed;
-                                timeSlot.Status = SlotStatus.Available;
-                                _logger.LogInformation($"TimeSlot {timeSlot.Id}, Booking {booking.BookingId} timed out (no transaction). Set to Available and Failed.");
+                                context.TherapistTimeSlotLocks.Remove(timeSlotLock);
+                                _logger.LogInformation($"TimeSlotLock {timeSlotLock.Id}, Booking {booking.BookingId} timed out. Removed lock and set booking to Failed.");
                             }
                         }
                         else
                         {
-                            _logger.LogInformation($"Transaction found for Booking {booking.BookingId}, Date: {transactionRecord.Date}");
-                            var timeSinceTransaction = DateTime.Now - transactionRecord.Date;
-
-                            if (timeSinceTransaction >= _timeoutInterval)
-                            {
-                                if (!booking.IsPaid)
-                                {
-                                    booking.Status = BookingStatus.Failed;
-                                    timeSlot.Status = SlotStatus.Available;
-                                    _logger.LogInformation($"TimeSlot {timeSlot.Id}, Booking {booking.BookingId} timed out. Set to Available and Failed.");
-                                }
-                            }
-                            else
-                            {
-                                _logger.LogInformation($"Booking {booking.BookingId} still within timeout period. Skipping.");
-                                continue;
-                            }
+                            _logger.LogInformation($"Booking {booking.BookingId} still within timeout period. Skipping.");
+                            continue;
                         }
-
-                        context.Entry(booking).Property(b => b.Status).IsModified = true;
-                        context.Entry(timeSlot).Property(ts => ts.Status).IsModified = true;
                     }
+
+                    context.Entry(booking).Property(b => b.Status).IsModified = true;
                 }
 
                 await context.SaveChangesAsync();
@@ -128,7 +124,7 @@ namespace SkinCareBookingSystem.BackgroundServices
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                _logger.LogError(ex, "Error occurred while updating TimeSlot statuses.");
+                _logger.LogError(ex, "Error occurred while updating TimeSlotLock statuses.");
                 throw;
             }
         }

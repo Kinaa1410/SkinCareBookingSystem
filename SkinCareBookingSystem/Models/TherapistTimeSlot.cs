@@ -1,4 +1,5 @@
-﻿using SkinCareBookingSystem.Enums;
+﻿using SkinCareBookingSystem.Data;
+using SkinCareBookingSystem.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,5 +20,6 @@ namespace SkinCareBookingSystem.Models
 
         public TherapistSchedule TherapistSchedule { get; set; } = null!;
         public TimeSlot TimeSlot { get; set; } = null!;
+        public ICollection<TherapistTimeSlotLock> TimeSlotLocks { get; set; } = new List<TherapistTimeSlotLock>();
     }
 }

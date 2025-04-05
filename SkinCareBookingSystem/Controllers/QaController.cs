@@ -74,7 +74,6 @@ namespace SkinCareBookingSystem.Controllers
             return NoContent();
         }
 
-        //[Authorize(Roles = "Admin")]
         [HttpDelete("{qaId}")]
         public async Task<IActionResult> DeleteQa(int qaId)
         {

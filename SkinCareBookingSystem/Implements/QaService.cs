@@ -18,20 +18,31 @@ namespace SkinCareBookingSystem.Implements
         public async Task<IEnumerable<QaDTO>> GetAllQasAsync()
         {
             return await _context.Qas
+                .Include(qa => qa.Options)
+                    .ThenInclude(o => o.ServiceRecommendations)
                 .Select(qa => new QaDTO
                 {
                     QaId = qa.QaId,
                     ServiceCategoryId = qa.ServiceCategoryId,
                     Question = qa.Question,
                     Type = qa.Type,
-                    Status = qa.Status
+                    Status = qa.Status,
+                    Options = qa.Options.Select(o => new QaOptionDTO
+                    {
+                        QaOptionId = o.QaOptionId,
+                        AnswerText = o.AnswerText,
+                        ServiceIds = o.ServiceRecommendations.Select(sr => sr.ServiceId).ToList()
+                    }).ToList()
                 }).ToListAsync();
         }
 
         public async Task<QaDTO> GetQaByIdAsync(int qaId)
         {
             var qa = await _context.Qas
+                .Include(qa => qa.Options)
+                    .ThenInclude(o => o.ServiceRecommendations)
                 .FirstOrDefaultAsync(q => q.QaId == qaId);
+
             if (qa == null) return null;
 
             return new QaDTO
@@ -40,7 +51,13 @@ namespace SkinCareBookingSystem.Implements
                 ServiceCategoryId = qa.ServiceCategoryId,
                 Question = qa.Question,
                 Type = qa.Type,
-                Status = qa.Status
+                Status = qa.Status,
+                Options = qa.Options.Select(o => new QaOptionDTO
+                {
+                    QaOptionId = o.QaOptionId,
+                    AnswerText = o.AnswerText,
+                    ServiceIds = o.ServiceRecommendations.Select(sr => sr.ServiceId).ToList()
+                }).ToList()
             };
         }
 
@@ -54,6 +71,25 @@ namespace SkinCareBookingSystem.Implements
                 Status = qaDTO.Status
             };
 
+            foreach (var optionDto in qaDTO.Options)
+            {
+                var qaOption = new QaOption
+                {
+                    AnswerText = optionDto.AnswerText,
+                    Qa = qa
+                };
+
+                foreach (var serviceId in optionDto.ServiceIds)
+                {
+                    qaOption.ServiceRecommendations.Add(new QaOptionService
+                    {
+                        ServiceId = serviceId
+                    });
+                }
+
+                qa.Options.Add(qaOption);
+            }
+
             _context.Qas.Add(qa);
             await _context.SaveChangesAsync();
 
@@ -63,18 +99,70 @@ namespace SkinCareBookingSystem.Implements
                 ServiceCategoryId = qa.ServiceCategoryId,
                 Question = qa.Question,
                 Type = qa.Type,
-                Status = qa.Status
+                Status = qa.Status,
+                Options = qa.Options.Select(o => new QaOptionDTO
+                {
+                    QaOptionId = o.QaOptionId,
+                    AnswerText = o.AnswerText,
+                    ServiceIds = o.ServiceRecommendations.Select(sr => sr.ServiceId).ToList()
+                }).ToList()
             };
         }
 
         public async Task<bool> UpdateQaAsync(int qaId, UpdateQaDTO qaDTO)
         {
-            var qa = await _context.Qas.FindAsync(qaId);
+            var qa = await _context.Qas
+                .Include(q => q.Options)
+                    .ThenInclude(o => o.ServiceRecommendations)
+                .FirstOrDefaultAsync(q => q.QaId == qaId);
+
             if (qa == null) return false;
 
             qa.Question = qaDTO.Question;
             qa.Type = qaDTO.Type;
             qa.Status = qaDTO.Status;
+
+            var incomingOptionIds = qaDTO.Options
+                .Where(o => o.QaOptionId.HasValue)
+                .Select(o => o.QaOptionId.Value)
+                .ToList();
+
+            var optionsToRemove = qa.Options
+                .Where(o => !incomingOptionIds.Contains(o.QaOptionId))
+                .ToList();
+
+            foreach (var option in optionsToRemove)
+            {
+                _context.QaOptions.Remove(option);
+            }
+
+            foreach (var optionDto in qaDTO.Options)
+            {
+                if (optionDto.QaOptionId.HasValue)
+                {
+                    var existingOption = qa.Options.FirstOrDefault(o => o.QaOptionId == optionDto.QaOptionId.Value);
+                    if (existingOption != null)
+                    {
+                        existingOption.AnswerText = optionDto.AnswerText;
+                        _context.QaOptionServices.RemoveRange(existingOption.ServiceRecommendations);
+                        existingOption.ServiceRecommendations = optionDto.ServiceIds
+                            .Select(serviceId => new QaOptionService { ServiceId = serviceId })
+                            .ToList();
+                    }
+                }
+                else
+                {
+                    var newOption = new QaOption
+                    {
+                        AnswerText = optionDto.AnswerText,
+                        QaId = qa.QaId,
+                        ServiceRecommendations = optionDto.ServiceIds
+                            .Select(serviceId => new QaOptionService { ServiceId = serviceId })
+                            .ToList()
+                    };
+                    qa.Options.Add(newOption);
+                }
+            }
 
             _context.Entry(qa).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -93,19 +181,24 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<IEnumerable<QaDTO>> GetQasByServiceCategoryAsync(int serviceCategoryId)
         {
-            var results = await _context.Qas
+            return await _context.Qas
                 .Where(qa => qa.ServiceCategoryId == serviceCategoryId)
+                .Include(qa => qa.Options)
+                    .ThenInclude(o => o.ServiceRecommendations)
                 .Select(qa => new QaDTO
                 {
                     QaId = qa.QaId,
                     ServiceCategoryId = qa.ServiceCategoryId,
                     Question = qa.Question,
                     Type = qa.Type,
-                    Status = qa.Status
-                })
-                .ToListAsync();
-
-            return results;
+                    Status = qa.Status,
+                    Options = qa.Options.Select(o => new QaOptionDTO
+                    {
+                        QaOptionId = o.QaOptionId,
+                        AnswerText = o.AnswerText,
+                        ServiceIds = o.ServiceRecommendations.Select(sr => sr.ServiceId).ToList()
+                    }).ToList()
+                }).ToListAsync();
         }
     }
 }

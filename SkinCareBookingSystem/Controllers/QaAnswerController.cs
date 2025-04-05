@@ -23,7 +23,6 @@ namespace SkinCareBookingSystem.Controllers
             _updateValidator = updateValidator;
         }
 
-        
         [HttpGet]
         public async Task<IActionResult> GetAllQaAnswers()
         {
@@ -31,7 +30,6 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(qaAnswers);
         }
 
-        
         [HttpGet("{userId}/{qaId}")]
         public async Task<IActionResult> GetQaAnswer(int userId, int qaId)
         {
@@ -43,7 +41,6 @@ namespace SkinCareBookingSystem.Controllers
             return Ok(qaAnswer);
         }
 
-        
         [HttpPost]
         public async Task<IActionResult> CreateQaAnswer([FromBody] CreateQaAnswerDTO qaAnswerDTO)
         {
@@ -57,7 +54,6 @@ namespace SkinCareBookingSystem.Controllers
             return CreatedAtAction(nameof(GetQaAnswer), new { userId = qaAnswer.UserId, qaId = qaAnswer.QaId }, qaAnswer);
         }
 
-        
         [HttpPut("{userId}/{qaId}")]
         public async Task<IActionResult> UpdateQaAnswer(int userId, int qaId, [FromBody] UpdateQaAnswerDTO qaAnswerDTO)
         {
@@ -76,7 +72,6 @@ namespace SkinCareBookingSystem.Controllers
             return NoContent();
         }
 
-        
         [HttpDelete("{userId}/{qaId}")]
         public async Task<IActionResult> DeleteQaAnswer(int userId, int qaId)
         {

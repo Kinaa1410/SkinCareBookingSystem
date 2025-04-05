@@ -79,9 +79,8 @@ builder.Services.AddScoped<IValidator<UpdateTherapistTimeSlotDTO>, UpdateTherapi
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IValidator<CreateFeedbackDTO>, CreateFeedbackDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateFeedbackDTO>, UpdateFeedbackDTOValidator>();
-builder.Services.AddScoped<IServiceRecommendationService, ServiceRecommendationService>();
-builder.Services.AddScoped<IValidator<CreateServiceRecommendationDTO>, CreateServiceRecommendationDTOValidator>();
-builder.Services.AddScoped<IValidator<UpdateServiceRecommendationDTO>, UpdateServiceRecommendationDTOValidator>();
+builder.Services.AddScoped<IValidator<CreateQaOptionDTO>, CreateQaOptionDTOValidator>();
+builder.Services.AddScoped<IValidator<UpdateQaOptionDTO>, UpdateQaOptionDTOValidator>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IValidator<CreateTimeSlotDTO>, CreateTimeSlotDTOValidator>();
 builder.Services.AddScoped<IValidator<UpdateTimeSlotDTO>, UpdateTimeSlotDTOValidator>();

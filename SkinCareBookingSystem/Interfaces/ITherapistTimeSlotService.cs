@@ -1,28 +1,19 @@
 ﻿using SkinCareBookingSystem.DTOs;
-using SkinCareBookingSystem.Enums;  // Include the SlotStatus enum
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Collections.Generic;  // For IEnumerable
+using SkinCareBookingSystem.Enums;
 
 namespace SkinCareBookingSystem.Interfaces
 {
     public interface ITherapistTimeSlotService
     {
-        // Get all therapist time slots
         Task<IEnumerable<TherapistTimeSlotDTO>> GetAllTimeSlotsAsync();
-
-        // Get a therapist time slot by its ID
         Task<TherapistTimeSlotDTO> GetTimeSlotByIdAsync(int timeSlotId);
-
-        // Create time slots for a therapist based on their schedule
         Task<IEnumerable<TherapistTimeSlotDTO>> CreateTimeSlotForTherapistAsync(int scheduleId);
-
-        // Update the status of a specific time slot (e.g., Available, InProcess, or Booked)
+        Task<TherapistTimeSlotDTO> CreateTherapistTimeSlotAsync(CreateTherapistTimeSlotDTO timeSlotDTO);
         Task<bool> UpdateTimeSlotAsync(int timeSlotId, SlotStatus status);
-
-        // Delete a therapist's time slot
         Task<bool> DeleteTimeSlotAsync(int timeSlotId);
         Task ResetWeeklyTimeSlotsAsync();
-
         Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync();
         Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync(int therapistId);
     }

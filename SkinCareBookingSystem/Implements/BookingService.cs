@@ -3,11 +3,11 @@ using SkinCareBookingSystem.Data;
 using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Models;
+using SkinCareBookingSystem.Enums;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using SkinCareBookingSystem.Enums;
 
 namespace SkinCareBookingSystem.Implements
 {
@@ -28,43 +28,13 @@ namespace SkinCareBookingSystem.Implements
             return TimeZoneInfo.ConvertTimeFromUtc(dateTime.ToUniversalTime(), vietnamTimeZone);
         }
 
-        private async Task<DayOfWeek> GetTherapistDayOfWeekFromTimeSlotAsync(int timeSlotId)
-        {
-            var therapistTimeSlot = await _context.TherapistTimeSlots
-                .Include(ts => ts.TherapistSchedule)
-                .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId);
-
-            if (therapistTimeSlot?.TherapistSchedule == null)
-                throw new InvalidOperationException("Therapist time slot or schedule not found.");
-
-            return therapistTimeSlot.TherapistSchedule.DayOfWeek;
-        }
-
-        private async Task<DateTime> GetNextDateOfDayOfWeek(DateTime startDate, DayOfWeek targetDay, int timeSlotId)
-        {
-            var timeSlot = await _context.TherapistTimeSlots
-                .Include(ts => ts.TimeSlot)
-                .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotId);
-
-            if (timeSlot?.TimeSlot == null)
-                throw new InvalidOperationException("Time slot details not found.");
-
-            TimeSpan slotStartTime = timeSlot.TimeSlot.StartTime;
-            int daysToAdd = ((int)targetDay - (int)startDate.DayOfWeek + 7) % 7;
-            var candidateDate = startDate.Date.AddDays(daysToAdd);
-
-            if (candidateDate == startDate.Date && startDate.TimeOfDay >= slotStartTime)
-                daysToAdd += 7;
-
-            return startDate.Date.AddDays(daysToAdd);
-        }
-
         public async Task<BookingDTO> GetBookingByIdAsync(int bookingId)
         {
             var booking = await _context.Bookings
+                .Include(b => b.Therapist)
+                .Include(b => b.Service)
                 .Include(b => b.TherapistTimeSlot)
-                .ThenInclude(ts => ts.TherapistSchedule)
-                .ThenInclude(ts => ts.TherapistUser)
+                .ThenInclude(ts => ts.TimeSlot)
                 .FirstOrDefaultAsync(b => b.BookingId == bookingId);
 
             if (booking == null) return null;
@@ -73,8 +43,10 @@ namespace SkinCareBookingSystem.Implements
             {
                 BookingId = booking.BookingId,
                 UserId = booking.UserId,
-                TherapistId = booking.TherapistTimeSlot.TherapistSchedule.TherapistId,
+                TherapistId = booking.TherapistId,
+                ServiceId = booking.ServiceId,
                 TimeSlotId = booking.TimeSlotId,
+                TherapistTimeSlotId = booking.TherapistTimeSlotId,
                 DateCreated = ConvertToVietnamTime(booking.DateCreated),
                 TotalPrice = booking.TotalPrice,
                 Note = booking.Note,
@@ -87,15 +59,18 @@ namespace SkinCareBookingSystem.Implements
         public async Task<IEnumerable<BookingDTO>> GetAllBookingsAsync()
         {
             return await _context.Bookings
+                .Include(b => b.Therapist)
+                .Include(b => b.Service)
                 .Include(b => b.TherapistTimeSlot)
-                .ThenInclude(ts => ts.TherapistSchedule)
-                .ThenInclude(ts => ts.TherapistUser)
+                .ThenInclude(ts => ts.TimeSlot)
                 .Select(b => new BookingDTO
                 {
                     BookingId = b.BookingId,
                     UserId = b.UserId,
-                    TherapistId = b.TherapistTimeSlot.TherapistSchedule.TherapistId,
+                    TherapistId = b.TherapistId,
+                    ServiceId = b.ServiceId,
                     TimeSlotId = b.TimeSlotId,
+                    TherapistTimeSlotId = b.TherapistTimeSlotId,
                     DateCreated = ConvertToVietnamTime(b.DateCreated),
                     TotalPrice = b.TotalPrice,
                     Note = b.Note,
@@ -110,36 +85,51 @@ namespace SkinCareBookingSystem.Implements
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var therapistTimeSlot = await _context.TherapistTimeSlots
-                    .Include(ts => ts.TherapistSchedule)
-                    .FirstOrDefaultAsync(ts => ts.TimeSlotId == bookingDTO.TimeSlotId && ts.TherapistSchedule.TherapistId == bookingDTO.TherapistId);
+                var therapist = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserId == bookingDTO.TherapistId);
+                if (therapist == null)
+                    throw new InvalidOperationException("Therapist not found.");
 
-                if (therapistTimeSlot?.TherapistSchedule == null)
-                    throw new InvalidOperationException("Therapist time slot or schedule not found for the specified therapist.");
-                var service = await _context.Services.FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
-                if (service == null) throw new InvalidOperationException("Service not found.");
+                var service = await _context.Services
+                    .Include(s => s.ServiceCategory)
+                    .FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
+                if (service == null)
+                    throw new InvalidOperationException("Service not found.");
+
                 var therapistSpecialty = await _context.TherapistSpecialties
-            .AnyAsync(ts => ts.TherapistId == bookingDTO.TherapistId && ts.ServiceCategoryId == service.ServiceCategoryId);
+                    .AnyAsync(ts => ts.TherapistId == bookingDTO.TherapistId &&
+                                  ts.ServiceCategoryId == service.ServiceCategoryId);
                 if (!therapistSpecialty)
                     throw new InvalidOperationException("Therapist does not offer this service category.");
-                DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistTimeSlot.TherapistSchedule.DayOfWeek, bookingDTO.TimeSlotId);
-                if (appointmentDate.Date < DateTime.Now.Date)
-                    throw new InvalidOperationException("Cannot book an appointment in the past.");
-                var existingBooking = await _context.Bookings
-                    .FirstOrDefaultAsync(b => b.TimeSlotId == therapistTimeSlot.Id &&
-                                                 b.AppointmentDate.Date == appointmentDate.Date &&
-                                                 (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Booked));
-                if (existingBooking != null)
-                    throw new InvalidOperationException("A booking with Pending or Booked status already exists for this time slot on this date.");
-                var bookTimeSlotResult = await _therapistScheduleService.BookTimeSlotAsync(bookingDTO.TimeSlotId, bookingDTO.UserId, appointmentDate, (int)bookingDTO.TherapistId);
+
+                DateTime appointmentDate = bookingDTO.AppointmentDate.Date;
+
+                var expectedDayOfWeek = appointmentDate.DayOfWeek;
+                var therapistTimeSlot = await _context.TherapistTimeSlots
+                    .Include(ts => ts.TherapistSchedule)
+                    .FirstOrDefaultAsync(ts => ts.TimeSlotId == bookingDTO.TimeSlotId &&
+                                               ts.TherapistSchedule.TherapistId == bookingDTO.TherapistId &&
+                                               ts.TherapistSchedule.DayOfWeek == expectedDayOfWeek);
+
+                if (therapistTimeSlot == null)
+                    throw new InvalidOperationException("Therapist time slot not found for this date.");
+
+                var bookTimeSlotResult = await _therapistScheduleService.BookTimeSlotAsync(
+                    therapistTimeSlot.Id,
+                    bookingDTO.UserId,
+                    appointmentDate,
+                    bookingDTO.TherapistId);
+
                 if (!bookTimeSlotResult)
-                {
                     throw new Exception("Unable to book timeslot");
-                }
+
                 var booking = new Booking
                 {
                     UserId = bookingDTO.UserId,
-                    TimeSlotId = therapistTimeSlot.Id,
+                    TherapistId = bookingDTO.TherapistId,
+                    ServiceId = bookingDTO.ServiceId,
+                    TimeSlotId = bookingDTO.TimeSlotId,
+                    TherapistTimeSlotId = therapistTimeSlot.Id,
                     DateCreated = DateTime.Now,
                     TotalPrice = (float)service.Price,
                     Status = BookingStatus.Pending,
@@ -147,9 +137,11 @@ namespace SkinCareBookingSystem.Implements
                     Note = bookingDTO.Note,
                     AppointmentDate = appointmentDate
                 };
+
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
+
                 return await GetBookingByIdAsync(booking.BookingId);
             }
             catch (Exception)
@@ -178,14 +170,13 @@ namespace SkinCareBookingSystem.Implements
             var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.BookingId == bookingId);
             if (booking == null) return false;
 
-            var timeSlot = await _context.TherapistTimeSlots.FindAsync(booking.TimeSlotId);
-            if (timeSlot != null)
-            {
-                var hasOtherBookings = await _context.Bookings
-                    .AnyAsync(b => b.TimeSlotId == booking.TimeSlotId && b.BookingId != bookingId &&
-                                     b.Status != BookingStatus.Completed && b.Status != BookingStatus.Canceled && b.Status != BookingStatus.Failed);
+            var timeSlotLock = await _context.TherapistTimeSlotLocks
+                .FirstOrDefaultAsync(tsl => tsl.TherapistTimeSlotId == booking.TherapistTimeSlotId &&
+                                            tsl.Date == booking.AppointmentDate.Date);
 
-                timeSlot.Status = hasOtherBookings ? SlotStatus.Booked : SlotStatus.Available;
+            if (timeSlotLock != null)
+            {
+                _context.TherapistTimeSlotLocks.Remove(timeSlotLock);
             }
 
             _context.Bookings.Remove(booking);
@@ -199,23 +190,44 @@ namespace SkinCareBookingSystem.Implements
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                DayOfWeek therapistDayOfWeek = await GetTherapistDayOfWeekFromTimeSlotAsync(bookingDTO.TimeSlotId);
-                DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistDayOfWeek, bookingDTO.TimeSlotId);
+                var service = await _context.Services
+                    .Include(s => s.ServiceCategory)
+                    .FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
+                if (service == null)
+                    throw new InvalidOperationException("Service not found.");
 
-                if (appointmentDate.Date < DateTime.Now.Date)
-                    throw new InvalidOperationException("Cannot book an appointment in the past.");
+                DateTime appointmentDate = bookingDTO.AppointmentDate.Date;
 
                 var availableTimeSlot = await _context.TherapistTimeSlots
                     .Include(ts => ts.TherapistSchedule)
-                    .Where(ts => !_context.Bookings.Any(b => b.TimeSlotId == ts.Id && b.AppointmentDate.Date == appointmentDate.Date))
+                    .Include(ts => ts.TimeSlot)
+                    .Where(ts => ts.TherapistSchedule.DayOfWeek == appointmentDate.DayOfWeek &&
+                                 ts.Status == SlotStatus.Available &&
+                                 ts.TimeSlotId == bookingDTO.TimeSlotId &&
+                                 _context.TherapistSpecialties.Any(tsp => tsp.TherapistId == ts.TherapistSchedule.TherapistId &&
+                                                                        tsp.ServiceCategoryId == service.ServiceCategoryId))
+                    .GroupJoin(_context.TherapistTimeSlotLocks,
+                        ts => ts.Id,
+                        tsl => tsl.TherapistTimeSlotId,
+                        (ts, locks) => new { TherapistTimeSlot = ts, Locks = locks })
+                    .SelectMany(x => x.Locks.DefaultIfEmpty(), (x, tsl) => new { x.TherapistTimeSlot, Lock = tsl })
+                    .Where(x => x.Lock == null || x.Lock.Date != appointmentDate.Date ||
+                                (x.Lock.Status != SlotStatus.InProcess && x.Lock.Status != SlotStatus.Booked))
                     .OrderBy(r => Guid.NewGuid())
+                    .Select(x => x.TherapistTimeSlot)
                     .FirstOrDefaultAsync();
 
                 if (availableTimeSlot?.TherapistSchedule == null)
-                    throw new InvalidOperationException("No available time slots.");
+                    throw new InvalidOperationException("No available therapists for this service on the selected date.");
 
-                await _therapistScheduleService.BookTimeSlotAsync(availableTimeSlot.Id, bookingDTO.UserId, appointmentDate, availableTimeSlot.TherapistSchedule.TherapistId);
-                bookingDTO.TimeSlotId = availableTimeSlot.Id;
+                bookingDTO.TherapistId = availableTimeSlot.TherapistSchedule.TherapistId;
+
+                await _therapistScheduleService.BookTimeSlotAsync(
+                    availableTimeSlot.Id,
+                    bookingDTO.UserId,
+                    appointmentDate,
+                    bookingDTO.TherapistId);
+
                 var result = await CreateBookingAsync(bookingDTO);
 
                 await transaction.CommitAsync();
@@ -233,22 +245,42 @@ namespace SkinCareBookingSystem.Implements
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                DayOfWeek therapistDayOfWeek = await GetTherapistDayOfWeekFromTimeSlotAsync(bookingDTO.TimeSlotId);
-                DateTime appointmentDate = await GetNextDateOfDayOfWeek(DateTime.Now, therapistDayOfWeek, bookingDTO.TimeSlotId);
+                var therapist = await _context.Users
+                    .FirstOrDefaultAsync(u => u.UserId == bookingDTO.TherapistId);
+                if (therapist == null)
+                    throw new InvalidOperationException("Therapist not found.");
 
-                if (appointmentDate.Date < DateTime.Now.Date)
-                    throw new InvalidOperationException("Cannot book an appointment in the past.");
+                var service = await _context.Services
+                    .Include(s => s.ServiceCategory)
+                    .FirstOrDefaultAsync(s => s.ServiceId == bookingDTO.ServiceId);
+                if (service == null)
+                    throw new InvalidOperationException("Service not found.");
+
+                var therapistSpecialty = await _context.TherapistSpecialties
+                    .AnyAsync(ts => ts.TherapistId == bookingDTO.TherapistId &&
+                                  ts.ServiceCategoryId == service.ServiceCategoryId);
+                if (!therapistSpecialty)
+                    throw new InvalidOperationException("Therapist does not offer this service category.");
+
+                DateTime appointmentDate = bookingDTO.AppointmentDate.Date;
 
                 var availableTimeSlot = await _context.TherapistTimeSlots
                     .Include(ts => ts.TherapistSchedule)
+                    .Include(ts => ts.TimeSlot)
                     .FirstOrDefaultAsync(ts => ts.TherapistSchedule.TherapistId == bookingDTO.TherapistId &&
-                                                 !_context.Bookings.Any(b => b.TimeSlotId == ts.Id && b.AppointmentDate.Date == appointmentDate.Date));
+                                               ts.TherapistSchedule.DayOfWeek == appointmentDate.DayOfWeek &&
+                                               ts.TimeSlotId == bookingDTO.TimeSlotId &&
+                                               ts.Status == SlotStatus.Available);
 
                 if (availableTimeSlot == null)
-                    throw new InvalidOperationException("No available time slots for this therapist.");
+                    throw new InvalidOperationException("No available time slots for this therapist on the selected date.");
 
-                await _therapistScheduleService.BookTimeSlotAsync(availableTimeSlot.Id, bookingDTO.UserId, appointmentDate, (int)bookingDTO.TherapistId);
-                bookingDTO.TimeSlotId = availableTimeSlot.Id;
+                await _therapistScheduleService.BookTimeSlotAsync(
+                    availableTimeSlot.Id,
+                    bookingDTO.UserId,
+                    appointmentDate,
+                    bookingDTO.TherapistId);
+
                 var result = await CreateBookingAsync(bookingDTO);
 
                 await transaction.CommitAsync();
@@ -264,15 +296,19 @@ namespace SkinCareBookingSystem.Implements
         public async Task<IEnumerable<BookingDTO>> GetBookingsByTherapistIdAsync(int therapistId)
         {
             return await _context.Bookings
+                .Include(b => b.Therapist)
+                .Include(b => b.Service)
                 .Include(b => b.TherapistTimeSlot)
-                .ThenInclude(ts => ts.TherapistSchedule)
-                .Where(b => b.TherapistTimeSlot.TherapistSchedule.TherapistId == therapistId)
+                .ThenInclude(ts => ts.TimeSlot)
+                .Where(b => b.TherapistId == therapistId)
                 .Select(b => new BookingDTO
                 {
                     BookingId = b.BookingId,
                     UserId = b.UserId,
-                    TherapistId = b.TherapistTimeSlot.TherapistSchedule.TherapistId,
+                    TherapistId = b.TherapistId,
+                    ServiceId = b.ServiceId,
                     TimeSlotId = b.TimeSlotId,
+                    TherapistTimeSlotId = b.TherapistTimeSlotId,
                     DateCreated = ConvertToVietnamTime(b.DateCreated),
                     TotalPrice = b.TotalPrice,
                     Note = b.Note,
@@ -285,15 +321,19 @@ namespace SkinCareBookingSystem.Implements
         public async Task<IEnumerable<BookingDTO>> GetBookingsByUserIdAsync(int userId)
         {
             return await _context.Bookings
+                .Include(b => b.Therapist)
+                .Include(b => b.Service)
                 .Include(b => b.TherapistTimeSlot)
-                .ThenInclude(ts => ts.TherapistSchedule)
+                .ThenInclude(ts => ts.TimeSlot)
                 .Where(b => b.UserId == userId)
                 .Select(b => new BookingDTO
                 {
                     BookingId = b.BookingId,
                     UserId = b.UserId,
-                    TherapistId = b.TherapistTimeSlot.TherapistSchedule.TherapistId,
+                    TherapistId = b.TherapistId,
+                    ServiceId = b.ServiceId,
                     TimeSlotId = b.TimeSlotId,
+                    TherapistTimeSlotId = b.TherapistTimeSlotId,
                     DateCreated = ConvertToVietnamTime(b.DateCreated),
                     TotalPrice = b.TotalPrice,
                     Note = b.Note,
@@ -301,6 +341,43 @@ namespace SkinCareBookingSystem.Implements
                     IsPaid = b.IsPaid,
                     AppointmentDate = ConvertToVietnamTime(b.AppointmentDate)
                 }).ToListAsync();
+        }
+
+        public async Task<bool> ConfirmBookingCompletedAsync(int bookingId, int therapistId)
+        {
+            var booking = await _context.Bookings
+                .Include(b => b.TherapistTimeSlot)
+                .ThenInclude(ts => ts.TimeSlot)
+                .FirstOrDefaultAsync(b => b.BookingId == bookingId);
+            if (booking == null)
+                return false;
+
+            if (booking.TherapistId != therapistId)
+                throw new InvalidOperationException("Only the assigned therapist can confirm this booking.");
+
+            if (booking.Status != BookingStatus.Booked)
+                throw new InvalidOperationException("Booking can only be confirmed as completed if it is in Booked status.");
+
+            var currentTime = ConvertToVietnamTime(DateTime.UtcNow);
+            var bookingEndTime = booking.AppointmentDate.Date + booking.TherapistTimeSlot.TimeSlot.EndTime;
+            if (currentTime < bookingEndTime)
+                throw new InvalidOperationException($"Cannot confirm booking as completed before its end time: {bookingEndTime}");
+
+            booking.Status = BookingStatus.Completed;
+
+            var timeSlotLock = await _context.TherapistTimeSlotLocks
+                .FirstOrDefaultAsync(tsl => tsl.TherapistTimeSlotId == booking.TherapistTimeSlotId &&
+                                            tsl.Date == booking.AppointmentDate.Date);
+
+            if (timeSlotLock != null)
+            {
+                _context.TherapistTimeSlotLocks.Remove(timeSlotLock);
+            }
+
+            _context.Entry(booking).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

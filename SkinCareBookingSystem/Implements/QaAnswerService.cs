@@ -9,12 +9,10 @@ namespace SkinCareBookingSystem.Implements
     public class QaAnswerService : IQaAnswerService
     {
         private readonly BookingDbContext _context;
-        private readonly IServiceRecommendationService _recommendationService;
 
-        public QaAnswerService(BookingDbContext context, IServiceRecommendationService recommendationService)
+        public QaAnswerService(BookingDbContext context)
         {
             _context = context;
-            _recommendationService = recommendationService;
         }
 
         public async Task<IEnumerable<QaAnswerDTO>> GetAllQaAnswersAsync()
@@ -24,7 +22,7 @@ namespace SkinCareBookingSystem.Implements
                 {
                     UserId = answer.UserId,
                     QaId = answer.QaId,
-                    Answer = answer.Answer
+                    QaOptionId = answer.QaOptionId
                 }).ToListAsync();
         }
 
@@ -38,7 +36,7 @@ namespace SkinCareBookingSystem.Implements
             {
                 UserId = qaAnswer.UserId,
                 QaId = qaAnswer.QaId,
-                Answer = qaAnswer.Answer
+                QaOptionId = qaAnswer.QaOptionId
             };
         }
 
@@ -48,7 +46,7 @@ namespace SkinCareBookingSystem.Implements
             {
                 UserId = qaAnswerDTO.UserId,
                 QaId = qaAnswerDTO.QaId,
-                Answer = qaAnswerDTO.Answer
+                QaOptionId = qaAnswerDTO.QaOptionId
             };
 
             _context.QaAnswers.Add(qaAnswer);
@@ -58,7 +56,7 @@ namespace SkinCareBookingSystem.Implements
             {
                 UserId = qaAnswer.UserId,
                 QaId = qaAnswer.QaId,
-                Answer = qaAnswer.Answer
+                QaOptionId = qaAnswer.QaOptionId
             };
         }
 
@@ -68,7 +66,7 @@ namespace SkinCareBookingSystem.Implements
                 .FirstOrDefaultAsync(a => a.UserId == userId && a.QaId == qaId);
             if (qaAnswer == null) return false;
 
-            qaAnswer.Answer = qaAnswerDTO.Answer;
+            qaAnswer.QaOptionId = qaAnswerDTO.QaOptionId;
 
             _context.Entry(qaAnswer).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -96,7 +94,7 @@ namespace SkinCareBookingSystem.Implements
                     .FirstOrDefaultAsync(a => a.UserId == dto.UserId && a.QaId == dto.QaId);
                 if (existingAnswer != null)
                 {
-                    existingAnswer.Answer = dto.Answer;
+                    existingAnswer.QaOptionId = dto.QaOptionId;
                     _context.Entry(existingAnswer).State = EntityState.Modified;
                 }
                 else
@@ -105,18 +103,37 @@ namespace SkinCareBookingSystem.Implements
                     {
                         UserId = dto.UserId,
                         QaId = dto.QaId,
-                        Answer = dto.Answer
+                        QaOptionId = dto.QaOptionId
                     });
                 }
             }
             await _context.SaveChangesAsync();
-            var answerDTOs = qaAnswersDTO.Select(dto => new QaAnswerDTO
-            {
-                UserId = dto.UserId,
-                QaId = dto.QaId,
-                Answer = dto.Answer
-            }).ToList();
-            return await _recommendationService.GetRecommendedServicesAsync(answerDTOs);
+
+            var qaOptionIds = qaAnswersDTO.Select(dto => dto.QaOptionId).ToList();
+            var serviceCounts = await _context.QaOptionServices
+                .Where(qos => qaOptionIds.Contains(qos.QaOptionId))
+                .GroupBy(qos => qos.ServiceId)
+                .Select(g => new { ServiceId = g.Key, Count = g.Count() })
+                .OrderByDescending(g => g.Count)
+                .ToListAsync();
+
+            var serviceIds = serviceCounts.Select(sc => sc.ServiceId).ToList();
+            var services = await _context.Services
+                .Where(s => serviceIds.Contains(s.ServiceId))
+                .Select(s => new ServiceDTO
+                {
+                    ServiceId = s.ServiceId,
+                    Name = s.Name,
+                    Description = s.Description,
+                    Price = s.Price,
+                    Rating = s.Rating,
+                    Status = s.Status,
+                    Exist = s.Exist,
+                    ServiceCategoryId = s.ServiceCategoryId
+                })
+                .ToListAsync();
+
+            return services.OrderBy(s => serviceCounts.First(sc => sc.ServiceId == s.ServiceId).Count);
         }
     }
 }

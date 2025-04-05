@@ -4,9 +4,8 @@ using SkinCareBookingSystem.DTOs;
 using SkinCareBookingSystem.Interfaces;
 using SkinCareBookingSystem.Models;
 using SkinCareBookingSystem.Enums;
-using System;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace SkinCareBookingSystem.Implements
@@ -29,7 +28,7 @@ namespace SkinCareBookingSystem.Implements
                     Id = ts.Id,
                     ScheduleId = ts.ScheduleId,
                     TimeSlotId = ts.TimeSlotId,
-                    TimeSlotDescription = ts.TimeSlot.Description,
+                    TimeSlotDescription = $"{ts.TimeSlot.StartTime} - {ts.TimeSlot.EndTime}",
                     Status = ts.Status
                 })
                 .ToListAsync();
@@ -49,7 +48,7 @@ namespace SkinCareBookingSystem.Implements
                 Id = timeSlot.Id,
                 ScheduleId = timeSlot.ScheduleId,
                 TimeSlotId = timeSlot.TimeSlotId,
-                TimeSlotDescription = timeSlot.TimeSlot.Description,
+                TimeSlotDescription = $"{timeSlot.TimeSlot.StartTime} - {timeSlot.TimeSlot.EndTime}",
                 Status = timeSlot.Status
             };
         }
@@ -88,19 +87,54 @@ namespace SkinCareBookingSystem.Implements
                     };
 
                     _context.TherapistTimeSlots.Add(therapistTimeSlot);
+                    await _context.SaveChangesAsync();
 
                     newTimeSlots.Add(new TherapistTimeSlotDTO
                     {
+                        Id = therapistTimeSlot.Id,
                         ScheduleId = scheduleId,
                         TimeSlotId = timeSlot.TimeSlotId,
-                        TimeSlotDescription = timeSlot.Description,
+                        TimeSlotDescription = $"{timeSlot.StartTime} - {timeSlot.EndTime}",
                         Status = SlotStatus.Available
                     });
                 }
             }
 
-            await _context.SaveChangesAsync();
             return newTimeSlots;
+        }
+
+        public async Task<TherapistTimeSlotDTO> CreateTherapistTimeSlotAsync(CreateTherapistTimeSlotDTO timeSlotDTO)
+        {
+            var schedule = await _context.TherapistSchedules
+                .FirstOrDefaultAsync(s => s.ScheduleId == timeSlotDTO.ScheduleId);
+
+            if (schedule == null)
+                throw new InvalidOperationException($"Schedule with ID {timeSlotDTO.ScheduleId} not found.");
+
+            var actualTimeSlot = await _context.TimeSlots
+                .FirstOrDefaultAsync(ts => ts.TimeSlotId == timeSlotDTO.TimeSlotId);
+
+            if (actualTimeSlot == null)
+                throw new InvalidOperationException($"Time slot with ID {timeSlotDTO.TimeSlotId} not found.");
+
+            var therapistTimeSlot = new TherapistTimeSlot
+            {
+                ScheduleId = timeSlotDTO.ScheduleId,
+                TimeSlotId = timeSlotDTO.TimeSlotId,
+                Status = timeSlotDTO.Status
+            };
+
+            _context.TherapistTimeSlots.Add(therapistTimeSlot);
+            await _context.SaveChangesAsync();
+
+            return new TherapistTimeSlotDTO
+            {
+                Id = therapistTimeSlot.Id,
+                ScheduleId = therapistTimeSlot.ScheduleId,
+                TimeSlotId = therapistTimeSlot.TimeSlotId,
+                TimeSlotDescription = $"{actualTimeSlot.StartTime} - {actualTimeSlot.EndTime}",
+                Status = therapistTimeSlot.Status
+            };
         }
 
         public async Task<bool> UpdateTimeSlotAsync(int timeSlotId, SlotStatus status)
@@ -126,6 +160,16 @@ namespace SkinCareBookingSystem.Implements
             if (timeSlot == null)
                 return false;
 
+            // Remove associated TherapistTimeSlotLocks
+            var locks = await _context.TherapistTimeSlotLocks
+                .Where(tsl => tsl.TherapistTimeSlotId == timeSlotId)
+                .ToListAsync();
+
+            if (locks.Any())
+            {
+                _context.TherapistTimeSlotLocks.RemoveRange(locks);
+            }
+
             _context.TherapistTimeSlots.Remove(timeSlot);
             await _context.SaveChangesAsync();
 
@@ -142,18 +186,35 @@ namespace SkinCareBookingSystem.Implements
 
             foreach (var timeSlot in timeSlots)
             {
-                var booking = await _context.Bookings
-                    .FirstOrDefaultAsync(b => b.TimeSlotId == timeSlot.Id);
+                var locks = await _context.TherapistTimeSlotLocks
+                    .Where(tsl => tsl.TherapistTimeSlotId == timeSlot.Id)
+                    .ToListAsync();
 
-                if (booking != null)
+                foreach (var lockEntry in locks)
                 {
-                    var startOfBookingWeek = booking.AppointmentDate.Date.AddDays(-(int)booking.AppointmentDate.DayOfWeek);
-                    if (startOfBookingWeek < startOfCurrentWeek && timeSlot.Status != SlotStatus.Available &&
-                        (booking.Status == BookingStatus.Failed || booking.Status == BookingStatus.Canceled || booking.Status == BookingStatus.Completed))
+                    var startOfLockWeek = lockEntry.Date.Date.AddDays(-(int)lockEntry.Date.DayOfWeek);
+                    if (startOfLockWeek < startOfCurrentWeek && timeSlot.Status != SlotStatus.Available)
                     {
-                        timeSlot.Status = SlotStatus.Available;
+                        // Check if there are any associated bookings
+                        var booking = await _context.Bookings
+                            .FirstOrDefaultAsync(b => b.TherapistTimeSlotId == timeSlot.Id &&
+                                                      b.AppointmentDate.Date == lockEntry.Date);
+
+                        if (booking != null && (booking.Status == BookingStatus.Failed ||
+                                                booking.Status == BookingStatus.Canceled || // Changed from Cancelled to Canceled
+                                                booking.Status == BookingStatus.Completed))
+                        {
+                            _context.TherapistTimeSlotLocks.Remove(lockEntry);
+                        }
                     }
                 }
+
+                // Update the status based on remaining locks
+                var hasActiveLocks = await _context.TherapistTimeSlotLocks
+                    .AnyAsync(tsl => tsl.TherapistTimeSlotId == timeSlot.Id &&
+                                     (tsl.Status == SlotStatus.InProcess || tsl.Status == SlotStatus.Booked));
+
+                timeSlot.Status = hasActiveLocks ? SlotStatus.Booked : SlotStatus.Available;
             }
 
             await _context.SaveChangesAsync();
@@ -161,34 +222,52 @@ namespace SkinCareBookingSystem.Implements
 
         public async Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync()
         {
+            var currentDate = DateTime.Now.Date;
             return await _context.TherapistTimeSlots
                 .Include(ts => ts.TimeSlot)
                 .Where(ts => ts.Status == SlotStatus.Available)
-                .Select(ts => new TherapistTimeSlotDTO
+                .GroupJoin(_context.TherapistTimeSlotLocks,
+                    ts => ts.Id,
+                    tsl => tsl.TherapistTimeSlotId,
+                    (ts, locks) => new { TherapistTimeSlot = ts, Locks = locks })
+                .SelectMany(x => x.Locks.DefaultIfEmpty(), (x, tsl) => new { x.TherapistTimeSlot, Lock = tsl })
+                .Where(x => x.Lock == null || x.Lock.Date != currentDate ||
+                            (x.Lock.Status != SlotStatus.InProcess && x.Lock.Status != SlotStatus.Booked))
+                .Select(x => new TherapistTimeSlotDTO
                 {
-                    Id = ts.Id,
-                    ScheduleId = ts.ScheduleId,
-                    TimeSlotId = ts.TimeSlotId,
-                    TimeSlotDescription = ts.TimeSlot.Description,
-                    Status = ts.Status
+                    Id = x.TherapistTimeSlot.Id,
+                    ScheduleId = x.TherapistTimeSlot.ScheduleId,
+                    TimeSlotId = x.TherapistTimeSlot.TimeSlotId,
+                    TimeSlotDescription = $"{x.TherapistTimeSlot.TimeSlot.StartTime} - {x.TherapistTimeSlot.TimeSlot.EndTime}",
+                    Status = x.TherapistTimeSlot.Status
                 })
+                .Distinct()
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync(int therapistId)
         {
+            var currentDate = DateTime.Now.Date;
             return await _context.TherapistTimeSlots
                 .Include(ts => ts.TimeSlot)
                 .Include(ts => ts.TherapistSchedule)
                 .Where(ts => ts.Status == SlotStatus.Available && ts.TherapistSchedule.TherapistId == therapistId)
-                .Select(ts => new TherapistTimeSlotDTO
+                .GroupJoin(_context.TherapistTimeSlotLocks,
+                    ts => ts.Id,
+                    tsl => tsl.TherapistTimeSlotId,
+                    (ts, locks) => new { TherapistTimeSlot = ts, Locks = locks })
+                .SelectMany(x => x.Locks.DefaultIfEmpty(), (x, tsl) => new { x.TherapistTimeSlot, Lock = tsl })
+                .Where(x => x.Lock == null || x.Lock.Date != currentDate ||
+                            (x.Lock.Status != SlotStatus.InProcess && x.Lock.Status != SlotStatus.Booked))
+                .Select(x => new TherapistTimeSlotDTO
                 {
-                    Id = ts.Id,
-                    ScheduleId = ts.ScheduleId,
-                    TimeSlotId = ts.TimeSlotId,
-                    TimeSlotDescription = ts.TimeSlot.Description,
-                    Status = ts.Status
+                    Id = x.TherapistTimeSlot.Id,
+                    ScheduleId = x.TherapistTimeSlot.ScheduleId,
+                    TimeSlotId = x.TherapistTimeSlot.TimeSlotId,
+                    TimeSlotDescription = $"{x.TherapistTimeSlot.TimeSlot.StartTime} - {x.TherapistTimeSlot.TimeSlot.EndTime}",
+                    Status = x.TherapistTimeSlot.Status
                 })
+                .Distinct()
                 .ToListAsync();
         }
     }

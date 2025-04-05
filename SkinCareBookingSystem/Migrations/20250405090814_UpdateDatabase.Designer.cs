@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SkinCareBookingSystem.Data;
 
@@ -11,9 +12,11 @@ using SkinCareBookingSystem.Data;
 namespace SkinCareBookingSystem.Migrations
 {
     [DbContext(typeof(BookingDbContext))]
-    partial class BookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250405090814_UpdateDatabase")]
+    partial class UpdateDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,9 +116,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.Property<int>("TherapistId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TherapistTimeSlotId")
-                        .HasColumnType("int");
-
                     b.Property<int>("TimeSlotId")
                         .HasColumnType("int");
 
@@ -131,7 +131,7 @@ namespace SkinCareBookingSystem.Migrations
 
                     b.HasIndex("TherapistId");
 
-                    b.HasIndex("TherapistTimeSlotId");
+                    b.HasIndex("TimeSlotId");
 
                     b.HasIndex("UserId");
 
@@ -359,30 +359,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.ToTable("TherapistTimeSlots");
                 });
 
-            modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistTimeSlotLock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TherapistTimeSlotId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TherapistTimeSlotId");
-
-                    b.ToTable("TherapistTimeSlotLocks");
-                });
-
             modelBuilder.Entity("SkinCareBookingSystem.Models.TimeSlot", b =>
                 {
                     b.Property<int>("TimeSlotId")
@@ -540,7 +516,7 @@ namespace SkinCareBookingSystem.Migrations
 
                     b.HasOne("SkinCareBookingSystem.Models.TherapistTimeSlot", "TherapistTimeSlot")
                         .WithMany()
-                        .HasForeignKey("TherapistTimeSlotId")
+                        .HasForeignKey("TimeSlotId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -687,17 +663,6 @@ namespace SkinCareBookingSystem.Migrations
                     b.Navigation("TimeSlot");
                 });
 
-            modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistTimeSlotLock", b =>
-                {
-                    b.HasOne("SkinCareBookingSystem.Models.TherapistTimeSlot", "TherapistTimeSlot")
-                        .WithMany("TimeSlotLocks")
-                        .HasForeignKey("TherapistTimeSlotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TherapistTimeSlot");
-                });
-
             modelBuilder.Entity("SkinCareBookingSystem.Models.Transaction", b =>
                 {
                     b.HasOne("SkinCareBookingSystem.Models.Booking", "Booking")
@@ -714,7 +679,7 @@ namespace SkinCareBookingSystem.Migrations
                     b.HasOne("SkinCareBookingSystem.Models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Role");
@@ -770,11 +735,6 @@ namespace SkinCareBookingSystem.Migrations
             modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistSchedule", b =>
                 {
                     b.Navigation("TimeSlots");
-                });
-
-            modelBuilder.Entity("SkinCareBookingSystem.Models.TherapistTimeSlot", b =>
-                {
-                    b.Navigation("TimeSlotLocks");
                 });
 
             modelBuilder.Entity("SkinCareBookingSystem.Models.User", b =>

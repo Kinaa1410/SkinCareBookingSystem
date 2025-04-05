@@ -7,10 +7,14 @@ namespace SkinCareBookingSystem.Validators
     {
         public CreateQaAnswerDTOValidator()
         {
-            RuleFor(qaAnswer => qaAnswer.Answer)
-                .NotEmpty().WithMessage("Answer is required.")
-                .Must(a => a.Equals("Yes", StringComparison.OrdinalIgnoreCase) || a.Equals("No", StringComparison.OrdinalIgnoreCase))
-                .WithMessage("Answer must be 'Yes' or 'No'.");
+            RuleFor(qaAnswer => qaAnswer.UserId)
+                .GreaterThan(0).WithMessage("UserId must be a valid ID.");
+
+            RuleFor(qaAnswer => qaAnswer.QaId)
+                .GreaterThan(0).WithMessage("QaId must be a valid ID.");
+
+            RuleFor(qaAnswer => qaAnswer.QaOptionId)
+                .GreaterThan(0).WithMessage("QaOptionId must be a valid option ID.");
         }
     }
 
@@ -18,10 +22,8 @@ namespace SkinCareBookingSystem.Validators
     {
         public UpdateQaAnswerDTOValidator()
         {
-            RuleFor(qaAnswer => qaAnswer.Answer)
-                .NotEmpty().WithMessage("Answer is required.")
-                .Must(a => a.Equals("Yes", StringComparison.OrdinalIgnoreCase) || a.Equals("No", StringComparison.OrdinalIgnoreCase))
-                .WithMessage("Answer must be 'Yes' or 'No'.");
+            RuleFor(qaAnswer => qaAnswer.QaOptionId)
+                .GreaterThan(0).WithMessage("QaOptionId must be a valid option ID.");
         }
     }
 }

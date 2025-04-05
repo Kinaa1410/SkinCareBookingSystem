@@ -16,9 +16,11 @@ namespace SkinCareBookingSystem.Models
         public int QaId { get; set; }
 
         [Required]
-        public string Answer { get; set; } = string.Empty;
+        [ForeignKey("QaOption")]
+        public int QaOptionId { get; set; }
 
         public User User { get; set; } = null!;
         public Qa Qa { get; set; } = null!;
+        public QaOption QaOption { get; set; } = null!;
     }
 }
