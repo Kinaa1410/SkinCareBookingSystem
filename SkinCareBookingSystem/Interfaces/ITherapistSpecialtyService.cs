@@ -10,6 +10,6 @@ namespace SkinCareBookingSystem.Interfaces
         Task<TherapistSpecialtyDTO> CreateTherapistSpecialtyAsync(TherapistSpecialtyDTO specialtyDTO);
         Task<bool> DeleteTherapistSpecialtyAsync(int id);
         Task<TherapistSpecialtyDTO> UpdateTherapistSpecialtyAsync(int therapistId, int serviceCategoryId);
-
+        Task<IEnumerable<ServiceDTO>> GetServicesByTherapistIdAsync(int therapistId);
     }
 }

@@ -13,7 +13,6 @@ namespace SkinCareBookingSystem.Interfaces
         Task<TherapistTimeSlotDTO> CreateTherapistTimeSlotAsync(CreateTherapistTimeSlotDTO timeSlotDTO);
         Task<bool> UpdateTimeSlotAsync(int timeSlotId, SlotStatus status);
         Task<bool> DeleteTimeSlotAsync(int timeSlotId);
-        Task ResetWeeklyTimeSlotsAsync();
         Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync();
         Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync(int therapistId);
     }

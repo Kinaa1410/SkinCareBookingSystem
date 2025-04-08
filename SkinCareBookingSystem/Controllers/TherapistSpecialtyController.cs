@@ -90,5 +90,12 @@ namespace SkinCareBookingSystem.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("{therapistId}/services")]
+        public async Task<ActionResult<IEnumerable<ServiceDTO>>> GetServicesByTherapistId(int therapistId)
+        {
+            var services = await _therapistSpecialtyService.GetServicesByTherapistIdAsync(therapistId);
+            return Ok(services);
+        }
     }
 }

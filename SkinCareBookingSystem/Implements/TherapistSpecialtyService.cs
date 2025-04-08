@@ -136,7 +136,31 @@ namespace SkinCareBookingSystem.Implements
             };
         }
 
-
+        public async Task<IEnumerable<ServiceDTO>> GetServicesByTherapistIdAsync(int therapistId)
+        {
+            var specialties = await _context.TherapistSpecialties
+                .Where(ts => ts.TherapistId == therapistId)
+                .Select(ts => ts.ServiceCategoryId)
+                .ToListAsync();
+            if (!specialties.Any())
+            {
+                return new List<ServiceDTO>();
+            }
+            return await _context.Services
+                .Where(s => specialties.Contains(s.ServiceCategoryId))
+                .Select(s => new ServiceDTO
+                {
+                    ServiceId = s.ServiceId,
+                    ServiceCategoryId = s.ServiceCategoryId,
+                    Name = s.Name,
+                    Description = s.Description,
+                    Price = s.Price,
+                    Rating = s.Rating,
+                    Status = s.Status,
+                    Exist = s.Exist
+                })
+                .ToListAsync();
+        }
 
 
     }

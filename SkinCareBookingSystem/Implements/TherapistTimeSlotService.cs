@@ -176,50 +176,6 @@ namespace SkinCareBookingSystem.Implements
             return true;
         }
 
-        public async Task ResetWeeklyTimeSlotsAsync()
-        {
-            var currentDate = DateTime.Now;
-            var startOfCurrentWeek = currentDate.Date.AddDays(-(int)currentDate.DayOfWeek);
-            var timeSlots = await _context.TherapistTimeSlots
-                .Include(ts => ts.TimeSlot)
-                .ToListAsync();
-
-            foreach (var timeSlot in timeSlots)
-            {
-                var locks = await _context.TherapistTimeSlotLocks
-                    .Where(tsl => tsl.TherapistTimeSlotId == timeSlot.Id)
-                    .ToListAsync();
-
-                foreach (var lockEntry in locks)
-                {
-                    var startOfLockWeek = lockEntry.Date.Date.AddDays(-(int)lockEntry.Date.DayOfWeek);
-                    if (startOfLockWeek < startOfCurrentWeek && timeSlot.Status != SlotStatus.Available)
-                    {
-                        // Check if there are any associated bookings
-                        var booking = await _context.Bookings
-                            .FirstOrDefaultAsync(b => b.TherapistTimeSlotId == timeSlot.Id &&
-                                                      b.AppointmentDate.Date == lockEntry.Date);
-
-                        if (booking != null && (booking.Status == BookingStatus.Failed ||
-                                                booking.Status == BookingStatus.Canceled || // Changed from Cancelled to Canceled
-                                                booking.Status == BookingStatus.Completed))
-                        {
-                            _context.TherapistTimeSlotLocks.Remove(lockEntry);
-                        }
-                    }
-                }
-
-                // Update the status based on remaining locks
-                var hasActiveLocks = await _context.TherapistTimeSlotLocks
-                    .AnyAsync(tsl => tsl.TherapistTimeSlotId == timeSlot.Id &&
-                                     (tsl.Status == SlotStatus.InProcess || tsl.Status == SlotStatus.Booked));
-
-                timeSlot.Status = hasActiveLocks ? SlotStatus.Booked : SlotStatus.Available;
-            }
-
-            await _context.SaveChangesAsync();
-        }
-
         public async Task<IEnumerable<TherapistTimeSlotDTO>> GetAvailableTimeSlotsAsync()
         {
             var currentDate = DateTime.Now.Date;

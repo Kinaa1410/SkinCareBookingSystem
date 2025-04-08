@@ -70,12 +70,6 @@ namespace SkinCareBookingSystem.Controllers
             return NoContent();
         }
 
-        [HttpPost("reset-weekly-timeslots")]
-        public async Task<IActionResult> ResetWeeklyTimeSlots()
-        {
-            await _timeSlotService.ResetWeeklyTimeSlotsAsync();
-            return Ok(new { message = "Weekly time slots reset successfully" });
-        }
 
         [HttpGet("available")]
         public async Task<ActionResult<IEnumerable<TherapistTimeSlotDTO>>> GetAvailableTimeSlots()

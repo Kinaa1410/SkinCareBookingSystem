@@ -108,18 +108,26 @@ namespace SkinCareBookingSystem.Implements
                 }
             }
             await _context.SaveChangesAsync();
-
             var qaOptionIds = qaAnswersDTO.Select(dto => dto.QaOptionId).ToList();
             var serviceCounts = await _context.QaOptionServices
                 .Where(qos => qaOptionIds.Contains(qos.QaOptionId))
                 .GroupBy(qos => qos.ServiceId)
                 .Select(g => new { ServiceId = g.Key, Count = g.Count() })
-                .OrderByDescending(g => g.Count)
                 .ToListAsync();
 
-            var serviceIds = serviceCounts.Select(sc => sc.ServiceId).ToList();
+            if (!serviceCounts.Any())
+                return new List<ServiceDTO>();
+            int maxCount = serviceCounts.Max(sc => sc.Count);
+
+            // Step 4: Get the service IDs with the maximum count (handles ties)
+            var topServiceIds = serviceCounts
+                .Where(sc => sc.Count == maxCount)
+                .Select(sc => sc.ServiceId)
+                .ToList();
+
+            // Step 5: Fetch the details of the top services
             var services = await _context.Services
-                .Where(s => serviceIds.Contains(s.ServiceId))
+                .Where(s => topServiceIds.Contains(s.ServiceId))
                 .Select(s => new ServiceDTO
                 {
                     ServiceId = s.ServiceId,
@@ -132,8 +140,7 @@ namespace SkinCareBookingSystem.Implements
                     ServiceCategoryId = s.ServiceCategoryId
                 })
                 .ToListAsync();
-
-            return services.OrderBy(s => serviceCounts.First(sc => sc.ServiceId == s.ServiceId).Count);
+            return services;
         }
     }
 }
